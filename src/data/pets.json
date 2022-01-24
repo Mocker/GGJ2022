@@ -1,0 +1,38 @@
+{
+ "types": {
+    "dino": {
+        "images": {
+            "egg": "monster_test_01-big.png",
+            "baby": "monster_test_01-big.png",
+            "adultCute": "monster_test_01-big.png",
+            "adultEvil": "monster_test_01-big.png"
+        },
+        "stages" : [
+            {
+                "stage": "egg",
+                "name": "dino egg",
+                "displayName": "?? egg ??",
+                "className": "DinoEgg"
+            },
+            {
+                "stage": "baby",
+                "name": "baby dino",
+                "displayName": "Dino",
+                "className": "DinoBaby"
+            },
+            {
+                "stage": "adultGood",
+                "name": "Dinobro",
+                "displayName": "Dinobro",
+                "className": "DinoAdultCute"
+            },
+            {
+                "stage": "adultEvil",
+                "name": "Dinoablo",
+                "displayName": "Dinoablo",
+                "className": "DinoAdultEvil"
+            }
+        ]
+    }
+ }   
+}

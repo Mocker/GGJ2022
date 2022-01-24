@@ -2,35 +2,46 @@ import Phaser from 'phaser';
 import { Image, Button } from '../../objects'
 
 // Our game scene
-var gameScene = new Phaser.Scene("game");
 
-gameScene.init = function() {
-
-};
 
 let image;
 
-gameScene.preload = function() {
-    image = new Image(this, 'monster', 'monster_test_01-big.png', 400, 400);
-};
+class GameScene extends Phaser.Scene
+{
 
-gameScene.create = function() {
+    constructor ()
+    {
+        super();
+        this.isPaused = false;
+        this.pet = null;
+    }
 
-    image.setImage();
+    preload ()
+    {
+        image = new Image(this, 'monster', 'monster_test_01-big.png', 400, 400);
+    }
 
-    const button = new Button(100, 100, 'Play', this, () => image.play());
-    const button2 = new Button(200, 100, 'Attack', this, () => image.attack());
+    create ()
+    {
 
-};
+        image.setImage();
 
-gameScene.update = function() {
+        const button = new Button(100, 100, 'Play', this, () => image.play());
+        const button2 = new Button(200, 100, 'Attack', this, () => image.attack());
+        const buttonRedFlash = new Button(300, 100, 'RedFlash', this, () => image.tweenRedAndBack());
 
-};
+    }
+
+    update () {
+
+    }
 
 
-gameScene.end = function() {
+    end () {
 
-};
+    }
+
+}
 
 
-export { gameScene };
+export { GameScene };
