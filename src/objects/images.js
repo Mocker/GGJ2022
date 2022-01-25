@@ -31,7 +31,7 @@ export class Image
         return true;
     }
 
-    tweenRedAndBack (duration=5000) {
+    tweenRedAndBack (duration=2000) {
         if (this.tweetPlaying()){
            return;
         }

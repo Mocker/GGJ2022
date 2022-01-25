@@ -1,38 +1,38 @@
 {
  "types": {
-    "dino": {
+    "tadpole": {
         "images": {
-            "egg": "monster_test_01-big.png",
-            "baby": "monster_test_01-big.png",
-            "adultCute": "monster_test_01-big.png",
+            "egg": "pets/test-A-_0002_blue-egg.png",
+            "baby": "pets/test-A-_006_Tadpole.png",
+            "adultCute": "pets/test-A-_0007_Cute-guy-1.png",
             "adultEvil": "monster_test_01-big.png"
         },
-        "stages" : [
-            {
+        "stages" : {
+            "egg" : {
                 "stage": "egg",
-                "name": "dino egg",
+                "name": "blue egg",
                 "displayName": "?? egg ??",
-                "className": "DinoEgg"
+                "className": "BlueEgg"
             },
-            {
+            "baby" : {
                 "stage": "baby",
-                "name": "baby dino",
-                "displayName": "Dino",
-                "className": "DinoBaby"
+                "name": "baby tadpole",
+                "displayName": "Tadpole",
+                "className": "Tadpole"
             },
-            {
+            "adultGood" : {
                 "stage": "adultGood",
-                "name": "Dinobro",
-                "displayName": "Dinobro",
-                "className": "DinoAdultCute"
+                "name": "CuteGuy",
+                "displayName": "Cute Guy",
+                "className": "CuteGuy"
             },
-            {
+            "adultEvil" : {
                 "stage": "adultEvil",
-                "name": "Dinoablo",
-                "displayName": "Dinoablo",
+                "name": "evil guy",
+                "displayName": "Evil Guy",
                 "className": "DinoAdultEvil"
             }
-        ]
+        }
     }
  }   
 }

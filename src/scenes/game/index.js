@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
-import { Image, Button } from '../../objects'
+import * as petData from '../../data/pets.json';
+import { PetFactory } from '../../objects/pets/index';
+import { GameUI } from '../../objects/gameUI';
 
 // Our game scene
 
-
-let image;
 
 class GameScene extends Phaser.Scene
 {
@@ -14,23 +14,50 @@ class GameScene extends Phaser.Scene
         super();
         this.isPaused = false;
         this.pet = null;
+        this.petData = petData.default;
+        this.pets = [];
+        this.playerData = {
+            name: "Player 1",
+            email: "loL@lol.com",
+            session_token: null
+        };
+        this.ui = null;
     }
 
     preload ()
     {
-        image = new Image(this, 'monster', 'monster_test_01-big.png', 400, 400);
+        this.load.image('bg-solid', 'images/ui/test-A-_0000_BG.png');
+        for (let petType in petData.types) {
+            for (let imageFile in petData.types[petType].images) {
+                console.log('preloading', `${petType}-${imageFile}`);
+                this.load.image(`${petType}-${imageFile}`, 'images/'+petData.types[petType].images[imageFile]);
+            }
+        }
+        //image = new Image(this, 'monster', 'monster_test_01-big.png', 400, 400);
+    }
+
+    createPet(petType, stage, customData={})
+    {
+        const baseData = {
+            type: petType,
+            stage: this.petData.types['tadpole'].stages["egg"]
+        };
+        return PetFactory(this.petData.types['tadpole'].stages["egg"].className)(baseData, customData);
     }
 
     create ()
     {
+        this.add.sprite(200, 200, 'bg-solid');
 
-        image.setImage();
+        this.pet = this.createPet('tadpole', 'egg');
+        console.log(this.pet);
+        this.pet.SetActive(this, 400, 250);
 
-        const button = new Button(100, 100, 'Play', this, () => image.play());
-        const button2 = new Button(200, 100, 'Attack', this, () => image.attack());
-        const buttonRedFlash = new Button(300, 100, 'RedFlash', this, () => image.tweenRedAndBack());
-
+        
+        this.ui = new GameUI(this);
     }
+
+    
 
     update () {
 

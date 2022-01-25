@@ -8,7 +8,10 @@ var config = {
     height: 600,
     backgroundColor: '#2d2d2d',
     parent: 'phaser-example',
-    scene: [ GameScene ]
+    scene: [ GameScene ],
+    dom: {
+        createContainer: true
+    }
 };
 
 // Our game Object
