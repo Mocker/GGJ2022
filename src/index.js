@@ -4,8 +4,8 @@ import { titleScene } from './scenes/titlescreen';
 
 var config = {
     type: Phaser.WEBGL,
-    width: 800,
-    height: 600,
+    width: 820,
+    height: 820,
     backgroundColor: '#2d2d2d',
     parent: 'phaser-example',
     scene: [ GameScene ],

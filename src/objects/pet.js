@@ -11,6 +11,7 @@ export class Pet
         this.sprite = null;
         this.x = 0;
         this.y = 0;
+        this.name = this.baseData.stage.displayName;
     }
 
     SetActive(scene, x, y) {
@@ -22,8 +23,11 @@ export class Pet
             this.sprite.x = this.x;
             this.sprite.y = this.y;
         } else {
-            this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite.setDisplaySize(300,300);
         }
+        
     }
 
     Evolve() {
