@@ -1,0 +1,38 @@
+{
+ "types": {
+    "tadpole": {
+        "images": {
+            "egg": "pets/test-A-_0002_blue-egg.png",
+            "baby": "pets/test-A-_006_Tadpole.png",
+            "adultCute": "pets/test-A-_0007_Cute-guy-1.png",
+            "adultEvil": "monster_test_01-big.png"
+        },
+        "stages" : {
+            "egg" : {
+                "stage": "egg",
+                "name": "blue egg",
+                "displayName": "?? egg ??",
+                "className": "BlueEgg"
+            },
+            "baby" : {
+                "stage": "baby",
+                "name": "baby tadpole",
+                "displayName": "Tadpole",
+                "className": "Tadpole"
+            },
+            "adultGood" : {
+                "stage": "adultGood",
+                "name": "CuteGuy",
+                "displayName": "Cute Guy",
+                "className": "CuteGuy"
+            },
+            "adultEvil" : {
+                "stage": "adultEvil",
+                "name": "evil guy",
+                "displayName": "Evil Guy",
+                "className": "DinoAdultEvil"
+            }
+        }
+    }
+ }   
+}
