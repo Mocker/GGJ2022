@@ -1,17 +1,25 @@
 import Phaser from 'phaser';
-import { GameScene, LoginScene, MonsterNameScene, BattleScene } from './scenes';
+import { 
+    GameScene,
+    LoginScene,
+    MonsterNameScene,
+    BattleScene,
+    TitleScene,
+    SelectMonsterScene,
+    BGScene
+} from './scenes';
 import { FireBaseSingleton, UserModel } from './utils';
 
 //import { TitleScene } from './scenes/titlescreen';
 
 var config = {
     type: Phaser.WEBGL,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#333311',
     parent: 'game',
     dom: {
         createContainer: true
     },
-    scene: [ LoginScene, GameScene, MonsterNameScene, BattleScene ],
+    scene: [ BGScene, TitleScene, LoginScene, GameScene, SelectMonsterScene, MonsterNameScene, BattleScene ],
     scale: {
         mode: Phaser.Scale.FIT,
         parent: 'game',

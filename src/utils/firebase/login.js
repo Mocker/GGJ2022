@@ -11,23 +11,20 @@ import { UserModel } from '../../utils';
 export class FireBaseSingleton {
 
     constructor(game) {
+        this.authenticated = false;
         if (!FireBaseSingleton._instance) {
             const auth = getAuth();
             onAuthStateChanged(auth, (user) => {
                 if (user && user.emailVerified) {
+                    this.authenticated = true;
                     const userModel = UserModel.getInstance();
                     userModel.setUser(user)
                     .then((userModel) => {
                         console.log("user monsters", userModel.monsters);
-                        game.scene.remove("LoginScene");
-                        if(userModel.monsters.length < 1) {
-                            game.scene.start("MonsterNameScene");
-                        } else {
-                            //TODO:: pick monster scene
-                            game.scene.start("GameScene");
-                        }
                     });
                     
+                } else {
+                    this.authenticated = false;
                 }
             })
 

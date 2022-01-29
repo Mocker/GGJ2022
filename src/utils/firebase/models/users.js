@@ -33,13 +33,11 @@ export class UserModel {
         return this.user;
     }
 
-    async createUserWithData({monsterName}) {
+    async createUserWithData({monsterName, monsterData={}}) {
         const db = getDatabase();
         this.pet = {
             name: monsterName,
-            hp: 123,
-            atk: 1,
-            isBattleEnabled: true
+            ...monsterData
         };
         if (this.monsters) {
             this.monsters.push(this.pet);

@@ -66,7 +66,7 @@ class LoginScene extends Phaser.Scene
                         switchMessage('Please verify the email sent', "1.3vw");
                     }
                     else {
-                        this.scene.start("GameScene");
+                        this.scene.start("SelectMonsterScene");
                         this.scene.remove("LoginScene");
                     }
                 };

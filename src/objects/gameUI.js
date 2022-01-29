@@ -8,6 +8,8 @@ export class GameUI   {
     constructor (scene) {
         this.scene = scene;
         this.layer = scene.add.layer();
+        this.buttonLayer = scene.add.layer();
+        this.eventListeners = {};
         const playMaskShape = this.scene.make.graphics();
         playMaskShape.fillStyle(0xffffff);
         playMaskShape.beginPath();
@@ -38,11 +40,7 @@ export class GameUI   {
         this.activeMenu = this.menu;
         this.paused = false;
 
-        const button = new Button(260, 680, 'Play', 'ui-btn-left', this.scene, () => this.onButtonOne());
-        const button2 = new Button(400, 690, 'Attack', 'ui-btn-circle', this.scene, () => this.onButtonTwo());
-        const button3 = new Button(540, 680, 'RedFlash', 'ui-btn-right', this.scene, () => this.onButtonThree());
-
-        this.layer.add([button.button, button2.button, button3.button]);
+        
         
 
         const tabBG = new Phaser.GameObjects.Graphics(this.scene);
@@ -50,7 +48,8 @@ export class GameUI   {
         tabBG.fillRoundedRect(210, 205, 120, 25, 4);
         tabBG.fillRoundedRect(346, 205, 120, 25, 4);
         tabBG.fillRoundedRect(475, 205, 120, 25, 4);
-        this.scene.add.existing(tabBG);
+        this.tabBG = tabBG;
+        this.scene.add.existing(this.tabBG);
         const tabTextStyle = {
             align: 'left',
             fixedWidth: 100,
@@ -64,7 +63,7 @@ export class GameUI   {
         this.tabRight = new Phaser.GameObjects.Text(this.scene, 485, 210, this.activeMenu[2].label)
         .setStyle(tabTextStyle);
         this.scene.add.existing(this.tabLeft); this.scene.add.existing(this.tabMid); this.scene.add.existing(this.tabRight);
-        this.layer.add([tabBG, this.tabLeft, this.tabMid, this.tabRight]);
+        this.layer.add([this.tabBG, this.tabLeft, this.tabMid, this.tabRight]);
 
         this.txtPetName = new Phaser.GameObjects.Text(this.scene, 220, 550, 'PET NAME')
             .setStyle({
@@ -108,20 +107,21 @@ export class GameUI   {
         }
     }
 
-    onButtonOne () {
-        if (!this.paused && this.scene.pet) {
-            this.scene.pet.OnActionOne();
+    emit (eventName, eventData) {
+        if  (this.eventListeners[eventName]) {
+            for (let i=0; i<this.eventListeners[eventName].length; i++) {
+                this.eventListeners[eventName][i](eventData);
+            }
         }
     }
 
-    onButtonTwo () {
-        if (!this.paused && this.scene.pet) {
-            this.scene.pet.OnActionTwo();
+    on (eventName, callback) {
+        if (this.eventListeners[eventName]) {
+            this.eventListeners[eventName].push(callback);
+        } else {
+            this.eventListeners[eventName] = [callback];
         }
     }
-    onButtonThree () {
-        if (!this.paused && this.scene.pet) {
-            this.scene.pet.OnActionThree();
-        }
-    }
+
+    
 }
