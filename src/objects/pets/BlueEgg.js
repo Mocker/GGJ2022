@@ -9,14 +9,24 @@ export class BlueEgg extends Egg
         super(baseData, customData);
     }
 
+    SetActive (scene, x, y) {
+        super.SetActive(scene, x, y);
+        
+        this.implode();
+
+    }
+
+    
+
     OnActionOne () {
         playAnimationByName('play', this.scene, this.sprite);
     }
 
     OnActionTwo () {
-       playAnimationByName('tintInOut', this.scene, this.sprite, {
+       /*playAnimationByName('tintInOut', this.scene, this.sprite, {
            duration: 1500
-       });
+       });*/
+       this.explode();
     }
 
     OnActionThree () {
