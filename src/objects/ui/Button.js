@@ -1,15 +1,12 @@
 export class Button {
-    constructor(x, y, label, scene, callback) {
+    constructor(x, y, label, image, scene, callback) {
         this.label = label;
         this.bgColor = '#2020FF';
-        this.button = new Phaser.GameObjects.Text(scene, x, y, label)
-            .setOrigin(0.5)
-            .setPadding(10)
-            .setStyle({ backgroundColor: this.bgColor })
+        this.button = new Phaser.GameObjects.Sprite(scene, x, y, image)
             .setInteractive({ useHandCursor: true })
-            .on('pointerdown', () => callback())
-            .on('pointerover', () => this.button.setStyle({ backgroundColor: '#f39c12' }))
-            .on('pointerout', () => this.button.setStyle({ backgroundColor: this.bgColor }));
+            .setDisplaySize(100,100)
+            .on('pointerdown', () => callback());
+
         scene.add.existing(this.button);
     }
 }

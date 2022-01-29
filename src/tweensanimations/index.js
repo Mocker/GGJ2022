@@ -10,6 +10,22 @@ var playingAnimation = (target) => ({
     }
 });
 
+const tintInOutAnimation = (target, options={}) => ({
+    targets: target,
+    duration: options.duration || 2000,
+    from: 510,
+    to: 0,
+    onUpdate: function(tween)
+    {
+        const value = Math.abs( 255 - Math.floor(tween.getValue()) );
+        if(options.getColor) {
+            target.setTint(options.getColor(value));
+        } else {
+            target.setTint(Phaser.Display.Color.GetColor(255, value, value));
+        }
+    }
+});
+
 const attackAnimation = (target) => ({
     targets: target,
     x: 500,
@@ -20,12 +36,19 @@ const attackAnimation = (target) => ({
 });
 
 export var animationDictionary = {
-    play: playingAnimation,
-    attack: attackAnimation
+    play: {counter: false, tween: playingAnimation},
+    attack: {counter: false, tween: attackAnimation},
+    tintInOut: {counter: true, tween: tintInOutAnimation}
 }
 
-export var playAnimationByName = (animationName, scene, target) => {
-    scene.tweens.add(
-        animationDictionary[animationName](target)
-    );
+export var playAnimationByName = (animationName, scene, target, options) => {
+    if (animationDictionary[animationName].counter) {
+        return scene.tweens.addCounter(
+            animationDictionary[animationName].tween(target, options)
+        );
+    } else {
+        return scene.tweens.add(
+            animationDictionary[animationName].tween(target, options)
+        );
+    }
 }

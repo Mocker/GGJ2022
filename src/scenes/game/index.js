@@ -11,7 +11,7 @@ class GameScene extends Phaser.Scene
 
     constructor ()
     {
-        super();
+        super("GameScene");
         this.isPaused = false;
         this.pet = null;
         this.petData = petData.default;
@@ -26,7 +26,11 @@ class GameScene extends Phaser.Scene
 
     preload ()
     {
+        this.load.image('bg-frame', 'images/ui/DEVICE_A01_0008_device body.png');
         this.load.image('bg-solid', 'images/ui/test-A-_0000_BG.png');
+        this.load.image('ui-btn-left', 'images/ui/DEVICE_A01_crop_0000s_0004_L-.png');
+        this.load.image('ui-btn-circle', 'images/ui/DEVICE_A01_crop_0000s_0002_circle.png');
+        this.load.image('ui-btn-right', 'images/ui/DEVICE_A01_crop_0000s_0006_R.png');
         for (let petType in petData.types) {
             for (let imageFile in petData.types[petType].images) {
                 console.log('preloading', `${petType}-${imageFile}`);
@@ -47,14 +51,33 @@ class GameScene extends Phaser.Scene
 
     create ()
     {
-        this.add.sprite(200, 200, 'bg-solid');
-
-        this.pet = this.createPet('tadpole', 'egg');
-        console.log(this.pet);
-        this.pet.SetActive(this, 400, 250);
+        
+        
+        this.bgFrame = this.add.sprite(400, 400, 'bg-frame')
+            .setDisplaySize(800,800);
+        this.bgSolid = this.add.sprite(400, 400, 'bg-solid')
+            .setAlpha(0.7)
+            .setDisplaySize(400, 400);
 
         
+        const pet = this.createPet('tadpole', 'egg');
         this.ui = new GameUI(this);
+        this.activatePet(pet);
+        
+        const playMaskShape = this.make.graphics();
+        playMaskShape.fillStyle(0xffffff);
+        playMaskShape.beginPath();
+        playMaskShape.fillRect(220,220,400,400);
+        const playMask = new Phaser.Display.Masks.GeometryMask(this, playMaskShape);
+        this.playLayer.setMask(playMask);
+
+    }
+
+    activatePet (pet) {
+        this.pet = pet;
+        this.pet.SetActive(this, 400, 400);
+        this.playLayer = this.add.layer([this.pet.sprite]);
+        this.ui.txtPetName.setText(this.pet.name);
     }
 
     

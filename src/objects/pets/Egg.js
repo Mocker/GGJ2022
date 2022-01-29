@@ -8,4 +8,6 @@ export class Egg extends Pet
         this.customData = customData; //current stats etc for the pet
 
     }
+
+    
 }

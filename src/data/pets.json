@@ -11,7 +11,7 @@
             "egg" : {
                 "stage": "egg",
                 "name": "blue egg",
-                "displayName": "?? egg ??",
+                "displayName": "?? EGG ??",
                 "className": "BlueEgg"
             },
             "baby" : {

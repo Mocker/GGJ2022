@@ -1,0 +1,76 @@
+<style>
+    @font-face {
+        font-family: gameFont;
+        src: url('public/ConnectionIi-2wj8.otf');
+    }
+    .login {
+      background: black;
+      border: 1px solid #42464b;
+      height: 330px;
+      margin: 20px auto 0;
+      width: 298px;
+      font-family: gameFont;
+    }
+    .login * {
+        font-family: gameFont;
+    }
+    input[type="password"], input[type="text"] {
+      background: transparent;
+      box-sizing: border-box;
+      color: #696969;
+      height: 39px;
+      margin: 31px 0 0 29px;
+      padding-left: 37px;
+      transition: box-shadow 0.3s;
+      width: 240px;
+      font-size:1.5vw;
+      border: none;
+      border-bottom: 1px solid white;
+    }
+    .forgot:hover { 
+        color: #3b3b3b 
+    }
+    .forgot { 
+        color: #7f7f7f;
+        float: right;
+        left: -19px;
+        position: relative;
+        text-decoration: none;
+        top: 5px;
+        transition: color .4s;
+        font-family: gameFont;
+         font-size:.8vw; 
+        }
+    input[type="submit"] {
+      width:240px;
+      height:35px;
+      display:block;
+      font-size:1.5vw;
+      font-weight:bold;
+      color:#fff;
+      text-decoration:none;
+      text-transform:uppercase;
+      text-align:center;
+      padding-top:6px;
+      margin: 29px 0 0 29px;
+      position:relative;
+      cursor:pointer; 
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid white;
+    }
+    
+    input[type="submit"]:active {
+      top:3px;
+    }    
+    </style>
+    
+    <div class="login">
+        <input pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/" type="text" placeholder="email" id="username" name="username" required>
+        <input type="password" placeholder="password" id="password" name="password" required>
+        <br>
+        <a href="#" id="forgot-password" class="forgot">forgot password?</a>
+        <br>
+        <input type="submit" value="Register" id="registerButton">
+        <input type="submit" value="Sign In" id="signInButton">
+    </div>
