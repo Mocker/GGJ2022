@@ -11,7 +11,7 @@ class GameScene extends Phaser.Scene
 
     constructor ()
     {
-        super();
+        super("GameScene");
         this.isPaused = false;
         this.pet = null;
         this.petData = petData.default;

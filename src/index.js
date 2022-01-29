@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
-import { GameScene } from './scenes/game';
-import { titleScene } from './scenes/titlescreen';
+import { GameScene, LoginScene, MonsterNameScene, BattleScene } from './scenes';
+import { FireBaseSingleton, UserModel } from './utils';
+
+//import { TitleScene } from './scenes/titlescreen';
 
 var config = {
     type: Phaser.WEBGL,
@@ -8,14 +10,17 @@ var config = {
     height: 820,
     backgroundColor: '#2d2d2d',
     parent: 'phaser-example',
-    scene: [ GameScene ],
+    scene: [ LoginScene, GameScene, MonsterNameScene, BattleScene ],
     dom: {
         createContainer: true
-    }
+    },
 };
 
 // Our game Object
 var game = new Phaser.Game(config);
+
+new FireBaseSingleton(game);
+new UserModel();
 
 // Add both scenes (it does not start them)
 /*game.scene.add('titlescreen', titleScene);
