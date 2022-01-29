@@ -43,9 +43,13 @@ export class MonsterNameScene extends Phaser.Scene
 
             if(inputMonsterName.value !== '' && inputMonsterName.value.length < 9) {
                 const user = UserModel.getInstance();
-                user.createUserWithData({monsterName: inputMonsterName.value});
-                this.scene.start("BattleScene");
-                this.scene.remove("MonsterNameScene");
+                user.createUserWithData({monsterName: inputMonsterName.value})
+                .then((user) => {
+                    console.log("User details set", user);
+                    this.game.scene.start("GameScene");
+                    this.game.scene.remove("MonsterNameScene");
+                });
+                
             }
         }
 

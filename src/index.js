@@ -6,14 +6,17 @@ import { FireBaseSingleton, UserModel } from './utils';
 
 var config = {
     type: Phaser.WEBGL,
-    width: 820,
-    height: 820,
     backgroundColor: '#2d2d2d',
-    parent: 'phaser-example',
-    scene: [ LoginScene, GameScene, MonsterNameScene, BattleScene ],
+    parent: 'game',
     dom: {
         createContainer: true
     },
+    scene: [ LoginScene, GameScene, MonsterNameScene, BattleScene ],
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: 'game',
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    }
 };
 
 // Our game Object

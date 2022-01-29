@@ -2,17 +2,47 @@
 <html>
 <head>
     <style>
+
+        /* @mixin for-phone-only {
+        @media (max-width: 599px) { @content; }
+        }
+        @mixin for-tablet-portrait-up {
+        @media (min-width: 600px) { @content; }
+        }
+        @mixin for-tablet-landscape-up {
+        @media (min-width: 900px) { @content; }
+        }
+        @mixin for-desktop-up {
+        @media (min-width: 1200px) { @content; }
+        }
+        @mixin for-big-desktop-up {
+        @media (min-width: 1800px) { @content; }
+        } */
+
         body {
             background-image: url('images/ui/test-A-_0000_BG.png');
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: '#2d2d2d'
         }
 
-        body > canvas {
-            height: 820px;
-            width: 820px;
-        }
+        @media (max-width: 599px) {
+                #game {
+                    width: 560px;
+                    height: 560px;
+                }
+            }
+
+            @media (min-width: 1080px) {
+                #game {
+                    width: 1080px;
+                    height: 1080px;
+                }
+            }
+
+           
+
         @font-face {
             font-family: beryl-digivice;
             src: url('images/ui/digivice-4.ttf');
@@ -24,5 +54,6 @@
 </head>
 <body>
     <div style="font-family:beryl-digivice; position: absolute; left:-1000px; visibility:hidden;">.</div>
+    <div id="game"></div>
 </body>
 </html>

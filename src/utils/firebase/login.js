@@ -16,9 +16,18 @@ export class FireBaseSingleton {
             onAuthStateChanged(auth, (user) => {
                 if (user && user.emailVerified) {
                     const userModel = UserModel.getInstance();
-                    userModel.setUser(user);
-                    game.scene.remove("LoginScene");
-                    game.scene.start("MonsterNameScene");
+                    userModel.setUser(user)
+                    .then((userModel) => {
+                        console.log("user monsters", userModel.monsters);
+                        game.scene.remove("LoginScene");
+                        if(userModel.monsters.length < 1) {
+                            game.scene.start("MonsterNameScene");
+                        } else {
+                            //TODO:: pick monster scene
+                            game.scene.start("GameScene");
+                        }
+                    });
+                    
                 }
             })
 
