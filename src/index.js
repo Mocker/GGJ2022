@@ -20,7 +20,7 @@ var config = {
     },
     scene: [ BGScene, TitleScene, LoginScene, GameScene, SelectMonsterScene, MonsterNameScene, BattleScene ],
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         parent: 'game',
         //autoCenter: Phaser.Scale.CENTER_BOTH
     }
