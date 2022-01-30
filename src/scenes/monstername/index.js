@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { clearButtonEvents } from '../../utils';
+import { clearButtonEvents, UserModel } from '../../utils';
 
 export class MonsterNameScene extends Phaser.Scene
 {
@@ -43,6 +43,7 @@ export class MonsterNameScene extends Phaser.Scene
             const inputMonsterName = document.getElementById("monstername");
 
             if(inputMonsterName.value !== '' && inputMonsterName.value.length < 9) {
+                UserModel.getInstance().updateCurrentMonsterName(inputMonsterName.value);
                 this.game.scene.getScene('GameScene').setPetName(inputMonsterName.value);
             }
         }

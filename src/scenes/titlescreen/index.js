@@ -22,7 +22,6 @@ export class TitleScene extends Phaser.Scene
     create ()
     {
         clearButtonEvents(this.game);
-        console.log("title loaded");
         this.titleText = this.make.text({
             add: false,
             x: 200,
@@ -62,7 +61,6 @@ export class TitleScene extends Phaser.Scene
                 frameWidth: this.FRAME_WIDTH,
                 frameHeight: this.FRAME_WIDTH
             });
-            console.log(this.piecesSprite);
             this.piecesSpritesFrames = this.piecesSprite.frameTotal;
             this.pieces = [];
             
@@ -153,7 +151,6 @@ export class TitleScene extends Phaser.Scene
         } else {
             this.game.scene.start("LoginScene");
         }
-        console.log(this.game.scene.getScene('BGScene').event);
         this.game.scene.stop("TitleScene");
     }
 }

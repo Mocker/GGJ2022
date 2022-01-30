@@ -35,12 +35,17 @@ export class SelectMonsterScene extends Phaser.Scene
 
     create ()
     {
-        this.newMonsterOption = null;
+        this.newMonsterOptions = [];
         this.userMonsterImages = [];
         clearButtonEvents(this.game);
         this.user = UserModel.getInstance();
         const initFunc = () => {
-            this.newMonsterOption = new Image(this, `${NEW_MONSTER_TYPE}-egg`, ACTIVE_MONSTER_X, ACTIVE_MONSTER_Y);
+            for( let petType in petData.types ) {
+                const positionX = petType == 'tadpole' ? ACTIVE_MONSTER_X : COMING_MONSTER_X;
+                const image = new Image(this, `${petType}-egg`, positionX, ACTIVE_MONSTER_Y);
+                image.image.setVisible(petType == 'tadpole' ? true : false);
+                this.newMonsterOptions.push(image);
+            }
             for( let monster of this.user.monsters ) {
                 const image = new Image(this, `${monster.type}-${monster.stage}`, COMING_MONSTER_X, ACTIVE_MONSTER_Y);
                 image.image.setVisible(false);
@@ -57,8 +62,8 @@ export class SelectMonsterScene extends Phaser.Scene
 
         let selectCounter = 0;
 
-        const monsterOptions = [this.newMonsterOption, ...this.userMonsterImages];
-        const nameOptions = ["New Monster", ...(this.user.monsters.map(monster => monster.stats.name))];
+        const monsterOptions = [...this.newMonsterOptions, ...this.userMonsterImages];
+        const nameOptions = [...(Object.keys(petData.types).map(name => `New egg`)), ...(this.user.monsters.map(monster => monster.stats.name))];
 
         const currentMonsterName = this.add.text(300, 350, nameOptions[0], {
             fontFamily: 'beryl-digivice',
@@ -67,11 +72,17 @@ export class SelectMonsterScene extends Phaser.Scene
 
         const scrollMonster = (action) => {
 
+            if(monsterOptions.length == 1) return;
+
             currentMonsterName.setVisible(false);
             const currentOption = monsterOptions[selectCounter % monsterOptions.length];
 
             if(action === "right") {
-                selectCounter++;
+                if(selectCounter == monsterOptions.length - 1){
+                    selectCounter = 0;
+                }else{
+                    selectCounter++;
+                }
             }
             else {
                 if(selectCounter == 0) {
@@ -100,10 +111,8 @@ export class SelectMonsterScene extends Phaser.Scene
         this.game.scene.getScene('BGScene').events.on('button-three-clicked',  () => scrollMonster("right"));
 
         this.game.scene.getScene('BGScene').events.on('button-two-clicked',  () => {
-
-            if(selectCounter % monsterOptions.length === 0){
-                //this.game.scene.start('MonsterNameScene');
-                this.user.monsters.push({
+            if(selectCounter < monsterOptions.length ){
+                this.user.addMonster({
                     type: 'tadpole',
                     stage: 'egg',
                     name: '?? EGG ??',
@@ -119,15 +128,17 @@ export class SelectMonsterScene extends Phaser.Scene
                         energy: { min: 0, current: 90, max: 100 },
                         timers: {
                             lived: 60000*5 //5 minutes?
-                        }
+                        },
+                        name: '?? EGG ??',
                     }
                 });
                 this.user.selectPet(this.user.monsters.length-1);
+                this.user.updateUser();
                 this.game.scene.start('GameScene');
                 this.game.scene.stop('SelectMonsterScene');
             }
             else {
-                this.user.selectPet((selectCounter % monsterOptions.length) - 1);
+                this.user.selectPet(selectCounter - monsterOptions.length);
                 this.game.scene.start('GameScene');
                 this.game.scene.stop('SelectMonsterScene');
             }
