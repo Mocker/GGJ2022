@@ -3,17 +3,18 @@ import { playAnimationByName } from '../tweensanimations';
 
 export class Image
 {
-    constructor (scene, imageTag, sizeX, sizeY)
+    constructor (scene, imageTag, sizeX, sizeY, scale=0.2, extras={})
     {
         this.scene = scene;
         this.imageTag = imageTag;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
+        this.extras = extras;
         //this.scene.load.image(imageTag, `images/${imageName}`);
         this.tweens = {};
         this.activeTween = null;
         this.image = this.scene.add.image(this.sizeX, this.sizeY, this.imageTag);
-        this.image.setScale(.2);
+        this.image.setScale(scale);
     }
 
     // checks if an active tweet is playing. if it has finished, clean up

@@ -40,17 +40,23 @@ export class SelectMonsterScene extends Phaser.Scene
         clearButtonEvents(this.game);
         this.user = UserModel.getInstance();
         const initFunc = () => {
-            for( let petType in petData.types ) {
-                const positionX = petType == 'tadpole' ? ACTIVE_MONSTER_X : COMING_MONSTER_X;
-                const image = new Image(this, `${petType}-egg`, positionX, ACTIVE_MONSTER_Y);
-                image.image.setVisible(petType == 'tadpole' ? true : false);
+            for ( let petType in petData.types ) {
+                const positionX = COMING_MONSTER_X;
+                const image = new Image(this, `${petType}-egg`, positionX, ACTIVE_MONSTER_Y, 0.2, {
+                    petType: petType,
+                    stage: 'egg',
+                    baseData: petData.types[petType].stages.egg,
+                    isNewEgg: true
+                });
+                image.image.setVisible(false);
                 this.newMonsterOptions.push(image);
             }
-            for( let monster of this.user.monsters ) {
+            for ( let monster of this.user.monsters ) {
                 const image = new Image(this, `${monster.type}-${monster.stage}`, COMING_MONSTER_X, ACTIVE_MONSTER_Y);
                 image.image.setVisible(false);
                 this.userMonsterImages.push(image);
             }
+            
         }
 
         initFunc();
@@ -62,12 +68,19 @@ export class SelectMonsterScene extends Phaser.Scene
 
         let selectCounter = 0;
 
-        const monsterOptions = [...this.newMonsterOptions, ...this.userMonsterImages];
-        const nameOptions = [...(Object.keys(petData.types).map(name => `New egg`)), ...(this.user.monsters.map(monster => monster.stats.name))];
+        const monsterOptions = [...this.userMonsterImages, ...this.newMonsterOptions ];
+        const nameOptions = [
+            ...(this.user.monsters.map( monster => monster.stats ? monster.stats.name : petData[monster.type].stages[monster.stage].name)),
+            ...(Object.keys(petData.types).map(name => `New ${petData.types[name].stages.egg.name}`))
+        ];
 
         const currentMonsterName = this.add.text(300, 350, nameOptions[0], {
             fontFamily: 'beryl-digivice',
             fontSize: 25
+        });
+        monsterOptions[selectCounter].image.setVisible(true);
+        monsterOptions[selectCounter].moveTo({
+            x: 400
         });
 
         const scrollMonster = (action) => {
@@ -111,34 +124,30 @@ export class SelectMonsterScene extends Phaser.Scene
         this.game.scene.getScene('BGScene').events.on('button-three-clicked',  () => scrollMonster("right"));
 
         this.game.scene.getScene('BGScene').events.on('button-two-clicked',  () => {
-            if(selectCounter < monsterOptions.length ){
-                this.user.addMonster({
-                    type: 'tadpole',
-                    stage: 'egg',
-                    name: '?? EGG ??',
-                    baseData: {
-                        "stage": "egg",
-                        "name": "?? EGG ??",
-                        "displayName": "?? EGG ??",
-                        "className": "BlueEgg",
-                        "type": "tadpole",
-                        "evolveDots": 1
-                    },
+            const selectedOption = monsterOptions[selectCounter];
+            if  (selectedOption.extras && selectedOption.extras.isNewEgg){
+                const newMonster = {
+                    type: selectedOption.extras.petType,
+                    stage: selectedOption.extras.stage,
+                    name: selectedOption.extras.baseData.name,
+                    baseData: selectedOption.extras.baseData,
                     stats: {
                         energy: { min: 0, current: 90, max: 100 },
                         timers: {
-                            lived: 60000*5 //5 minutes?
+                            lived: 0
                         },
-                        name: '?? EGG ??',
                     }
-                });
+                };
+                console.log('new', newMonster);
+                this.user.addMonster(newMonster);
                 this.user.selectPet(this.user.monsters.length-1);
                 this.user.updateUser();
                 this.game.scene.start('GameScene');
                 this.game.scene.stop('SelectMonsterScene');
             }
             else {
-                this.user.selectPet(selectCounter - monsterOptions.length);
+                console.log('existing', selectedOption);
+                this.user.selectPet(selectCounter);
                 this.game.scene.start('GameScene');
                 this.game.scene.stop('SelectMonsterScene');
             }

@@ -1,0 +1,34 @@
+{
+    "items" : [
+    {
+        "name" : "Parsnip",
+        "effects": {
+            "energy" : 15
+        },
+        "shopValue": 2,
+        "tags": {
+        }
+    },
+    {
+        "name" : "Eggg",
+        "effects": {
+            "energy" : 15
+        },
+        "shopValue": 2,
+        "tags": {
+            "tadpole": 2
+        }
+    },
+    {
+        "name" : "Pond Scum",
+        "effects": {
+            "energy" : 1
+        },
+        "shopValue": 2,
+        "tags": {
+            "bacteria" : 25
+        }
+    }
+    
+    ]
+}

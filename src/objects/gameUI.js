@@ -1,3 +1,4 @@
+import { LEFT } from 'phaser';
 import { Button }  from './ui/Button';
 
 // All UI components should be in a layer here to prevent any mixup when applying effects to the game
@@ -110,12 +111,56 @@ export class GameUI   {
         this.scene.add.existing(this.txtCornerNumber);
         this.layer.add([this.txtCornerNumber]);
 
+        this.txtMoneyNumber = new Phaser.GameObjects.Text(this.scene, 450, 570, '$$')
+            .setStyle({
+                align: 'left',
+                fixedWidth: 50,
+                color: '#336633',
+                fontSize: 18,
+                fontFamily: 'beryl-digivice'
+            });
+        this.scene.add.existing(this.txtMoneyNumber);
+        this.layer.add([this.txtMoneyNumber]);
+
         this.evolveDots = new Phaser.GameObjects.Graphics(this.scene);
         this.scene.add.existing(this.evolveDots);
         this.layer.add([this.evolveDots]);
 
+
+        this.msgLayer = this.scene.add.layer();
+        this.msgBG = new Phaser.GameObjects.Graphics(this.scene);
+        this.msgBG.fillStyle(0x333311, 0.9);
+        this.msgBG.fillRoundedRect(this.MENU_RIGHT+50, this.MENU_TOP+50, 270, 200, 4);
+        this.msgText = new Phaser.GameObjects.Text(this.scene, this.MENU_RIGHT+60, this.MENU_TOP+60, '', {
+            color: '#ffff',
+            align: 'left',
+            fontSize: 20,
+            wordWrap: true,
+            wordWrapWidth: 250,
+            fontFamily: 'beryl-digivice'
+        });
+        //this.msgText.setDisplaySize(250, 180);
+        this.scene.add.existing(this.msgBG);
+        this.scene.add.existing(this.msgText);
+        this.msgLayer.add([this.msgBG, this.msgText]);
+        this.hideMessage();
+
         this.on('petActivated', this.onPetActivated.bind(this));
         
+    }
+
+    hideMessage () {
+        this.msgLayer.setVisible(false);
+    }
+
+    showMessage (content, duration=0) {
+        this.msgText.setText(content);
+        this.msgText.setWordWrapWidth(250);
+        this.msgBG.setVisible(true);
+        this.msgLayer.setVisible(true);
+        if (duration) {
+            setTimeout(this.hideMessage.bind(this), duration);
+        }
     }
 
     // build the game objects to display menu options
@@ -162,6 +207,10 @@ export class GameUI   {
 
 
     onButtonOne () {
+        if (this.msgLayer.visible) {
+            this.hideMessage();
+            return;
+        }
         if (this.isMenuShown) {
             this.menuOptionSelected--;
             if (this.menuOptionSelected < 0) {
@@ -171,6 +220,10 @@ export class GameUI   {
         }
     }
     onButtonTwo () {
+        if (this.msgLayer.visible) {
+            this.hideMessage();
+            return;
+        }
         if (this.isMenuShown) {
             if (this.menuOptionSelected !== null && this.menuOptionsData[this.menuOptionSelected]) {
                 console.log(this.menuOptionsData[this.menuOptionSelected]);
@@ -182,6 +235,10 @@ export class GameUI   {
         }
     }
     onButtonThree () {
+        if (this.msgLayer.visible) {
+            this.hideMessage();
+            return;
+        }
         if (this.isMenuShown) {
             this.menuOptionSelected++;
             if (this.menuOptionSelected >= this.menuOptions.length) {
@@ -211,8 +268,10 @@ export class GameUI   {
     
 
     onPetActivated () {
+        this.txtMoneyNumber.setText('$'+this.scene.user.money);
         this.txtPetName.setText(this.scene.pet.name);
         this.drawEvolveDots(220, 580, 10, this.scene.pet.baseData.evolveDots, 3);
+        this.showMessage(`${this.scene.pet.name} welcomes you back`, 1500);
     }
 
     emit (eventName, eventData) {

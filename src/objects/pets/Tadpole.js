@@ -83,8 +83,22 @@ export class Tadpole extends Pet
             y: 800,
             scale: 0.1,
             yoyo: true,
-            onComplete: this.resume.bind(this)
+            onComplete: this.doneExploring.bind(this)
         });
+    }
+
+    doneExploring () {
+        const rando = Math.random();
+        // TODO:: fill in exploration rewards here
+        if  (rando > 0.8) {
+            this.scene.foundItem({
+                name: 'Cake',
+                quantity: 2
+            });
+        } else {
+            this.scene.foundMoney(5);
+        }
+        this.resume();
     }
 
     update (time, delta) {

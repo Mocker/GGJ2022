@@ -10,10 +10,30 @@ export class BGScene extends Phaser.Scene
         super("BGScene");
         this.isPowerOn = false;
         this.activeScene = null;
+
+        this.themes = {
+            'Mountain Steel': {
+                suffix: 'Mountain Steel'
+            },
+            'Dragon Blood': {
+                suffix: 'DB'
+            },
+            'Golden Beam': {
+                suffix: 'gold'
+            },
+            'Sage Bog': {
+                suffix: 'Sage Bog'
+            },
+            'Cool Bronze': {
+                suffix: 'Cool Bronze'
+            }
+        };
+        this.currentTheme = 'Mountain Steel';
     }
 
     preload () {
-        this.load.image('bg-frame', 'images/ui/DEVICE_A01_0008_device body.png');
+        //this.load.image('bg-frame', 'images/ui/DEVICE_A01_0008_device body.png');
+        this.load.image('bg-frame', 'images/ui/Mountain Steel/MiteByte_Mountain Steel.png');
         this.load.image('bg-solid', 'images/ui/test-A-_0000_BG.png');
         this.load.image('ui-btn-left', 'images/ui/DEVICE_A01_crop_0000s_0004_L-.png');
         this.load.image('ui-btn-circle', 'images/ui/DEVICE_A01_crop_0000s_0002_circle.png');
@@ -21,11 +41,28 @@ export class BGScene extends Phaser.Scene
         this.load.image('ui-btn-left-on', 'images/ui/DEVICE_A01_crop_0000s_0005_L-push.png');
         this.load.image('ui-btn-circle-on', 'images/ui/DEVICE_A01_crop_0000s_0003_circle-push.png');
         this.load.image('ui-btn-right-on', 'images/ui/DEVICE_A01_crop_0000s_0007_R-push.png');
+
+        const themeKeys = Object.keys(this.themes);
+        for (let i=0; i<themeKeys.length; i++) {
+            const theme = this.themes[themeKeys[i]];
+            this.load.image('ui-frame'+themeKeys[i], `images/ui/${themeKeys[i]}/MiteByte_${theme.suffix}.png`);
+            this.load.image('ui-btn-left'+themeKeys[i], `images/ui/${themeKeys[i]}/L_${theme.suffix}.png`);
+            this.load.image('ui-btn-circle'+themeKeys[i], `images/ui/${themeKeys[i]}/B 1_${theme.suffix}.png`);
+            this.load.image('ui-btn-right'+themeKeys[i], `images/ui/${themeKeys[i]}/R_${theme.suffix}.png`);
+            this.load.image(`ui-btn-left${themeKeys[i]}-on`, `images/ui/${themeKeys[i]}/L push_${theme.suffix}.png`);
+            this.load.image(`ui-btn-circle${themeKeys[i]}-on`, `images/ui/${themeKeys[i]}/B 1 push_${theme.suffix}.png`);
+            this.load.image(`ui-btn-right${themeKeys[i]}-on`, `images/ui/${themeKeys[i]}/R push_${theme.suffix}.png`);
+        }
+
+        
     }
 
     create () {
         clearButtonEvents(this.game);
-        this.bgFrame = this.add.sprite(400, 400, 'bg-frame')
+        const themeKeys = Object.keys(this.themes);
+        this.currentTheme = themeKeys[Math.floor(Math.random()*themeKeys.length)];
+        console.log(this.currentTheme);
+        this.bgFrame = this.add.sprite(400, 400, 'ui-frame'+this.currentTheme)
             .setDisplaySize(800,800);
         this.bgSolid = this.add.sprite(400, 400, 'bg-solid')
             .setAlpha(0)
@@ -38,9 +75,9 @@ export class BGScene extends Phaser.Scene
 
         this.buttonLayer = this.add.layer();
 
-        const button = new Button(260, 680, 'Play', 'ui-btn-left', this, this.onButtonOne.bind(this));
-        const button2 = new Button(400, 690, 'Attack', 'ui-btn-circle', this, this.onButtonTwo.bind(this));
-        const button3 = new Button(540, 680, 'RedFlash', 'ui-btn-right', this, this.onButtonThree.bind(this));
+        const button = new Button(260, 680, 'Play', 'ui-btn-left'+this.currentTheme, this, this.onButtonOne.bind(this));
+        const button2 = new Button(400, 690, 'Attack', 'ui-btn-circle'+this.currentTheme, this, this.onButtonTwo.bind(this));
+        const button3 = new Button(540, 680, 'RedFlash', 'ui-btn-right'+this.currentTheme, this, this.onButtonThree.bind(this));
 
         this.buttonLayer.add([button.button, button2.button, button3.button]);
 

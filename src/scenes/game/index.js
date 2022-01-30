@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import * as petData from '../../data/pets.json';
+import * as shopData from '../../data/shop.json';
 import { PetFactory } from '../../objects/pets/index';
 import { GameUI } from '../../objects/gameUI';
 import { UserModel, clearButtonEvents } from '../../utils';
@@ -100,9 +101,10 @@ class GameScene extends Phaser.Scene
 
     buildActionMenu () {
         const actionData = [
+            ...this.pet.getActionMenu(),
             ['Force Evolve', this.pet.Evolve.bind(this.pet), true],
             ['Logout', this.logout.bind(this)],
-            ...this.pet.getActionMenu()
+            
         ];
         this.ui.buildMenu(actionData);
     }
@@ -130,11 +132,43 @@ class GameScene extends Phaser.Scene
                 this.consumeItem.bind(this)
             ]);
         }
+        itemData.push(...this.getShopItems());
         this.ui.buildMenu(itemData, itemIndex);
+    }
+
+    // return list of items that user can by, disabled if they dont have the moneys
+    getShopItems () {
+        if (!this.user.money) this.user.money = 0;
+        let shop = [];
+        console.log(shopData.items);
+        for (let i=0; i<shopData.items.length; i++) {
+            let item = shopData.items[i];
+            shop.push([
+                '$'+`${item.shopValue} - ${item.name}`,
+                this.buyItem.bind(this),
+                (this.user.money >= item.shopValue)
+            ]);
+        }
+        return shop;
+    }
+
+    buyItem (itemIndex) {
+        // this index relates to menu position, we are assuming user items are first in the menu, this might not always be true
+        let item = shopData.items[itemIndex - this.user.items.length];
+        console.log('buyItem', item);
+        if (this.user.money < item.shopValue) {
+            // Todo: sound?
+            this.ui.showMessage(`You can't afford ${item.name}!`, 1200);
+            console.log("Can't afford!"); return;
+        }
+        this.user.money -= item.shopValue ;
+        this.ui.txtMoneyNumber.setText('$'+this.user.money);
+        this.foundItem(item);
     }
 
     consumeItem (itemIndex) {
         console.log('consume item', itemIndex, this.user.items[itemIndex]);
+        this.pet.useItem(this.user.items[itemIndex]);
         if (this.user.items[itemIndex].quantity && this.user.items[itemIndex].quantity > 1) {
             this.user.items[itemIndex].quantity--;
         } else {
@@ -142,6 +176,30 @@ class GameScene extends Phaser.Scene
             itemIndex = 0;
         }
         this.buildItemMenu(itemIndex);
+    }
+
+    // acquired, add or increment user items
+    // should add most logic to users class
+    foundItem (newItem) {
+        const incrementedItem = false;
+        for (let i=0; i<this.user.items.length; i++) {
+            if (this.user.items[i].name == newItem.name) {
+                incrementedItem = true;
+                this.user.items[i].quantity += newItem.quantity;
+                break;
+            }
+        }
+        if  (!incrementedItem) {
+            this.user.items.push(newItem);
+        }
+        this.ui.showMessage(`Acquired ${newItem.name}${newItem.quantity ? 'x'+newItem.quantity: ''}`, 1200);
+
+    }
+
+    foundMoney (coins) {
+        this.user.money += coins;
+        this.ui.txtMoneyNumber.setText('$'+this.user.money);
+        this.ui.showMessage(`Found ${coins} shiny coins`, 1200);
     }
 
     activatePet (pet) {

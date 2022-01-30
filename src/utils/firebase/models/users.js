@@ -36,6 +36,7 @@ export class UserModel {
         const db = getDatabase();
         await set(ref(db, 'users/' + this.user.uid), {
             user: this.user.email,
+            money: this.user.money || 0,
             monsters: this.monsters,
             items: this.items
         });
@@ -56,48 +57,50 @@ export class UserModel {
         const userData = await (await get(ref(db, 'users/' + this.user.uid))).val();
         console.log(`user ${user.email} existing data:`);
         console.log(userData);
+        this.money = userData.money || 0;
         this.monsters = userData.monsters ? userData.monsters : [];
         this.items = userData.items ? userData.items : [];
         //TODO:: use db data
-        /*this.monsters = [{
-            type: 'tadpole',
-            stage: 'baby',
-            baseData: {
-                "stage": "baby",
-                "name": "CuteGuy",
-                "displayName": "Cute Guy",
-                "className": "Tadpole",
-                "type": "tadpole",
-                "evolveDots": 3
-            },
-            stats: {
-                energy: { min: 0, current: 90, max: 100 },
-                name: "random name",
-                timers: {
-                    lived: 60000*5 //5 minutes?
-                }
-            }
-        }];
-        this.items = [
-        {
-            name: 'Candy Cane',
-            effects: {
-                energy: (e) => e+25
-            },
-            quantity: 5
-        },
-        {
-            name: 'Cake',
-            effects: {
-                happiness: (e) => e+25
-            },
-            quantity: 3
-        }];*/
-        /*if  (userData && userData.monsters && userData.monsters.length > 0) {
+        // this.monsters = [{
+        //     type: 'tadpole',
+        //     stage: 'baby',
+        //     baseData: {
+        //         "stage": "baby",
+        //         "name": "CuteGuy",
+        //         "displayName": "Cute Guy",
+        //         "className": "Tadpole",
+        //         "type": "tadpole",
+        //         "evolveDots": 3
+        //     },
+        //     stats: {
+        //         energy: { min: 0, current: 90, max: 100 },
+        //         name: "random name",
+        //         timers: {
+        //             lived: 60000*5 //5 minutes?
+        //         }
+        //     }
+        // }];
+        // this.items = [
+        // {
+        //     name: 'Candy Cane',
+        //     effects: {
+        //         energy: 25
+        //     },
+        //     quantity: 5
+        // },
+        // {
+        //     name: 'Cake',
+        //     effects: {
+        //         happiness: 25
+        //     },
+        //     quantity: 3
+        // }];
+        // await this.updateUser();
+        if  (userData && userData.monsters && userData.monsters.length > 0) {
                 this.monsters = userData.monsters
         } else {
             this.monsters = [];
-        }*/
+        }
         if (this.userCallback) {
             this.userCallback(this);
         }
