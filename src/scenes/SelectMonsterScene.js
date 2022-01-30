@@ -15,10 +15,13 @@ export class SelectMonsterScene extends Phaser.Scene
 
     constructor ()
     {
-        super("SelectMonsterScene");
+        super({
+            key: "SelectMonsterScene",
+            active: false
+        });
         this.newMonsterOption = null;
         this.userMonsterImages = [];
-        this.user = UserModel.getInstance();
+        
     }
     
     preload ()
@@ -33,7 +36,7 @@ export class SelectMonsterScene extends Phaser.Scene
     create ()
     {
         this.game.scene.getScene('BGScene').events.off('button-two-clicked');
-
+        this.user = UserModel.getInstance();
         const initFunc = () => {
             this.newMonsterOption = new Image(this, `${NEW_MONSTER_TYPE}-egg`, ACTIVE_MONSTER_X, ACTIVE_MONSTER_Y);
             for( let monster of this.user.monsters ) {
