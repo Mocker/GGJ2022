@@ -4,14 +4,15 @@ import { Image } from './images'
 export class Pet
 {
 
-    constructor (baseData) {
+    constructor (baseData, customData={}) {
         this.baseData = baseData; //base stats for type->stage of pet
+        this.customData = customData;
         this.active = false;
         this.scene = null;
         this.sprite = null;
         this.x = 0;
         this.y = 0;
-        this.name = this.baseData.stage.displayName;
+        this.name = this.customData.name;
         this.pieces = [];
     }
 
@@ -25,14 +26,29 @@ export class Pet
             this.sprite.y = this.y;
         } else {
             //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
-            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage}`);
             this.sprite.setDisplaySize(300,300);
+            this.buildPieces();
         }
 
+        
+        
+    }
+
+
+    reloadSprite () {
+        this.sprite.destroy();
+        this.clearPieces();
+        this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage}`);
+        this.sprite.setDisplaySize(300,300);
+        this.buildPieces();
+    }
+
+    buildPieces () {
         if (this.pieces.length < 1) {
-            const source = scene.textures.get(`${this.baseData.type}-${this.baseData.stage.stage}`).source[0].image;
+            const source = this.scene.textures.get(`${this.baseData.type}-${this.baseData.stage}`).source[0].image;
             this.FRAME_WIDTH = 32;
-            this.piecesSprite = scene.textures.addSpriteSheet(`${this.baseData.type}-${this.baseData.stage.stage}-pieces`, source, {
+            this.piecesSprite = this.scene.textures.addSpriteSheet(`${this.baseData.type}-${this.baseData.stage}-pieces`, source, {
                 frameWidth: this.FRAME_WIDTH,
                 frameHeight: this.FRAME_WIDTH
             });
@@ -43,13 +59,20 @@ export class Pet
         
             for (let i=0; i<this.piecesSprite.frameTotal; i++){
                 
-                this.pieces.push(scene.add.image(0, 0, `${this.baseData.type}-${this.baseData.stage.stage}-pieces`, i));
+                this.pieces.push(this.scene.add.image(0, 0, `${this.baseData.type}-${this.baseData.stage}-pieces`, i));
                 this.pieces[this.pieces.length - 1].setVisible(false);
                 this.pieces[this.pieces.length - 1].setScale(this.sprite.scale);
                 
             }
+            this.scene.playLayer.add(this.pieces);
         }
-        
+    }
+
+    clearPieces () {
+        for (let i=0; i<this.pieces.length; i++){
+            this.pieces[i].destroy();
+        }
+        this.pieces = [];
     }
 
     implode (duration=4000) {
@@ -165,5 +188,9 @@ export class Pet
 
     OnActionThree() {
         console.log(`pressed three`);
+    }
+
+    update (time, delta) {
+
     }
 }

@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, push, query, limitToLast, onValue } from 'firebase/database';
+import { getDatabase, ref, set, push, query, limitToLast, onValue, get } from 'firebase/database';
 
 export class UserModel {
 
@@ -7,7 +7,9 @@ export class UserModel {
             UserModel._instance = this;
         }
         this.user = null;
-        this.monster = null;
+        this.monsters = null;
+        this.pet = null;
+        this.items = [];
         return UserModel._instance;
     }
 
@@ -15,33 +17,78 @@ export class UserModel {
         return this._instance;
     }
 
-    setUser(user) {
+    async setUser(user) {
         this.user = user;
+        const db = getDatabase();
+        const userData = await (await get(ref(db, 'users/' + this.user.uid))).val();
+        console.log(`user ${user.email} existing data: ${userData}`);
+        //TODO:: use db data
+        this.monsters = [{
+            type: 'tadpole',
+            stage: 'egg',
+            baseData: {
+                "egg" : {
+                    "stage": "egg",
+                    "name": "blue egg",
+                    "displayName": "?? EGG ??",
+                    "className": "BlueEgg"
+                }
+            },
+            stats: {
+                energy: { min: 0, current: 90, max: 100 },
+                name: "?? EGG ??",
+                timers: {
+                    lived: 60000*5 //5 minutes?
+                }
+            }
+        }];
+        this.items = [
+        {
+            name: 'Candy Cane',
+            effects: {
+                energy: (e) => e+25
+            },
+            quantity: 5
+        },
+        {
+            name: 'Cake',
+            effects: {
+                happiness: (e) => e+25
+            },
+            quantity: 3
+        }];
+        /*if  (userData && userData.monsters && userData.monsters.length > 0) {
+                this.monsters = userData.monsters
+        } else {
+            this.monsters = [];
+        }*/
+        return this;
+    }
+
+    selectPet (petIndex) {
+        this.pet = this.monsters[petIndex];
     }
 
     getUser() {
         return this.user;
     }
 
-    createUserWithData({monsterName}) {
+    async createUserWithData({monsterName, monsterData={}}) {
         const db = getDatabase();
-        this.monster = [{
+        this.pet = {
             name: monsterName,
-            hp: 123,
-            atk: 1,
-            isBattleEnabled: true
-        }];
-        set(ref(db, 'users/' + this.user.uid), {
+            ...monsterData
+        };
+        if (this.monsters) {
+            this.monsters.push(this.pet);
+        } else {
+            this.monsters = [this.pet];
+        }
+        await set(ref(db, 'users/' + this.user.uid), {
             email: this.user.email,
-            monsters: [this.monster]
-          })
-          .then(() => {
-            
-          })
-          .catch((error) => {
-              console.log(error);
-            // The write failed...
+            monsters: this.monsters
           });
+        return this;
     }
 
     startBattleWithMonster() {

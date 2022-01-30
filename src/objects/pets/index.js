@@ -10,7 +10,7 @@ export const PetClasses = {
 
 
 export function PetFactory(petType) {
-    return (args) => {
-        return new PetClasses[petType](args);
+    return (baseData, customData) => {
+        return new PetClasses[petType](baseData, customData);
     };
 }

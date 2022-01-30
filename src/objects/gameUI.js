@@ -8,6 +8,8 @@ export class GameUI   {
     constructor (scene) {
         this.scene = scene;
         this.layer = scene.add.layer();
+        this.buttonLayer = scene.add.layer();
+        this.eventListeners = {};
         const playMaskShape = this.scene.make.graphics();
         playMaskShape.fillStyle(0xffffff);
         playMaskShape.beginPath();
@@ -37,12 +39,9 @@ export class GameUI   {
 
         this.activeMenu = this.menu;
         this.paused = false;
+        this.isMenuShown = false;
 
-        const button = new Button(260, 680, 'Play', 'ui-btn-left', this.scene, () => this.onButtonOne());
-        const button2 = new Button(400, 690, 'Attack', 'ui-btn-circle', this.scene, () => this.onButtonTwo());
-        const button3 = new Button(540, 680, 'RedFlash', 'ui-btn-right', this.scene, () => this.onButtonThree());
-
-        this.layer.add([button.button, button2.button, button3.button]);
+        
         
 
         const tabBG = new Phaser.GameObjects.Graphics(this.scene);
@@ -50,7 +49,8 @@ export class GameUI   {
         tabBG.fillRoundedRect(210, 205, 120, 25, 4);
         tabBG.fillRoundedRect(346, 205, 120, 25, 4);
         tabBG.fillRoundedRect(475, 205, 120, 25, 4);
-        this.scene.add.existing(tabBG);
+        this.tabBG = tabBG;
+        this.scene.add.existing(this.tabBG);
         const tabTextStyle = {
             align: 'left',
             fixedWidth: 100,
@@ -64,7 +64,29 @@ export class GameUI   {
         this.tabRight = new Phaser.GameObjects.Text(this.scene, 485, 210, this.activeMenu[2].label)
         .setStyle(tabTextStyle);
         this.scene.add.existing(this.tabLeft); this.scene.add.existing(this.tabMid); this.scene.add.existing(this.tabRight);
-        this.layer.add([tabBG, this.tabLeft, this.tabMid, this.tabRight]);
+        this.layer.add([this.tabBG, this.tabLeft, this.tabMid, this.tabRight]);
+
+        this.menuBG = new Phaser.GameObjects.Graphics(this.scene);
+        this.menuBG.fillStyle(0x333311, 0.7);
+        this.MENU_RIGHT = 210; this.MENU_TOP = 235;
+        this.menuBG.fillRoundedRect(this.MENU_RIGHT, this.MENU_TOP, 370, 350, 4);
+        this.scene.add.existing(this.menuBG);
+        this.menuLayer = this.scene.add.layer([this.menuBG]);
+        this.menuPointer = new Phaser.GameObjects.Text(this.scene, this.MENU_RIGHT+5, this.MENU_TOP+25, '->', {
+            fontFamily: 'beryl-digivice',
+            fontSize: 15
+        });
+        this.scene.add.existing(this.menuPointer);
+        this.menuLayer.add([this.menuPointer]);
+        this.menuOptionsData = [];
+        const testMenu = [
+            ['Menu Option One', () => { console.log('selected menu one'); }],
+            ['Menu Close', this.closeMenu.bind(this)]
+        ];
+        this.menuOptions = [];
+        this.menuOptionSelected = false;
+        //this.buildMenu(testMenu);
+        this.menuLayer.setVisible(false);
 
         this.txtPetName = new Phaser.GameObjects.Text(this.scene, 220, 550, 'PET NAME')
             .setStyle({
@@ -92,10 +114,85 @@ export class GameUI   {
         this.scene.add.existing(this.evolveDots);
         this.layer.add([this.evolveDots]);
 
-        this.drawEvolveDots(220, 580, 10, 1, 3);
+        this.on('petActivated', this.onPetActivated.bind(this));
+        
     }
 
-    drawEvolveDots( x, y, w, filledDots, maxDots) {
+    // build the game objects to display menu options
+    buildMenu (menuData, selectOption=0) {
+        this.closeMenu();
+        const MENU_PADDING_RIGHT = 40;
+        const MENU_PADDING_UP = 30;
+        this.MENU_PADDING_UP = MENU_PADDING_UP;
+        menuData.push(['Close', this.closeMenu.bind(this)]);
+        for(let i=0; i<menuData.length; i++){
+            const menuObject = new Phaser.GameObjects.Text(this.scene,
+                this.MENU_RIGHT+MENU_PADDING_RIGHT,
+                this.MENU_TOP+((i+1)*MENU_PADDING_UP),
+                //300, 300,
+                menuData[i][0], 
+                {
+                    fontFamily: 'beryl-digivice'
+                });
+            this.menuOptions[i] = menuObject;
+            this.scene.add.existing(this.menuOptions[i]);
+            
+        }
+        this.menuLayer.add(this.menuOptions);
+        this.menuOptionsData = menuData;
+        this.menuOptionSelected = selectOption;
+        this.positionMenuPointer();
+        this.menuPointer.y = this.MENU_TOP + MENU_PADDING_UP;
+        this.isMenuShown = true;
+        this.menuLayer.setVisible(true);
+    }
+
+    closeMenu () {
+        for(let i=0; i<this.menuOptions.length; i++){
+            this.menuOptions[i].destroy();
+        }
+        this.menuOptions = [];
+        this.menuOptionsData = [];
+        this.menuLayer.setVisible(false);
+        this.isMenuShown = false;
+        this.tabLeft.clearTint().setScale(1);
+        this.tabMid.clearTint().setScale(1);
+        this.tabRight.clearTint().setScale(1);
+    }
+
+
+    onButtonOne () {
+        if (this.isMenuShown) {
+            this.menuOptionSelected--;
+            if (this.menuOptionSelected < 0) {
+                this.menuOptionSelected = this.menuOptions.length - 1;
+            }
+            this.positionMenuPointer();
+        }
+    }
+    onButtonTwo () {
+        if (this.isMenuShown) {
+            if (this.menuOptionSelected !== null && this.menuOptionsData[this.menuOptionSelected]) {
+                console.log(this.menuOptionSelected);
+                this.menuOptionsData[this.menuOptionSelected][1](this.menuOptionSelected);
+            }
+        }
+    }
+    onButtonThree () {
+        if (this.isMenuShown) {
+            this.menuOptionSelected++;
+            if (this.menuOptionSelected >= this.menuOptions.length) {
+                this.menuOptionSelected = 0;
+            }
+            this.positionMenuPointer();
+        }
+    }
+
+    positionMenuPointer () {
+        this.menuPointer.y = this.MENU_TOP + (this.MENU_PADDING_UP*(this.menuOptionSelected+1));
+    }
+
+    drawEvolveDots  ( x, y, w, filledDots, maxDots) {
         this.evolveDots.clear();
         
         for (let i=0; i<maxDots; i++) {
@@ -108,20 +205,26 @@ export class GameUI   {
         }
     }
 
-    onButtonOne () {
-        if (!this.paused && this.scene.pet) {
-            this.scene.pet.OnActionOne();
+    onPetActivated () {
+        this.txtPetName.setText(this.scene.pet.name);
+        this.drawEvolveDots(220, 580, 10, this.scene.pet.baseData.evolveDots, 3);
+    }
+
+    emit (eventName, eventData) {
+        if  (this.eventListeners[eventName]) {
+            for (let i=0; i<this.eventListeners[eventName].length; i++) {
+                this.eventListeners[eventName][i](eventData);
+            }
         }
     }
 
-    onButtonTwo () {
-        if (!this.paused && this.scene.pet) {
-            this.scene.pet.OnActionTwo();
+    on (eventName, callback) {
+        if (this.eventListeners[eventName]) {
+            this.eventListeners[eventName].push(callback);
+        } else {
+            this.eventListeners[eventName] = [callback];
         }
     }
-    onButtonThree () {
-        if (!this.paused && this.scene.pet) {
-            this.scene.pet.OnActionThree();
-        }
-    }
+
+    
 }
