@@ -164,12 +164,7 @@ export class TitleScene extends Phaser.Scene
             return;
         }
         this.goAway = true;
-        const userModel = UserModel.getInstance();
-        if  (userModel.user) {
-            this.game.scene.start("SelectMonsterScene");
-        } else {
-            this.game.scene.start("LoginScene");
-        }
+        this.game.scene.start("LoginScene");
         this.game.scene.stop("TitleScene");
     }
 }
