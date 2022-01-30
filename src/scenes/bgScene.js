@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Button } from '../objects/ui/Button';
+import { UserModel } from '../utils';
 
 // Background frame, should remain active at all times
 
@@ -47,8 +48,6 @@ export class BGScene extends Phaser.Scene
     }
 
     onPowerOn () {
-        console.log("false");
-        console.log(this.isPowerOn);
         if (this.isPowerOn) return;
         this.isPowerOn = true;
         this.tweens.add({
@@ -62,6 +61,34 @@ export class BGScene extends Phaser.Scene
             alpha: 1
         });
         this.game.scene.start('TitleScene');
+    }
+
+    logout () {
+        //reset all the things, clear user session, power down
+        this.game.scene.stop('GameScene');
+        this.game.scene.stop('TitleScene');
+        this.game.scene.stop('SelectMonsterScene');
+        this.game.scene.stop('LoginScene');
+        this.events.off('button-one-clicked');
+        this.events.off('button-two-clicked');
+        this.events.off('button-three-clicked');
+        UserModel.getInstance().logout();
+        this.tweens.add({
+            duration: 1500,
+            targets: this.powerLight,
+            alpha: 0
+        });
+        this.tweens.add({
+            duration: 3000,
+            targets: this.bgSolid,
+            alpha: 0
+        });
+        setTimeout(this.resetPower.bind(this), 1500);
+        
+    }
+
+    resetPower () {
+        this.isPowerOn=false; this.events.on('button-two-clicked', this.onPowerOn.bind(this));
     }
 
     onButtonOne () {

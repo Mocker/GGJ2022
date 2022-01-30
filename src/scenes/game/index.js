@@ -76,7 +76,7 @@ class GameScene extends Phaser.Scene
     onButtonOne () {
         if  (this.ui.isMenuShown) {
             this.ui.onButtonOne();
-        } else { // build menu one (items)
+        } else if (!this.isPaused) { // build menu one (items)
             
             this.buildItemMenu();
             this.ui.tabLeft.setTint(0xffffff, 0xff0000).setScale(1.2);
@@ -85,17 +85,40 @@ class GameScene extends Phaser.Scene
     onButtonTwo () {
         if  (this.ui.isMenuShown) {
             this.ui.onButtonTwo();
-        } else { // show menu 2 ('action')
-            //this.ui.tabLeft.setTintFill(0xccccff).setScale(1.2);
+        } else if (!this.isPaused) { // show menu 2 ('action')
+            this.buildActionMenu();
+            this.ui.tabMid.setTint(0xffffff, 0xff0000).setScale(1.2);
         }
 
     }
     onButtonThree () {
         if  (this.ui.isMenuShown) {
             this.ui.onButtonThree();
-        } else { // build menu 3 battle/explore
-            //this.ui.tabLeft.setTintFill(0xccccff).setScale(1.2);
+        } else if (!this.isPaused) { // build menu 3 battle/explore
+            this.buildBattleMenu();
+            this.ui.tabRight.setTint(0xffffff, 0xff0000).setScale(1.2);
         }
+    }
+
+    buildActionMenu () {
+        const actionData = [
+            ['Force Evolve', this.pet.Evolve.bind(this.pet), true],
+            ['Logout', this.logout.bind(this)],
+            ...this.pet.getActionMenu()
+        ];
+        this.ui.buildMenu(actionData);
+    }
+
+    buildBattleMenu () {
+        const battleData = [
+            ...this.pet.getBattleMenu()
+        ];
+        this.ui.buildMenu(battleData);
+    }
+
+    //
+    logout () {
+        this.game.scene.getScene('BGScene').logout();
     }
 
     buildItemMenu (itemIndex=0) {

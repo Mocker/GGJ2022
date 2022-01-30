@@ -4,7 +4,8 @@ import { getAuth, createUserWithEmailAndPassword,
     sendPasswordResetEmail,
     setPersistence,
     browserLocalPersistence,
-    onAuthStateChanged    
+    onAuthStateChanged,
+    signOut    
 } from 'firebase/auth';
 import { UserModel } from '../../utils';
 
@@ -40,6 +41,11 @@ export class FireBaseSingleton {
 
     static getInstance() {
         return this._instance;
+    }
+
+    async signOut () {
+        await signOut(getAuth());
+        this.authenticated = false;
     }
 
     signIn(email, password, errorCallback, successCallback) {

@@ -58,6 +58,7 @@ class LoginScene extends Phaser.Scene
             //  Have they entered anything?
             if (inputUsername.value !== '' && inputPassword.value !== '')
             {
+
                 const successCallback = (userCredential) => {
                     // Signed in
                     const user = userCredential.user;
@@ -66,7 +67,7 @@ class LoginScene extends Phaser.Scene
                         switchMessage('Please verify the email sent', "1.3vw");
                     }
                     else {
-                        this.scene.remove("LoginScene");
+                        
                     }
                 };
 
@@ -81,7 +82,8 @@ class LoginScene extends Phaser.Scene
                         switchMessage('Wrong password', "1.3vw");
                     }
                 };
-
+                this.waitingForSignIn = true;
+                UserModel.getInstance().userCallback = this.onAuthChange.bind(this);
                 this.fireBaseAppHelper.signIn(inputUsername.value, inputPassword.value, errorCallback, successCallback);
             }
         }
@@ -160,6 +162,12 @@ class LoginScene extends Phaser.Scene
 
     }
     
+    onAuthChange (userModel) {
+        if (!this.waitingForSignIn) return;
+        this.waitingForSignIn = false;
+        this.scene.start('SelectMonsterScene');
+        this.scene.remove("LoginScene");
+    }
 
     update () {
 

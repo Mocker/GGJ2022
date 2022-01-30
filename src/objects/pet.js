@@ -196,6 +196,30 @@ export class Pet
         console.log(`pressed three`);
     }
 
+    getActionMenu() {
+        return [];
+    }
+
+    getBattleMenu() {
+        return [];
+    }
+
+    doBattle () {
+        console.log("Get battlin");
+    }
+
+    doExplore () {
+        console.log("Gone explorin");
+    }
+
+    resume () {
+        this.scene.isPaused = false;
+    }
+
+    pause () {
+        this.scene.isPaused = true;
+    }
+
     update (time, delta) {
 
     }
