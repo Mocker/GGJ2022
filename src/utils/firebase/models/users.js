@@ -1,4 +1,5 @@
 import { getDatabase, ref, set, push, query, limitToLast, onValue, get } from 'firebase/database';
+import { FireBaseSingleton } from '..';
 
 export class UserModel {
 
@@ -10,11 +11,25 @@ export class UserModel {
         this.monsters = null;
         this.pet = null;
         this.items = [];
+        this.userCallback = null;
         return UserModel._instance;
     }
 
     static getInstance() {
         return this._instance;
+    }
+
+    async logout() {
+        await FireBaseSingleton.getInstance().signOut();
+        this.user = null;
+        this.monsters = null;
+        this.pet = null;
+        this.items = [];
+        this.userData = null;
+    }
+
+    addUserListener (callback) {
+        this.userCallback = callback;
     }
 
     async setUser(user) {
@@ -62,6 +77,9 @@ export class UserModel {
         } else {
             this.monsters = [];
         }*/
+        if (this.userCallback) {
+            this.userCallback(this);
+        }
         return this;
     }
 

@@ -86,7 +86,8 @@ class GameScene extends Phaser.Scene
         if  (this.ui.isMenuShown) {
             this.ui.onButtonTwo();
         } else { // show menu 2 ('action')
-            //this.ui.tabLeft.setTintFill(0xccccff).setScale(1.2);
+            this.buildActionMenu();
+            this.ui.tabLeft.setTint(0xffffff, 0xff0000).setScale(1.2);
         }
 
     }
@@ -96,6 +97,19 @@ class GameScene extends Phaser.Scene
         } else { // build menu 3 battle/explore
             //this.ui.tabLeft.setTintFill(0xccccff).setScale(1.2);
         }
+    }
+
+    buildActionMenu () {
+        const actionData = [
+            ['Force Evolve', this.pet.Evolve.bind(this.pet)],
+            ['Logout', this.logout.bind(this)]
+        ];
+        this.ui.buildMenu(actionData);
+    }
+
+    //
+    logout () {
+        this.game.scene.getScene('BGScene').logout();
     }
 
     buildItemMenu (itemIndex=0) {
