@@ -20,7 +20,7 @@ export class UserModel {
     }
 
     async logout() {
-        await FireBaseSingleton.getInstance().signOut();
+        await FireBaseSingleton.getInstance().signOutUser();
         this.user = null;
         this.monsters = null;
         this.pet = null;

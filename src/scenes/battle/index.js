@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Button } from '../../objects';
-import { UserModel } from '../../utils';
+import { UserModel, clearButtonEvents } from '../../utils';
 
 export class BattleScene extends Phaser.Scene
 {
@@ -17,6 +17,7 @@ export class BattleScene extends Phaser.Scene
 
     create ()
     {   
+        clearButtonEvents(this.game);
         const user = UserModel.getInstance();
         const button = new Button(100, 100, 'Start Battle', this, () => user.startBattleWithMonster());   
     }

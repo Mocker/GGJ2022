@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GameUI } from '../../objects/gameUI';
-import { UserModel } from '../../utils' ;
+import { UserModel, clearButtonEvents } from '../../utils' ;
 
 export class TitleScene extends Phaser.Scene
 {
@@ -9,7 +9,6 @@ export class TitleScene extends Phaser.Scene
     {
         super("TitleScene");
         this.monsterTiles = [];
-        this.goAway = false;
         this.pieces = [];
         this.sprite = null;
         this.FRAME_WIDTH = 16;
@@ -22,7 +21,7 @@ export class TitleScene extends Phaser.Scene
 
     create ()
     {
-
+        clearButtonEvents(this.game);
         console.log("title loaded");
         this.titleText = this.make.text({
             add: false,
@@ -149,15 +148,12 @@ export class TitleScene extends Phaser.Scene
     }
 
     nextScene () {
-        if (this.goAway) {
-            return;
-        }
-        this.goAway = true;
         if (UserModel.getInstance().user) {
             this.game.scene.start('SelectMonsterScene');
         } else {
             this.game.scene.start("LoginScene");
         }
+        console.log(this.game.scene.getScene('BGScene').event);
         this.game.scene.stop("TitleScene");
     }
 }

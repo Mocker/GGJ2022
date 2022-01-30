@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Button } from '../objects/ui/Button';
-import { UserModel } from '../utils';
+import { UserModel, clearButtonEvents } from '../utils';
 
 // Background frame, should remain active at all times
 
@@ -24,6 +24,7 @@ export class BGScene extends Phaser.Scene
     }
 
     create () {
+        clearButtonEvents(this.game);
         this.bgFrame = this.add.sprite(400, 400, 'bg-frame')
             .setDisplaySize(800,800);
         this.bgSolid = this.add.sprite(400, 400, 'bg-solid')
@@ -64,14 +65,12 @@ export class BGScene extends Phaser.Scene
     }
 
     logout () {
+        clearButtonEvents(this.game);
         //reset all the things, clear user session, power down
         this.game.scene.stop('GameScene');
         this.game.scene.stop('TitleScene');
         this.game.scene.stop('SelectMonsterScene');
         this.game.scene.stop('LoginScene');
-        this.events.off('button-one-clicked');
-        this.events.off('button-two-clicked');
-        this.events.off('button-three-clicked');
         UserModel.getInstance().logout();
         this.tweens.add({
             duration: 1500,
