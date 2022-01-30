@@ -233,11 +233,21 @@ class GameScene extends Phaser.Scene
         this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
         this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));
     }
+    
+    pad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+      }
 
     update (time, delta) {
         if (!this.isPaused) {
             if (this.pet) {
                 this.pet.update(time, delta);
+                this.ui.txtCornerNumber.setText(this.pad( 
+                    Math.floor(this.pet.customData.timers.lived / (1000*1)),
+                    3
+                ));
             }
         }
     }

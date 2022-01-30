@@ -7,6 +7,12 @@ export class Pet
     constructor (baseData, customData={}) {
         this.baseData = baseData; //base stats for type->stage of pet
         this.customData = customData;
+        if (!this.customData.timers ) {
+            this.customData.timers = {};
+        }
+        if (!this.customData.timers.lived) {
+            this.customData.timers.lived = 1;
+        }
         this.active = false;
         this.scene = null;
         this.sprite = null;
@@ -231,6 +237,6 @@ export class Pet
     }
 
     update (time, delta) {
-
+        this.customData.timers.lived += delta;
     }
 }

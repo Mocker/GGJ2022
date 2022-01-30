@@ -116,6 +116,6 @@ export class Tadpole extends Pet
     }
 
     update (time, delta) {
-
+        super.update(time, delta);
     }
 }
