@@ -43,7 +43,7 @@ export class FireBaseSingleton {
         return this._instance;
     }
 
-    async signOut () {
+    async signOutUser () {
         await signOut(getAuth());
         this.authenticated = false;
     }

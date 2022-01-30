@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import * as petData from '../../data/pets.json';
 import { PetFactory } from '../../objects/pets/index';
 import { GameUI } from '../../objects/gameUI';
-import { UserModel } from '../../utils';
+import { UserModel, clearButtonEvents } from '../../utils';
 
 // Our game scene
 
@@ -45,6 +45,7 @@ class GameScene extends Phaser.Scene
 
     create ()
     {   
+        clearButtonEvents(this.game);
         this.game.scene.getScene('BGScene').events.off('button-one-clicked');
         this.game.scene.getScene('BGScene').events.off('button-two-clicked');
         this.game.scene.getScene('BGScene').events.off('button-three-clicked');

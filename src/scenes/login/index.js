@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FireBaseSingleton, UserModel } from '../../utils';
+import { FireBaseSingleton, UserModel, clearButtonEvents } from '../../utils';
 
 class LoginScene extends Phaser.Scene
 {
@@ -16,6 +16,7 @@ class LoginScene extends Phaser.Scene
 
     create ()
     {   
+        clearButtonEvents(this.game);
         const validateEmail = (inputText) =>
         {
             var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -166,7 +167,7 @@ class LoginScene extends Phaser.Scene
         if (!this.waitingForSignIn) return;
         this.waitingForSignIn = false;
         this.scene.start('SelectMonsterScene');
-        this.scene.remove("LoginScene");
+        this.scene.stop("LoginScene");
     }
 
     update () {

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { UserModel } from '../../utils';
+import { clearButtonEvents } from '../../utils';
 
 export class MonsterNameScene extends Phaser.Scene
 {
@@ -16,9 +16,7 @@ export class MonsterNameScene extends Phaser.Scene
 
     create ()
     {   
-        // HATCHING ANIMATION
-
-
+        clearButtonEvents(this.game);
         var textLabel = document.createElement('textLabel');
 
         textLabel.style.color = "white";

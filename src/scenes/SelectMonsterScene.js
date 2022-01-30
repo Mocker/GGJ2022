@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { UserModel } from '../utils';
 import { Image } from '../objects';
 import * as petData from '../data/pets.json';
+import { clearButtonEvents } from '../utils';
 
 
 // Select Existing Pet or Select an Egg to start a new one
@@ -35,7 +36,7 @@ export class SelectMonsterScene extends Phaser.Scene
 
     create ()
     {
-        this.game.scene.getScene('BGScene').events.off('button-two-clicked');
+        clearButtonEvents(this.game);
         this.user = UserModel.getInstance();
         const initFunc = () => {
             this.newMonsterOption = new Image(this, `${NEW_MONSTER_TYPE}-egg`, ACTIVE_MONSTER_X, ACTIVE_MONSTER_Y);
