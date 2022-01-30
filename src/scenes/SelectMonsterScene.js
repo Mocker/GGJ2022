@@ -22,7 +22,6 @@ export class SelectMonsterScene extends Phaser.Scene
         });
         this.newMonsterOption = null;
         this.userMonsterImages = [];
-        
     }
     
     preload ()
@@ -36,6 +35,8 @@ export class SelectMonsterScene extends Phaser.Scene
 
     create ()
     {
+        this.newMonsterOption = null;
+        this.userMonsterImages = [];
         clearButtonEvents(this.game);
         this.user = UserModel.getInstance();
         const initFunc = () => {
@@ -73,7 +74,12 @@ export class SelectMonsterScene extends Phaser.Scene
                 selectCounter++;
             }
             else {
-                selectCounter--;
+                if(selectCounter == 0) {
+                    selectCounter = monsterOptions.length - 1;
+                }
+                else {
+                    selectCounter--;
+                }
             }
 
             const newOption = monsterOptions[selectCounter % monsterOptions.length];
@@ -82,7 +88,6 @@ export class SelectMonsterScene extends Phaser.Scene
                 currentOption.image.setVisible(false);
                 currentOption.image.x=COMING_MONSTER_X;
                 newOption.image.setVisible(true);
-                console.log(newOption.image.displayWidth * newOption.image.scaleX);
                 newOption.moveTo({x: ACTIVE_MONSTER_X, onComplete: () => {
                     currentMonsterName.setVisible(true);
                 }});
