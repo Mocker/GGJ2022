@@ -24,8 +24,8 @@
                 "type": "tadpole",
                 "evolveDots": 2
             },
-            "adultGood" : {
-                "stage": "adultGood",
+            "adultCute" : {
+                "stage": "adultCute",
                 "name": "CuteGuy",
                 "displayName": "Cute Guy",
                 "className": "CuteGuy",

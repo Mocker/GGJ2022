@@ -44,7 +44,11 @@ class GameScene extends Phaser.Scene
     }
 
     create ()
-    {
+    {   
+        this.game.scene.getScene('BGScene').events.off('button-one-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-two-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-three-clicked');
+
         this.user = UserModel.getInstance();
 
         this.playLayer = this.add.layer();

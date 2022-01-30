@@ -27,7 +27,11 @@ export class Tadpole extends Pet
         this.scene.isPaused = true;
         this.implode(500);
         setTimeout(()=>{
-            this.scene.promptNewPetName();
+            if (this.customData.name) {
+                this.scene.isPaused = false;
+            } else {
+                this.scene.promptNewPetName();
+            }
         }, 500);
     }
 
@@ -36,6 +40,6 @@ export class Tadpole extends Pet
     }
 
     update (time, delta) {
-        
+
     }
 }

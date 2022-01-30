@@ -138,18 +138,7 @@ export class TitleScene extends Phaser.Scene
     onPowerButton () {
         
         this.turningOn = true;
-        // this.tweens.add({
-        //     duration: 3000,
-        //     targets: this.titleTextImage,
-        //     alpha: 1.0,
-        //     x: 220,
-        //     y: 300,
-        //     scale: 0.3,
-        //     rotation: Math.PI*4, 
-        //     ease: 'Expo.easeInOut',
-        //     //onComplete: this.nextScene.bind(this)
-        // });
-        this.implode(1000, //{});
+        this.implode(1000,
             {
             minX: 220,
             maxX: 600,

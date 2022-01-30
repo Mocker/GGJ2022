@@ -12,6 +12,7 @@ export const PetClasses = {
 
 
 export function PetFactory(petType) {
+    console.log('petType: ' + petType);
     return (baseData, customData) => {
         return new PetClasses[petType](baseData, customData);
     };

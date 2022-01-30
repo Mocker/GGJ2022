@@ -3,20 +3,17 @@ import { playAnimationByName } from '../tweensanimations';
 
 export class Image
 {
-    constructor (scene, imageTag, imageName, sizeX, sizeY)
+    constructor (scene, imageTag, sizeX, sizeY)
     {
         this.scene = scene;
         this.imageTag = imageTag;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        this.scene.load.image(imageTag, `../images/${imageName}`);
+        //this.scene.load.image(imageTag, `images/${imageName}`);
         this.tweens = {};
         this.activeTween = null;
-    }
-
-    setImage () {
         this.image = this.scene.add.image(this.sizeX, this.sizeY, this.imageTag);
-        this.image.setScale(.3);
+        this.image.setScale(.2);
     }
 
     // checks if an active tweet is playing. if it has finished, clean up
@@ -46,6 +43,13 @@ export class Image
                 self.image.setTint(Phaser.Display.Color.GetColor(255, value, value));
             }
         });
+    }
+
+    
+
+
+    moveTo (options) {
+        playAnimationByName('moveTo', this.scene, this.image, options);
     }
 
     play () {

@@ -10,7 +10,6 @@ import {
 } from './scenes';
 import { FireBaseSingleton, UserModel } from './utils';
 
-//import { TitleScene } from './scenes/titlescreen';
 
 var config = {
     type: Phaser.WEBGL,

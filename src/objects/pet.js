@@ -12,7 +12,7 @@ export class Pet
         this.sprite = null;
         this.x = 0;
         this.y = 0;
-        this.name = this.customData.name;
+        this.name = this.customData.name || this.baseData.name;
         this.pieces = [];
     }
 
