@@ -12,25 +12,33 @@
                 "stage": "egg",
                 "name": "blue egg",
                 "displayName": "?? EGG ??",
-                "className": "BlueEgg"
+                "className": "BlueEgg",
+                "type": "tadpole",
+                "evolveDots": 1
             },
             "baby" : {
                 "stage": "baby",
                 "name": "baby tadpole",
                 "displayName": "Tadpole",
-                "className": "Tadpole"
+                "className": "Tadpole",
+                "type": "tadpole",
+                "evolveDots": 2
             },
             "adultGood" : {
                 "stage": "adultGood",
                 "name": "CuteGuy",
                 "displayName": "Cute Guy",
-                "className": "CuteGuy"
+                "className": "CuteGuy",
+                "type": "tadpole",
+                "evolveDots": 3
             },
             "adultEvil" : {
                 "stage": "adultEvil",
                 "name": "evil guy",
                 "displayName": "Evil Guy",
-                "className": "DinoAdultEvil"
+                "className": "DinoAdultEvil",
+                "type": "tadpole",
+                "evolveDots": 3
             }
         }
     }

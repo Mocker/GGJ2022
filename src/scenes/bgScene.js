@@ -17,6 +17,9 @@ export class BGScene extends Phaser.Scene
         this.load.image('ui-btn-left', 'images/ui/DEVICE_A01_crop_0000s_0004_L-.png');
         this.load.image('ui-btn-circle', 'images/ui/DEVICE_A01_crop_0000s_0002_circle.png');
         this.load.image('ui-btn-right', 'images/ui/DEVICE_A01_crop_0000s_0006_R.png');
+        this.load.image('ui-btn-left-on', 'images/ui/DEVICE_A01_crop_0000s_0005_L-push.png');
+        this.load.image('ui-btn-circle-on', 'images/ui/DEVICE_A01_crop_0000s_0003_circle-push.png');
+        this.load.image('ui-btn-right-on', 'images/ui/DEVICE_A01_crop_0000s_0007_R-push.png');
     }
 
     create () {

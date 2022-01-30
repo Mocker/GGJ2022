@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import * as petData from '../../data/pets.json';
 import { PetFactory } from '../../objects/pets/index';
 import { GameUI } from '../../objects/gameUI';
+import { UserModel } from '../../utils';
 
 // Our game scene
 
@@ -15,22 +16,17 @@ class GameScene extends Phaser.Scene
         this.isPaused = false;
         this.pet = null;
         this.petData = petData.default;
-        this.pets = [];
         this.playerData = {
             name: "Player 1",
             email: "loL@lol.com",
             session_token: null
         };
         this.ui = null;
+        this.user = null;
     }
 
     preload ()
     {
-        this.load.image('bg-frame', 'images/ui/DEVICE_A01_0008_device body.png');
-        this.load.image('bg-solid', 'images/ui/test-A-_0000_BG.png');
-        this.load.image('ui-btn-left', 'images/ui/DEVICE_A01_crop_0000s_0004_L-.png');
-        this.load.image('ui-btn-circle', 'images/ui/DEVICE_A01_crop_0000s_0002_circle.png');
-        this.load.image('ui-btn-right', 'images/ui/DEVICE_A01_crop_0000s_0006_R.png');
         for (let petType in petData.types) {
             for (let imageFile in petData.types[petType].images) {
                 console.log('preloading', `${petType}-${imageFile}`);
@@ -41,49 +37,104 @@ class GameScene extends Phaser.Scene
     }
 
     createPet(petType, stage, customData={})
-    {
-        const baseData = {
-            type: petType,
-            stage: this.petData.types['tadpole'].stages["egg"]
-        };
-        return PetFactory(this.petData.types['tadpole'].stages["egg"].className)(baseData, customData);
+    {   
+        const baseData = this.petData.types[petType].stages[stage];
+        console.log(petType, stage, baseData, customData);
+        return PetFactory(baseData.className)(baseData, customData);
     }
 
     create ()
     {
-        
-        
-        this.bgFrame = this.add.sprite(400, 400, 'bg-frame')
-            .setDisplaySize(800,800);
-        this.bgSolid = this.add.sprite(400, 400, 'bg-solid')
-            .setAlpha(0.7)
-            .setDisplaySize(400, 400);
+        this.user = UserModel.getInstance();
 
-        
-        const pet = this.createPet('tadpole', 'egg');
-        this.ui = new GameUI(this);
-        this.activatePet(pet);
-        
+        this.playLayer = this.add.layer();
         const playMaskShape = this.make.graphics();
         playMaskShape.fillStyle(0xffffff);
         playMaskShape.beginPath();
         playMaskShape.fillRect(220,220,400,400);
         const playMask = new Phaser.Display.Masks.GeometryMask(this, playMaskShape);
         this.playLayer.setMask(playMask);
+        
+        const pet = this.createPet(this.user.pet.type, this.user.pet.stage, this.user.pet.stats);
+        this.ui = new GameUI(this);
+        this.activatePet(pet);
+        console.log(this.pet);
+        
 
+        this.bgScene = this.game.scene.getScene('BGScene');
+        this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
+        this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
+        this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));
+
+    }
+
+    // always passing to the ui for now because all pet interaction will be done via menus
+    onButtonOne () {
+        if  (this.ui.isMenuShown) {
+            this.ui.onButtonOne();
+        } else { // build menu one (items)
+            
+            this.buildItemMenu();
+            this.ui.tabLeft.setTint(0xffffff, 0xff0000).setScale(1.2);
+        }
+    }
+    onButtonTwo () {
+        if  (this.ui.isMenuShown) {
+            this.ui.onButtonTwo();
+        } else { // show menu 2 ('action')
+            //this.ui.tabLeft.setTintFill(0xccccff).setScale(1.2);
+        }
+
+    }
+    onButtonThree () {
+        if  (this.ui.isMenuShown) {
+            this.ui.onButtonThree();
+        } else { // build menu 3 battle/explore
+            //this.ui.tabLeft.setTintFill(0xccccff).setScale(1.2);
+        }
+    }
+
+    buildItemMenu (itemIndex=0) {
+        let itemData = [];
+        for (let i=0; i<this.user.items.length; i++) {
+            itemData.push([
+                this.user.items[i].name + 
+                    ((this.user.items[i].quantity && this.user.items[i].quantity > 1)
+                        ? `  x ${this.user.items[i].quantity}`
+                        : ''),
+                this.consumeItem.bind(this)
+            ]);
+        }
+        this.ui.buildMenu(itemData, itemIndex);
+    }
+
+    consumeItem (itemIndex) {
+        console.log('consume item', itemIndex, this.user.items[itemIndex]);
+        if (this.user.items[itemIndex].quantity && this.user.items[itemIndex].quantity > 1) {
+            this.user.items[itemIndex].quantity--;
+        } else {
+            this.user.items.splice(itemIndex, 1);
+            itemIndex = 0;
+        }
+        this.buildItemMenu(itemIndex);
     }
 
     activatePet (pet) {
         this.pet = pet;
         this.pet.SetActive(this, 400, 400);
-        this.playLayer = this.add.layer([this.pet.sprite]);
-        this.ui.txtPetName.setText(this.pet.name);
+        this.playLayer.add([this.pet.sprite]);
+        this.ui.emit('petActivated');
+        
     }
 
     
 
-    update () {
-
+    update (time, delta) {
+        if (!this.isPaused) {
+            if (this.pet) {
+                this.pet.update(time, delta);
+            }
+        }
     }
 
 

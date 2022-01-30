@@ -26,10 +26,12 @@ export class SelectMonsterScene extends Phaser.Scene
 
         this.add.text(300, 300, "Select Pet", {
             fontFamily: 'beryl-digivice',
-            fontSize: 25
+            fontSize: 35
         });
 
-        this.user = UserModel.getInstance();
+        this.isActive = true;
+        this.game.scene.getScene('BGScene').events.on('button-two-clicked', this.selectTile.bind(this));
+        
 
     }
 
@@ -42,7 +44,12 @@ export class SelectMonsterScene extends Phaser.Scene
     }
 
     selectTile () {
+        if (!this.isActive) return;
+        this.isActive = false;
         console.log(`select tile {this.selectedTile}`);
+        UserModel.getInstance().selectPet(0);
+        this.game.scene.start('GameScene');
+        this.game.scene.stop('SelectMonsterScene');
     }
 
     update () {

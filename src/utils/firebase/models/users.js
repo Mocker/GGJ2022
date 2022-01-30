@@ -9,6 +9,7 @@ export class UserModel {
         this.user = null;
         this.monsters = null;
         this.pet = null;
+        this.items = [];
         return UserModel._instance;
     }
 
@@ -21,12 +22,51 @@ export class UserModel {
         const db = getDatabase();
         const userData = await (await get(ref(db, 'users/' + this.user.uid))).val();
         console.log(`user ${user.email} existing data: ${userData}`);
-        if  (userData && userData.monsters && userData.monsters.length > 0) {
+        //TODO:: use db data
+        this.monsters = [{
+            type: 'tadpole',
+            stage: 'egg',
+            baseData: {
+                "egg" : {
+                    "stage": "egg",
+                    "name": "blue egg",
+                    "displayName": "?? EGG ??",
+                    "className": "BlueEgg"
+                }
+            },
+            stats: {
+                energy: { min: 0, current: 90, max: 100 },
+                name: "?? EGG ??",
+                timers: {
+                    lived: 60000*5 //5 minutes?
+                }
+            }
+        }];
+        this.items = [
+        {
+            name: 'Candy Cane',
+            effects: {
+                energy: (e) => e+25
+            },
+            quantity: 5
+        },
+        {
+            name: 'Cake',
+            effects: {
+                happiness: (e) => e+25
+            },
+            quantity: 3
+        }];
+        /*if  (userData && userData.monsters && userData.monsters.length > 0) {
                 this.monsters = userData.monsters
         } else {
             this.monsters = [];
-        }
+        }*/
         return this;
+    }
+
+    selectPet (petIndex) {
+        this.pet = this.monsters[petIndex];
     }
 
     getUser() {
