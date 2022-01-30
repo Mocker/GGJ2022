@@ -161,7 +161,9 @@ class GameScene extends Phaser.Scene
             this.ui.showMessage(`You can't afford ${item.name}!`, 1200);
             console.log("Can't afford!"); return;
         }
-        this.user.items.push[{ quantity: 1,  ...item }];
+        this.user.money -= item.shopValue ;
+        this.ui.txtMoneyNumber.setText('$'+this.user.money);
+        this.foundItem(item);
     }
 
     consumeItem (itemIndex) {
