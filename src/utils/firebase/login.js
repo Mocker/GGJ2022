@@ -19,15 +19,7 @@ export class FireBaseSingleton {
                 if (user && user.emailVerified) {
                     this.authenticated = true;
                     const userModel = UserModel.getInstance();
-                    userModel.setUser(user)
-                    .then((userModel) => {
-                        /*if(userModel.monsters.length <= 0){
-                            game.scene.start("MonsterNameScene")
-                        } else {
-                            game.scene.start("SelectMonsterScene")
-                        }*/
-                        console.log("user monsters", userModel.monsters);
-                    });
+                    userModel.setUser(user);
                     
                 } else {
                     this.authenticated = false;
@@ -48,26 +40,27 @@ export class FireBaseSingleton {
         this.authenticated = false;
     }
 
-    signIn(email, password, errorCallback, successCallback) {
+    async signIn(email, password, errorCallback, successCallback) {
         const auth = getAuth();
 
-        setPersistence(auth, browserLocalPersistence)
-        .then(() => {
-            signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
+        try {
+
+            await setPersistence(auth, browserLocalPersistence);
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 successCallback(userCredential);
-            })
-            .catch((error) => {
-                errorCallback(error)
-            });
-        })
-        .catch((error) => {
+            }
+            catch(error) {
+                errorCallback(error);
+            }
+
+        }
+        catch(error) {
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(error);
-        });
-
+        }
 
     }
 

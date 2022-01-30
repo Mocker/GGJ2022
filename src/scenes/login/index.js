@@ -39,12 +39,11 @@ class LoginScene extends Phaser.Scene
         const switchMessage = (message, fontSize) => {
             textLabel.style.fontSize = fontSize;
             textLabel.innerText = message;
-        }
-
-        this.add.dom(170, 30, textLabel);
-    
+        }    
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+
+        this.add.dom(screenCenterX - 190, screenCenterY - 180, textLabel);
 
         var element = this.add.dom(screenCenterX, screenCenterY).createFromCache('loginform');
     
@@ -68,7 +67,8 @@ class LoginScene extends Phaser.Scene
                         switchMessage('Please verify the email sent', "1.3vw");
                     }
                     else {
-                        
+                        const userModel = UserModel.getInstance();
+                        userModel.setUser(user);
                     }
                 };
 
