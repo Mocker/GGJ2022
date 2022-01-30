@@ -39,6 +39,54 @@ export class Tadpole extends Pet
         console.log("tadpole evolves");
     }
 
+    getActionMenu () {
+        return [
+            ['Ribbit', this.shakeIt.bind(this), true],
+            ...super.getActionMenu()
+        ];
+    }
+
+    shakeIt () {
+        playAnimationByName('play', this.scene, this.sprite);
+    }
+
+    getBattleMenu () {
+        return [
+            ['To Battle!', this.doBattle.bind(this), true],
+            ['Go Explorin', this.doExplore.bind(this), true],
+            ...super.getBattleMenu()
+        ];
+    }
+
+    doBattle () {
+        this.scene.isPaused = true;
+        playAnimationByName('tintInOut', this.scene, this.sprite, {
+            duration: 2500
+        });
+        this.scene.tweens.add({
+            targets: this.sprite,
+            duration: 750,
+            scale: 2.5,
+            yoyo: true,
+            repeat: 3,
+            onComplete: this.resume.bind(this)
+        });
+    }
+
+    doExplore () {
+        this.scene.isPaused = true;
+        this.scene.tweens.add({
+            targets: this.sprite,
+            duration: 2500,
+            rotation: 6,
+            x: 800,
+            y: 800,
+            scale: 0.1,
+            yoyo: true,
+            onComplete: this.resume.bind(this)
+        });
+    }
+
     update (time, delta) {
 
     }

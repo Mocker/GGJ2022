@@ -173,8 +173,11 @@ export class GameUI   {
     onButtonTwo () {
         if (this.isMenuShown) {
             if (this.menuOptionSelected !== null && this.menuOptionsData[this.menuOptionSelected]) {
-                console.log(this.menuOptionSelected);
+                console.log(this.menuOptionsData[this.menuOptionSelected]);
                 this.menuOptionsData[this.menuOptionSelected][1](this.menuOptionSelected);
+                if (this.isMenuShown && this.menuOptionsData[this.menuOptionSelected].length > 2 && this.menuOptionsData[this.menuOptionSelected][2]) {
+                    this.closeMenu();
+                }
             }
         }
     }
