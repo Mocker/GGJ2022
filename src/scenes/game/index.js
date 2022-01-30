@@ -57,7 +57,7 @@ class GameScene extends Phaser.Scene
         const playMaskShape = this.make.graphics();
         playMaskShape.fillStyle(0xffffff);
         playMaskShape.beginPath();
-        playMaskShape.fillRect(220,220,400,400);
+        playMaskShape.fillRect(200,200,400,400);
         const playMask = new Phaser.Display.Masks.GeometryMask(this, playMaskShape);
         this.playLayer.setMask(playMask);
         const pet = this.createPet(this.user.pet.type, this.user.pet.stage, this.user.pet.stats);
