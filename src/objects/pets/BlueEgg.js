@@ -25,10 +25,10 @@ export class BlueEgg extends Egg
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;
-        this.implode(1500);
+        this.implode(500);
         setTimeout(()=>{
             this.scene.isPaused = false;
-        }, 1500);
+        }, 500);
 
     }
 
@@ -67,9 +67,28 @@ export class BlueEgg extends Egg
         this.scene.isPaused = true;
         this.explode(1500);
         setTimeout(()=>{
-            //this.baseData = petData.types['tadpole'].stages.baby;
-            //this.reloadSprite();
-            //this.implode(1500);
+            const newBaby = this.scene.createPet('tadpole','baby', this.customData);
+            this.scene.activatePet(newBaby);
+            this.clearPieces();
+            this.scene.playLayer.remove(this.sprite);
+            this.sprite.destroy();
+            /*this.baseData = petData.types['tadpole'].stages.baby;
+            this.name = this.baseData.name;
+
+            console.log(this.baseData);
+            this.reloadSprite();
+            this.sprite.setVisible(false);
+            console.log(this.pieces);
+            this.implode(500, {
+                minX: 200,
+                maxX: 600,
+                minY: 200,
+                maxY: 600
+            });
+            this.scene.ui.emit('petActivated');
+            setTimeout( this.scene.promptNewPetName.bind(this.scene)
+                ,500);
+            */
         },1500);
 
     }

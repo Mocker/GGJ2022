@@ -45,7 +45,7 @@ export class TitleScene extends Phaser.Scene
         this.titleTextImage = new Phaser.GameObjects.Sprite(this, 220, 320, 'title-text')
             .setOrigin(0, 0)
             .setAlpha(0)
-            .setTintFill(0xcc9999, 0xff0000)
+            .setTintFill(0x162b3c)
             .setScale(0.3, 0.3);
         this.add.existing(this.titleTextImage);
         this.titleTextImage.x = 220; this.titleTextImage.y = 320;
@@ -74,7 +74,7 @@ export class TitleScene extends Phaser.Scene
                 this.pieces.push(this.add.image(0, 0, `title-text-pieces`, i));
                 this.pieces[this.pieces.length - 1].setVisible(false);
                 this.pieces[this.pieces.length - 1].setScale(this.sprite.scale)
-                .setTintFill(0xcc9999, 0xff0000);
+                .setTintFill(0x162b3c);
                 
             }
         }
@@ -149,7 +149,7 @@ export class TitleScene extends Phaser.Scene
         //     ease: 'Expo.easeInOut',
         //     //onComplete: this.nextScene.bind(this)
         // });
-        this.implode(2000, //{});
+        this.implode(1000, //{});
             {
             minX: 220,
             maxX: 600,

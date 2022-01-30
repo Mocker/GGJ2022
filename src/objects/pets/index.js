@@ -1,11 +1,13 @@
 import { BlueEgg } from './BlueEgg';
 import { Baby } from './Baby';
 import { AdultCute } from './AdultCute';
+import { Tadpole } from './Tadpole';
 
 export const PetClasses = {
     BlueEgg,
     Baby,
-    AdultCute
+    AdultCute,
+    Tadpole
 };
 
 

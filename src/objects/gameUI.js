@@ -205,6 +205,8 @@ export class GameUI   {
         }
     }
 
+    
+
     onPetActivated () {
         this.txtPetName.setText(this.scene.pet.name);
         this.drawEvolveDots(220, 580, 10, this.scene.pet.baseData.evolveDots, 3);
