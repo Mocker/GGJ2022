@@ -72,6 +72,8 @@ export class BlueEgg extends Egg
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);
             this.sprite.destroy();
+            setTimeout( this.scene.promptNewPetName.bind(this.scene)
+                ,500);
             /*this.baseData = petData.types['tadpole'].stages.baby;
             this.name = this.baseData.name;
 

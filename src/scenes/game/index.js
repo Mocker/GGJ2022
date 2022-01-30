@@ -59,12 +59,9 @@ class GameScene extends Phaser.Scene
         playMaskShape.fillRect(220,220,400,400);
         const playMask = new Phaser.Display.Masks.GeometryMask(this, playMaskShape);
         this.playLayer.setMask(playMask);
-        
         const pet = this.createPet(this.user.pet.type, this.user.pet.stage, this.user.pet.stats);
         this.ui = new GameUI(this);
-        this.activatePet(pet);
-        console.log(this.pet);
-        
+        this.activatePet(pet);        
 
         this.bgScene = this.game.scene.getScene('BGScene');
         this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
@@ -152,7 +149,6 @@ class GameScene extends Phaser.Scene
         this.pet.SetActive(this, 400, 400);
         this.playLayer.add([this.pet.sprite]);
         this.ui.emit('petActivated');
-        
     }
 
 

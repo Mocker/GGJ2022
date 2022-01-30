@@ -8,7 +8,7 @@ export class UserModel {
             UserModel._instance = this;
         }
         this.user = null;
-        this.monsters = null;
+        this.monsters = [];
         this.pet = null;
         this.items = [];
         this.userCallback = null;
@@ -22,7 +22,7 @@ export class UserModel {
     async logout() {
         await FireBaseSingleton.getInstance().signOutUser();
         this.user = null;
-        this.monsters = null;
+        this.monsters = [];
         this.pet = null;
         this.items = [];
         this.userData = null;
@@ -32,13 +32,34 @@ export class UserModel {
         this.userCallback = callback;
     }
 
+    async updateUser() {
+        const db = getDatabase();
+        await set(ref(db, 'users/' + this.user.uid), {
+            user: this.user.email,
+            monsters: this.monsters,
+            items: this.items
+        });
+    }
+
+    async updateCurrentMonsterName(name) {
+        this.monsters[0].stats.name = name;
+        await this.updateUser();
+    }
+
+    addMonster(monster) {
+        this.monsters.push(monster);
+    }
+
     async setUser(user) {
         this.user = user;
         const db = getDatabase();
         const userData = await (await get(ref(db, 'users/' + this.user.uid))).val();
-        console.log(`user ${user.email} existing data: ${userData}`);
+        console.log(`user ${user.email} existing data:`);
+        console.log(userData);
+        this.monsters = userData.monsters ? userData.monsters : [];
+        this.items = userData.items ? userData.items : [];
         //TODO:: use db data
-        this.monsters = [{
+        /*this.monsters = [{
             type: 'tadpole',
             stage: 'baby',
             baseData: {
@@ -71,7 +92,7 @@ export class UserModel {
                 happiness: (e) => e+25
             },
             quantity: 3
-        }];
+        }];*/
         /*if  (userData && userData.monsters && userData.monsters.length > 0) {
                 this.monsters = userData.monsters
         } else {
@@ -83,30 +104,13 @@ export class UserModel {
         return this;
     }
 
-    selectPet (petIndex) {
+    selectPet(petIndex) {
+        this.petIndex = petIndex;
         this.pet = this.monsters[petIndex];
     }
 
     getUser() {
         return this.user;
-    }
-
-    async createUserWithData({monsterName, monsterData={}}) {
-        const db = getDatabase();
-        this.pet = {
-            name: monsterName,
-            ...monsterData
-        };
-        if (this.monsters) {
-            this.monsters.push(this.pet);
-        } else {
-            this.monsters = [this.pet];
-        }
-        await set(ref(db, 'users/' + this.user.uid), {
-            email: this.user.email,
-            monsters: this.monsters
-          });
-        return this;
     }
 
     startBattleWithMonster() {

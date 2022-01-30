@@ -41,6 +41,48 @@
                 "evolveDots": 3
             }
         }
+    },
+    "bacteria": {
+        "images": {
+            "egg": "pets/test-A-_0001_green-egg.png",
+            "baby": "pets/test-A-_0004_germ.png",
+            "adultCute": "pets/test-A-_0004_germ.png",
+            "adultEvil": "pets/test-A-_0004_germ.png"
+        },
+        "stages" : {
+            "egg" : {
+                "stage": "egg",
+                "name": "green egg",
+                "displayName": "?? EGG ??",
+                "className": "GreenEgg",
+                "type": "bacteria",
+                "evolveDots": 1
+            },
+            "baby" : {
+                "stage": "baby",
+                "name": "bacteria",
+                "displayName": "Bacteria",
+                "className": "Bacteria",
+                "type": "bacteria",
+                "evolveDots": 2
+            },
+            "adultCute" : {
+                "stage": "adultCute",
+                "name": "Cure Bacteria",
+                "displayName": "Cute Bacteria",
+                "className": "CuteBacteria",
+                "type": "bacteria",
+                "evolveDots": 3
+            },
+            "adultEvil" : {
+                "stage": "adultEvil",
+                "name": "Evil Bacteria",
+                "displayName": "Evil Bacteria",
+                "className": "EvilBacteria",
+                "type": "bacteria",
+                "evolveDots": 4
+            }
+        }
     }
  }   
 }

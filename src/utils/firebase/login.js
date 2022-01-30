@@ -20,7 +20,6 @@ export class FireBaseSingleton {
                     this.authenticated = true;
                     const userModel = UserModel.getInstance();
                     userModel.setUser(user);
-                    
                 } else {
                     this.authenticated = false;
                 }
