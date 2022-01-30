@@ -1,3 +1,12 @@
+var moveTo = (target, options={}) => ({
+    targets: target,
+    ...(options.x && { x: options.x }),
+    ...(options.y && { y: options.y }),
+    duration: 250, 
+    ease: 'Linear',
+    ...(options.onComplete && { onComplete: options.onComplete })
+});
+
 var playingAnimation = (target) => ({
     targets: target,
     alpha: { from: 0, to: 175 },
@@ -38,7 +47,8 @@ const attackAnimation = (target) => ({
 export var animationDictionary = {
     play: {counter: false, tween: playingAnimation},
     attack: {counter: false, tween: attackAnimation},
-    tintInOut: {counter: true, tween: tintInOutAnimation}
+    tintInOut: {counter: true, tween: tintInOutAnimation},
+    moveTo: {counter: false, tween: moveTo}
 }
 
 export var playAnimationByName = (animationName, scene, target, options) => {

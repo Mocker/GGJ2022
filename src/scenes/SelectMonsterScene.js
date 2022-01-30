@@ -1,9 +1,14 @@
 import Phaser from 'phaser';
-import * as petData from '../data/pets.json';
-import { GameUI } from '../objects/gameUI';
 import { UserModel } from '../utils';
+import { Image } from '../objects';
+import * as petData from '../data/pets.json';
+
 
 // Select Existing Pet or Select an Egg to start a new one
+const NEW_MONSTER_TYPE = 'tadpole';
+const ACTIVE_MONSTER_X = 390;
+const ACTIVE_MONSTER_Y = 500;
+const COMING_MONSTER_X = 250;
 
 export class SelectMonsterScene extends Phaser.Scene
 {
@@ -11,45 +16,94 @@ export class SelectMonsterScene extends Phaser.Scene
     constructor ()
     {
         super("SelectMonsterScene");
-        this.monsterTiles = [];
-        this.selectedTile = null;
+        this.newMonsterOption = null;
+        this.userMonsterImages = [];
+        this.user = UserModel.getInstance();
     }
     
     preload ()
     {
-        
+        for (let petType in petData.types) {
+            for (let imageFile in petData.types[petType].images) {
+                this.load.image(`${petType}-${imageFile}`, 'images/'+petData.types[petType].images[imageFile]);
+            }
+        }
     }
-
 
     create ()
     {
+        this.game.scene.getScene('BGScene').events.off('button-two-clicked');
 
-        this.add.text(300, 300, "Select Pet", {
+        const initFunc = () => {
+            this.newMonsterOption = new Image(this, `${NEW_MONSTER_TYPE}-egg`, ACTIVE_MONSTER_X, ACTIVE_MONSTER_Y);
+            for( let monster of this.user.monsters ) {
+                const image = new Image(this, `${monster.type}-${monster.stage}`, COMING_MONSTER_X, ACTIVE_MONSTER_Y);
+                image.image.setVisible(false);
+                this.userMonsterImages.push(image);
+            }
+        }
+
+        initFunc();
+
+        this.add.text(300, 250, "Select Pet", {
             fontFamily: 'beryl-digivice',
             fontSize: 35
+        }); 
+
+        let selectCounter = 0;
+
+        const monsterOptions = [this.newMonsterOption, ...this.userMonsterImages];
+        const nameOptions = ["New Monster", ...(this.user.monsters.map(monster => monster.stats.name))];
+
+        const currentMonsterName = this.add.text(300, 350, nameOptions[0], {
+            fontFamily: 'beryl-digivice',
+            fontSize: 25
         });
 
-        this.isActive = true;
-        this.game.scene.getScene('BGScene').events.on('button-two-clicked', this.selectTile.bind(this));
-        
+        const scrollMonster = (action) => {
 
-    }
+            currentMonsterName.setVisible(false);
+            const currentOption = monsterOptions[selectCounter % monsterOptions.length];
 
-    moveTileLeft () {
-        if (this.monsterTiles.length < 2) return;
-    }
+            if(action === "right") {
+                selectCounter++;
+            }
+            else {
+                selectCounter--;
+            }
 
-    moveTileRight () {
-        if (this.monsterTiles.length < 2) return;
-    }
+            const newOption = monsterOptions[selectCounter % monsterOptions.length];
 
-    selectTile () {
-        if (!this.isActive) return;
-        this.isActive = false;
-        console.log(`select tile {this.selectedTile}`);
-        UserModel.getInstance().selectPet(0);
-        this.game.scene.start('GameScene');
-        this.game.scene.stop('SelectMonsterScene');
+            currentOption.moveTo({ x: 560 - (newOption.image.displayWidth * newOption.image.scaleX), onComplete: () => {
+                currentOption.image.setVisible(false);
+                currentOption.image.x=COMING_MONSTER_X;
+                newOption.image.setVisible(true);
+                console.log(newOption.image.displayWidth * newOption.image.scaleX);
+                newOption.moveTo({x: ACTIVE_MONSTER_X, onComplete: () => {
+                    currentMonsterName.setVisible(true);
+                }});
+            }});
+
+            currentMonsterName.setText(nameOptions[selectCounter % monsterOptions.length])
+        }
+
+        this.game.scene.getScene('BGScene').events.on('button-one-clicked', () => scrollMonster("left"));
+        this.game.scene.getScene('BGScene').events.on('button-three-clicked',  () => scrollMonster("right"));
+
+        this.game.scene.getScene('BGScene').events.on('button-two-clicked',  () => {
+
+            if(selectCounter % monsterOptions.length === 0){
+                this.game.scene.start('MonsterNameScene');
+                this.game.scene.stop('SelectMonsterScene');
+            }
+            else {
+                this.user.selectPet((selectCounter % monsterOptions.length) - 1);
+                this.game.scene.start('GameScene');
+                this.game.scene.stop('SelectMonsterScene');
+            }
+
+        });
+
     }
 
     update () {

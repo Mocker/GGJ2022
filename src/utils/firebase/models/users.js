@@ -25,18 +25,20 @@ export class UserModel {
         //TODO:: use db data
         this.monsters = [{
             type: 'tadpole',
-            stage: 'egg',
+            stage: 'adultCute',
             baseData: {
-                "egg" : {
-                    "stage": "egg",
-                    "name": "blue egg",
-                    "displayName": "?? EGG ??",
-                    "className": "BlueEgg"
+                "adultCute" : {
+                    "stage": "adultCutes",
+                    "name": "CuteGuy",
+                    "displayName": "Cute Guy",
+                    "className": "CuteGuy",
+                    "type": "tadpole",
+                    "evolveDots": 3
                 }
             },
             stats: {
                 energy: { min: 0, current: 90, max: 100 },
-                name: "?? EGG ??",
+                name: "random name",
                 timers: {
                     lived: 60000*5 //5 minutes?
                 }

@@ -40,11 +40,15 @@ class GameScene extends Phaser.Scene
     {   
         const baseData = this.petData.types[petType].stages[stage];
         console.log(petType, stage, baseData, customData);
-        return PetFactory(baseData.className)(baseData, customData);
+        return PetFactory(stage)(baseData, customData);
     }
 
     create ()
-    {
+    {   
+        this.game.scene.getScene('BGScene').events.off('button-one-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-two-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-three-clicked');
+
         this.user = UserModel.getInstance();
 
         this.playLayer = this.add.layer();

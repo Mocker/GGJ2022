@@ -3,7 +3,7 @@
     "tadpole": {
         "images": {
             "egg": "pets/test-A-_0002_blue-egg.png",
-            "baby": "pets/test-A-_006_Tadpole.png",
+            "baby": "pets/test-A-_0006_Tadpole.png",
             "adultCute": "pets/test-A-_0007_Cute-guy-1.png",
             "adultEvil": "monster_test_01-big.png"
         },
@@ -24,8 +24,8 @@
                 "type": "tadpole",
                 "evolveDots": 2
             },
-            "adultGood" : {
-                "stage": "adultGood",
+            "adultCute" : {
+                "stage": "adultCute",
                 "name": "CuteGuy",
                 "displayName": "Cute Guy",
                 "className": "CuteGuy",

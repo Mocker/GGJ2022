@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FireBaseSingleton } from '../../utils';
+import { FireBaseSingleton, UserModel } from '../../utils';
 
 class LoginScene extends Phaser.Scene
 {
@@ -32,7 +32,7 @@ class LoginScene extends Phaser.Scene
         var textLabel = document.createElement('textLabel');
 
         textLabel.style.color = "white";
-        textLabel.style.fontFamily = "gameFont"
+        textLabel.style.fontFamily = "beryl-digivice"
         textLabel.style.fontSize = "3vw";
 
         const switchMessage = (message, fontSize) => {
@@ -45,7 +45,7 @@ class LoginScene extends Phaser.Scene
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
-        var element = this.add.dom(screenCenterX, screenCenterY - 30).createFromCache('loginform');
+        var element = this.add.dom(screenCenterX, screenCenterY).createFromCache('loginform');
     
         element.setPerspective(800);
 
@@ -66,6 +66,7 @@ class LoginScene extends Phaser.Scene
                         switchMessage('Please verify the email sent', "1.3vw");
                     }
                     else {
+
                         this.scene.start("SelectMonsterScene");
                         this.scene.remove("LoginScene");
                     }
