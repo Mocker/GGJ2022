@@ -144,7 +144,6 @@ class GameScene extends Phaser.Scene
         for (let i=0; i<shopData.items.length; i++) {
             let item = shopData.items[i];
             shop.push([
-                (this.user.money < item.shopValue ? '(need $) ' : '') +
                 '$'+`${item.shopValue} - ${item.name}`,
                 this.buyItem.bind(this),
                 (this.user.money >= item.shopValue)
@@ -159,6 +158,7 @@ class GameScene extends Phaser.Scene
         console.log('buyItem', item);
         if (this.user.money < item.shopValue) {
             // Todo: sound?
+            this.ui.showMessage(`You can't afford ${item.name}!`, 1200);
             console.log("Can't afford!"); return;
         }
         this.user.items.push[{ quantity: 1,  ...item }];
@@ -166,6 +166,7 @@ class GameScene extends Phaser.Scene
 
     consumeItem (itemIndex) {
         console.log('consume item', itemIndex, this.user.items[itemIndex]);
+        this.pet.useItem(this.user.items[itemIndex]);
         if (this.user.items[itemIndex].quantity && this.user.items[itemIndex].quantity > 1) {
             this.user.items[itemIndex].quantity--;
         } else {
@@ -173,6 +174,30 @@ class GameScene extends Phaser.Scene
             itemIndex = 0;
         }
         this.buildItemMenu(itemIndex);
+    }
+
+    // acquired, add or increment user items
+    // should add most logic to users class
+    foundItem (newItem) {
+        const incrementedItem = false;
+        for (let i=0; i<this.user.items.length; i++) {
+            if (this.user.items[i].name == newItem.name) {
+                incrementedItem = true;
+                this.user.items[i].quantity += newItem.quantity;
+                break;
+            }
+        }
+        if  (!incrementedItem) {
+            this.user.items.push(newItem);
+        }
+        this.ui.showMessage(`Acquired ${newItem.name}${newItem.quantity ? 'x'+newItem.quantity: ''}`, 1200);
+
+    }
+
+    foundMoney (coins) {
+        this.user.money += coins;
+        this.ui.txtMoneyNumber.setText('$'+this.user.money);
+        this.ui.showMessage(`Found ${coins} shiny coins`, 1200);
     }
 
     activatePet (pet) {

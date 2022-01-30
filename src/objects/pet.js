@@ -215,6 +215,11 @@ export class Pet
 
     useItem (item) {
         console.log(`${this.name} uses ${item.name} - its super effective`, item);
+        const msg = `${this.name} uses ${item.name} .. ` +
+        ((item.tags && (item.tags[this.type] || item.tags[this.baseData.classname]))
+            ? 'delicious!'
+            : 'meh');
+        this.scene.ui.showMessage(msg, 1500);
     }
 
     resume () {

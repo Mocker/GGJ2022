@@ -13,7 +13,7 @@ import { FireBaseSingleton, UserModel } from './utils';
 
 var config = {
     type: Phaser.WEBGL,
-    backgroundColor: '#333311',
+    //backgroundColor: '#829c7a',
     parent: 'game',
     dom: {
         createContainer: true
@@ -23,7 +23,9 @@ var config = {
         mode: Phaser.Scale.RESIZE,
         parent: 'game',
         //autoCenter: Phaser.Scale.CENTER_BOTH
-    }
+    },
+    "render.transparent": true,
+    transparent: true
 };
 
 // Our game Object
