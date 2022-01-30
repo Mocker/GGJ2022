@@ -40,9 +40,8 @@ export class BGScene extends Phaser.Scene
         const button2 = new Button(400, 690, 'Attack', 'ui-btn-circle', this, this.onButtonTwo.bind(this));
         const button3 = new Button(540, 680, 'RedFlash', 'ui-btn-right', this, this.onButtonThree.bind(this));
 
-        //this.buttonLayer.add([button.button, button2.button, button3.button]);
+        this.buttonLayer.add([button.button, button2.button, button3.button]);
 
-        console.log("bgFrame created");
 
         this.events.on('button-two-clicked', this.onPowerOn.bind(this));
     }
@@ -70,7 +69,6 @@ export class BGScene extends Phaser.Scene
     }
 
     onButtonTwo () {
-        console.log("BUTTON TWO CLICKY");
         this.events.emit('button-two-clicked');
     }
     onButtonThree () {

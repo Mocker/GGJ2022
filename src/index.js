@@ -10,7 +10,6 @@ import {
 } from './scenes';
 import { FireBaseSingleton, UserModel } from './utils';
 
-//import { TitleScene } from './scenes/titlescreen';
 
 var config = {
     type: Phaser.WEBGL,
@@ -23,7 +22,7 @@ var config = {
     scale: {
         mode: Phaser.Scale.FIT,
         parent: 'game',
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        //autoCenter: Phaser.Scale.CENTER_BOTH
     }
 };
 

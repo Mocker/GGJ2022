@@ -12,7 +12,7 @@ export class Pet
         this.sprite = null;
         this.x = 0;
         this.y = 0;
-        this.name = this.customData.name;
+        this.name = this.customData.name || this.baseData.name;
         this.pieces = [];
     }
 
@@ -41,6 +41,8 @@ export class Pet
         this.clearPieces();
         this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage}`);
         this.sprite.setDisplaySize(300,300);
+        this.scene.add.existing(this.sprite);
+        this.scene.playLayer.add([this.sprite]);
         this.buildPieces();
     }
 
@@ -60,8 +62,8 @@ export class Pet
             for (let i=0; i<this.piecesSprite.frameTotal; i++){
                 
                 this.pieces.push(this.scene.add.image(0, 0, `${this.baseData.type}-${this.baseData.stage}-pieces`, i));
-                this.pieces[this.pieces.length - 1].setVisible(false);
-                this.pieces[this.pieces.length - 1].setScale(this.sprite.scale);
+                this.pieces[i].setVisible(false);
+                this.pieces[i].setScale(this.sprite.scale);
                 
             }
             this.scene.playLayer.add(this.pieces);
@@ -69,22 +71,23 @@ export class Pet
     }
 
     clearPieces () {
+        this.scene.playLayer.remove(this.pieces);
         for (let i=0; i<this.pieces.length; i++){
             this.pieces[i].destroy();
         }
         this.pieces = [];
     }
 
-    implode (duration=4000) {
+    implode (duration=4000,bounds) {
         let pX = 0;
         let pY = 0;
         let minMaxX = [
-            this.sprite.x - (this.sprite.displayWidth / 2),
-            this.sprite.x + (this.sprite.displayWidth / 2)
+            bounds ? bounds.minX : this.sprite.x - (this.sprite.displayWidth / 2),
+            bounds ? bounds.maxX : this.sprite.x + (this.sprite.displayWidth / 2)
         ];
         let minMaxY = [
-            this.sprite.y - (this.sprite.displayHeight / 2),
-            this.sprite.y + (this.sprite.displayHeight / 2)
+            bounds ? bounds.minY : this.sprite.y - (this.sprite.displayHeight / 2),
+            bounds ? bounds.maxY : this.sprite.y + (this.sprite.displayHeight / 2)
         ];
         let columns = Math.floor(this.sprite.width / this.FRAME_WIDTH);
         let scaledWidth = Math.floor(this.sprite.displayWidth / columns); 
@@ -95,9 +98,12 @@ export class Pet
             this.pieces[i].x = startX; this.pieces[i].y = startY;
             this.pieces[i].setVisible(true);
             this.pieces[i].setAlpha(0.3);
-            this.pieces[i].setScale(0);
+            this.pieces[i].setScale(0.1);
             const dx = minMaxX[0] + pX*scaledWidth;
             const dy = minMaxY[0] + pY*scaledWidth;
+            if (i<2) {
+                console.log(startX,startY,dx,dy);
+            }
             this.scene.tweens.add({
                 targets: this.pieces[i],
                 duration: duration,
@@ -107,7 +113,7 @@ export class Pet
                 scaleY: this.sprite.scale,
                 angle: 360,
                 alpha: 1,
-                delay: i / 3.5,
+                //delay: i / 3.5,
                 yoyo: false
 
             });
@@ -118,7 +124,7 @@ export class Pet
             }
         }
         this.sprite.setVisible(false);
-        setTimeout(this.hideExplodeys.bind(this, true), duration + (this.pieces.length/3.5)); 
+        setTimeout(this.hideExplodeys.bind(this, true), duration /*+ (this.pieces.length/3.5)*/); 
     }
 
     explode (duration=4000) {

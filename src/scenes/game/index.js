@@ -40,7 +40,7 @@ class GameScene extends Phaser.Scene
     {   
         const baseData = this.petData.types[petType].stages[stage];
         console.log(petType, stage, baseData, customData);
-        return PetFactory(stage)(baseData, customData);
+        return PetFactory(baseData.className)(baseData, customData);
     }
 
     create ()
@@ -131,7 +131,17 @@ class GameScene extends Phaser.Scene
         
     }
 
-    
+
+    promptNewPetName () {
+        this.game.scene.start('MonsterNameScene');
+    }
+    setPetName (petName) {
+        this.pet.name = petName;
+        this.pet.customData.name = petName;
+        this.ui.txtPetName.setText(petName);
+        this.game.scene.stop('MonsterNameScene');
+        this.isPaused = false;
+    }
 
     update (time, delta) {
         if (!this.isPaused) {

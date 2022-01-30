@@ -15,10 +15,13 @@ export class SelectMonsterScene extends Phaser.Scene
 
     constructor ()
     {
-        super("SelectMonsterScene");
+        super({
+            key: "SelectMonsterScene",
+            active: false
+        });
         this.newMonsterOption = null;
         this.userMonsterImages = [];
-        this.user = UserModel.getInstance();
+        
     }
     
     preload ()
@@ -33,7 +36,7 @@ export class SelectMonsterScene extends Phaser.Scene
     create ()
     {
         this.game.scene.getScene('BGScene').events.off('button-two-clicked');
-
+        this.user = UserModel.getInstance();
         const initFunc = () => {
             this.newMonsterOption = new Image(this, `${NEW_MONSTER_TYPE}-egg`, ACTIVE_MONSTER_X, ACTIVE_MONSTER_Y);
             for( let monster of this.user.monsters ) {
@@ -93,7 +96,28 @@ export class SelectMonsterScene extends Phaser.Scene
         this.game.scene.getScene('BGScene').events.on('button-two-clicked',  () => {
 
             if(selectCounter % monsterOptions.length === 0){
-                this.game.scene.start('MonsterNameScene');
+                //this.game.scene.start('MonsterNameScene');
+                this.user.monsters.push({
+                    type: 'tadpole',
+                    stage: 'egg',
+                    name: '?? EGG ??',
+                    baseData: {
+                        "stage": "egg",
+                        "name": "?? EGG ??",
+                        "displayName": "?? EGG ??",
+                        "className": "BlueEgg",
+                        "type": "tadpole",
+                        "evolveDots": 1
+                    },
+                    stats: {
+                        energy: { min: 0, current: 90, max: 100 },
+                        timers: {
+                            lived: 60000*5 //5 minutes?
+                        }
+                    }
+                });
+                this.user.selectPet(this.user.monsters.length-1);
+                this.game.scene.start('GameScene');
                 this.game.scene.stop('SelectMonsterScene');
             }
             else {
