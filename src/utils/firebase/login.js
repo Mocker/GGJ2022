@@ -20,6 +20,11 @@ export class FireBaseSingleton {
                     const userModel = UserModel.getInstance();
                     userModel.setUser(user)
                     .then((userModel) => {
+                        if(userModel.monsters.length <= 0){
+                            game.scene.start("MonsterNameScene")
+                        } else {
+                            game.scene.start("SelectMonsterScene")
+                        }
                         console.log("user monsters", userModel.monsters);
                     });
                     

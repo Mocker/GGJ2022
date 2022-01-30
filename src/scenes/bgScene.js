@@ -48,6 +48,8 @@ export class BGScene extends Phaser.Scene
     }
 
     onPowerOn () {
+        console.log("false");
+        console.log(this.isPowerOn);
         if (this.isPowerOn) return;
         this.isPowerOn = true;
         this.tweens.add({

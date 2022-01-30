@@ -16,6 +16,9 @@ export class MonsterNameScene extends Phaser.Scene
 
     create ()
     {   
+        // HATCHING ANIMATION
+
+
         var textLabel = document.createElement('textLabel');
 
         textLabel.style.color = "white";

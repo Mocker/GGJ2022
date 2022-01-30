@@ -3,13 +3,14 @@ import { Baby } from './Baby';
 import { AdultCute } from './AdultCute';
 
 export const PetClasses = {
-    BlueEgg,
-    Baby,
-    AdultCute
+    blueEgg: BlueEgg,
+    baby: Baby,
+    adultCute: AdultCute
 };
 
 
 export function PetFactory(petType) {
+    console.log('petType: ' + petType);
     return (baseData, customData) => {
         return new PetClasses[petType](baseData, customData);
     };
