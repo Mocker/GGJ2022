@@ -75,9 +75,9 @@ export class BGScene extends Phaser.Scene
 
         this.buttonLayer = this.add.layer();
 
-        const button = new Button(260, 680, 'Play', 'ui-btn-left'+this.currentTheme, this, this.onButtonOne.bind(this));
-        const button2 = new Button(400, 690, 'Attack', 'ui-btn-circle'+this.currentTheme, this, this.onButtonTwo.bind(this));
-        const button3 = new Button(540, 680, 'RedFlash', 'ui-btn-right'+this.currentTheme, this, this.onButtonThree.bind(this));
+        const button = new Button(321 * 0.8, 852 * 0.8, 'Play', 'ui-btn-left'+this.currentTheme, this, this.onButtonOne.bind(this));
+        const button2 = new Button(504 * 0.8, 862 * 0.8, 'Attack', 'ui-btn-circle'+this.currentTheme, this, this.onButtonTwo.bind(this));
+        const button3 = new Button(683 * 0.8, 851 * 0.8, 'RedFlash', 'ui-btn-right'+this.currentTheme, this, this.onButtonThree.bind(this));
 
         this.buttonLayer.add([button.button, button2.button, button3.button]);
 

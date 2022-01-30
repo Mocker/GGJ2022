@@ -6,7 +6,8 @@ export class Button {
         this.image = image;
         this.button = new Phaser.GameObjects.Sprite(scene, x, y, image)
             .setInteractive({ useHandCursor: true })
-            .setDisplaySize(100,100)
+            .setScale(0.8)
+            //.setDisplaySize(100,100)
             .on('pointerdown', this.clickDaButton.bind(this));
         scene.add.existing(this.button);
     }
