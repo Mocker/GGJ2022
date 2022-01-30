@@ -65,7 +65,7 @@ export class BlueEgg extends Egg
     Evolve () {
         super.Evolve();
         // transition to tadpole
-        this.scene.ui.closeMenu();
+        //this.scene.ui.closeMenu();
         this.scene.isPaused = true;
         this.explode(1500);
         setTimeout(()=>{

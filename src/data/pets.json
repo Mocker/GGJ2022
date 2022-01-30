@@ -28,7 +28,7 @@
                 "stage": "adultCute",
                 "name": "CuteGuy",
                 "displayName": "Cute Guy",
-                "className": "CuteGuy",
+                "className": "AdultCute",
                 "type": "tadpole",
                 "evolveDots": 3
             },
@@ -70,7 +70,7 @@
                 "stage": "adultCute",
                 "name": "Cure Bacteria",
                 "displayName": "Cute Bacteria",
-                "className": "CuteBacteria",
+                "className": "AdultCute",
                 "type": "bacteria",
                 "evolveDots": 3
             },

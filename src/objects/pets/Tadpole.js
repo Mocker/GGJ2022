@@ -36,7 +36,21 @@ export class Tadpole extends Pet
     }
 
     Evolve () {
-        console.log("tadpole evolves");
+        super.Evolve();
+        // transition to tadpole
+        //this.scene.ui.closeMenu();
+        this.scene.isPaused = true;
+        this.explode(1500);
+        setTimeout(()=>{
+            const newBaby = this.scene.createPet('tadpole','adultCute', this.customData);
+            this.scene.activatePet(newBaby);
+            this.clearPieces();
+            this.scene.playLayer.remove(this.sprite);
+            this.sprite.destroy();
+            setTimeout( this.scene.promptNewPetName.bind(this.scene)
+                ,500);
+        },1500);
+
     }
 
     getActionMenu () {
