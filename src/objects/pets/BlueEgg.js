@@ -52,12 +52,12 @@ export class BlueEgg extends Egg
     update (time, delta) {
         super.update(time, delta);
         // evolve counter only counts down when pet has energy
-        if (this.customData.energy.current > 0 && this.customData.msLeftToEvolve > 0) {
-            this.customData.msLeftToEvolve -= delta;
-            if (this.customData.msLeftToEvolve <= 0) {
-                this.Evolve();
-            }
-        }
+        // if (this.customData.energy.current > 0 && this.customData.msLeftToEvolve > 0) {
+        //     this.customData.msLeftToEvolve -= delta;
+        //     if (this.customData.msLeftToEvolve <= 0) {
+        //         this.Evolve();
+        //     }
+        // }
     }
 
     Evolve () {
@@ -74,23 +74,6 @@ export class BlueEgg extends Egg
             this.sprite.destroy();
             setTimeout( this.scene.promptNewPetName.bind(this.scene)
                 ,500);
-            /*this.baseData = petData.types['tadpole'].stages.baby;
-            this.name = this.baseData.name;
-
-            console.log(this.baseData);
-            this.reloadSprite();
-            this.sprite.setVisible(false);
-            console.log(this.pieces);
-            this.implode(500, {
-                minX: 200,
-                maxX: 600,
-                minY: 200,
-                maxY: 600
-            });
-            this.scene.ui.emit('petActivated');
-            setTimeout( this.scene.promptNewPetName.bind(this.scene)
-                ,500);
-            */
         },1500);
 
     }

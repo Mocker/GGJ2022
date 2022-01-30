@@ -212,6 +212,11 @@ export class Pet
         console.log("Gone explorin");
     }
 
+
+    useItem (item) {
+        console.log(`${this.name} uses ${item.name} - its super effective`, item);
+    }
+
     resume () {
         this.scene.isPaused = false;
     }
