@@ -62,12 +62,13 @@ class GameScene extends Phaser.Scene
         this.playLayer.setMask(playMask);
         const pet = this.createPet(this.user.pet.type, this.user.pet.stage, this.user.pet.stats);
         this.ui = new GameUI(this);
+        this.bgScene = this.game.scene.getScene('BGScene');
         this.activatePet(pet);        
 
-        this.bgScene = this.game.scene.getScene('BGScene');
-        this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
+        
+        /*this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
         this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
-        this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));
+        this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));*/
 
     }
 
@@ -82,11 +83,16 @@ class GameScene extends Phaser.Scene
         }
     }
     onButtonTwo () {
+        console.log('clicked button two');
         if  (this.ui.isMenuShown) {
+            console.log("menu shown");
             this.ui.onButtonTwo();
         } else if (!this.isPaused) { // show menu 2 ('action')
+            console.log("show action menu");
             this.buildActionMenu();
             this.ui.tabMid.setTint(0xffffff, 0xff0000).setScale(1.2);
+        } else {
+            console.log("GameScene paused");
         }
 
     }
@@ -207,6 +213,10 @@ class GameScene extends Phaser.Scene
         this.pet.SetActive(this, 400, 400);
         this.playLayer.add([this.pet.sprite]);
         this.ui.emit('petActivated');
+        this.isPaused = false;
+        this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
+        this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
+        this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));
     }
 
 
@@ -219,6 +229,9 @@ class GameScene extends Phaser.Scene
         this.ui.txtPetName.setText(petName);
         this.game.scene.stop('MonsterNameScene');
         this.isPaused = false;
+        this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
+        this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
+        this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));
     }
 
     update (time, delta) {

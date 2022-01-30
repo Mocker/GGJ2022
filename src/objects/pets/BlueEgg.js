@@ -13,6 +13,8 @@ export class BlueEgg extends Egg
         if (!this.customData.stats) {
             this.customData.stats = {
                 energy: { min: 0, current: 90, max: 100 },
+                attachment: { min: 0, current: 10, max: 100 },
+                luck: { min: 0, current: 10, max: 100 },
                 name: "?? EGG ??",
                 timers: {
                     lived: 60000*5 //5 minutes?
