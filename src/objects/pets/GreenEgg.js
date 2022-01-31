@@ -70,6 +70,7 @@ export class GreenEgg extends Egg
         this.explode(1500);
         setTimeout(()=>{
             const newBaby = this.scene.createPet('bacteria','baby', this.customData);
+            newBaby.customData.timers.lived = 0;
             this.scene.activatePet(newBaby);
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);

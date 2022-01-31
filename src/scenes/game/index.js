@@ -252,6 +252,9 @@ class GameScene extends Phaser.Scene
         this.playLayer.add([this.pet.sprite]);
         this.ui.emit('petActivated');
         this.isPaused = false;
+        this.game.scene.getScene('BGScene').events.off('button-one-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-two-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-three-clicked');
         this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
         this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
         this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));
@@ -267,6 +270,9 @@ class GameScene extends Phaser.Scene
         this.ui.txtPetName.setText(petName);
         this.game.scene.stop('MonsterNameScene');
         this.isPaused = false;
+        this.game.scene.getScene('BGScene').events.off('button-one-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-two-clicked');
+        this.game.scene.getScene('BGScene').events.off('button-three-clicked');
         this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
         this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
         this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));

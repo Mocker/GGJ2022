@@ -47,12 +47,11 @@ export class Tadpole extends Pet
         this.explode(1500);
         setTimeout(()=>{
             const newBaby = this.scene.createPet('tadpole','adultCute', this.customData);
+            newBaby.customData.timers.lived = 0;
             this.scene.activatePet(newBaby);
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);
             this.sprite.destroy();
-            setTimeout( this.scene.promptNewPetName.bind(this.scene)
-                ,500);
         },1500);
 
     }
