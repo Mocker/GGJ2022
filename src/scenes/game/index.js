@@ -63,7 +63,6 @@ class GameScene extends Phaser.Scene
                 }
             }
         }
-        console.log(this.sfx);
 
         this.user = UserModel.getInstance();
 
@@ -79,7 +78,6 @@ class GameScene extends Phaser.Scene
         this.bgScene = this.game.scene.getScene('BGScene');
         this.activatePet(pet);        
 
-        
         /*this.bgScene.events.on('button-one-clicked', this.onButtonOne.bind(this));
         this.bgScene.events.on('button-two-clicked', this.onButtonTwo.bind(this));
         this.bgScene.events.on('button-three-clicked', this.onButtonThree.bind(this));*/
@@ -197,6 +195,7 @@ class GameScene extends Phaser.Scene
         this.user.money -= item.shopValue ;
         this.ui.txtMoneyNumber.setText('$'+this.user.money);
         this.foundItem(item);
+        this.user.updateUser();
     }
 
     consumeItem (itemIndex) {
@@ -235,7 +234,7 @@ class GameScene extends Phaser.Scene
             this.user.items.push(newItem);
         }
         this.ui.showMessage(`Acquired ${newItem.name}${newItem.quantity ? 'x'+newItem.quantity: ''}`, 1200);
-
+        this.user.updateUser();
     }
 
     foundMoney (coins) {
@@ -245,10 +244,12 @@ class GameScene extends Phaser.Scene
         this.user.money += coins;
         this.ui.txtMoneyNumber.setText('$'+this.user.money);
         this.ui.showMessage(`Found ${coins} shiny coins`, 1200);
+        this.user.updateUser();
     }
 
     activatePet (pet) {
         this.pet = pet;
+        this.user.updateUser(this.pet);
         this.pet.SetActive(this, 400, 400);
         this.playLayer.add([this.pet.sprite]);
         this.ui.emit('petActivated');

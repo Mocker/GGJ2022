@@ -16,6 +16,8 @@ export class AdultCute extends Pet
                 }
             };
         }
+        this.type = baseData.type;
+        this.stage = baseData.stage;
         console.log('adult cute', baseData, customData);
     }
 

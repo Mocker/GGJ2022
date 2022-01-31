@@ -71,7 +71,7 @@ export class SelectMonsterScene extends Phaser.Scene
 
         const monsterOptions = [...this.userMonsterImages, ...this.newMonsterOptions ];
         const nameOptions = [
-            ...(this.user.monsters.map( monster => monster.stats ? monster.stats.name : petData[monster.type].stages[monster.stage].name)),
+            ...(this.user.monsters.map( monster => monster.name ? monster.name : petData[monster.type].stages[monster.stage].name)),
             ...(Object.keys(petData.types).map(name => `New ${petData.types[name].stages.egg.name}`))
         ];
 

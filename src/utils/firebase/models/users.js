@@ -33,18 +33,21 @@ export class UserModel {
         this.userCallback = callback;
     }
 
-    async updateUser(updatedPet=null) {
+    async updateUser(updatedPet = null) {
+        console.log("updatedPet");
+        console.log(updatedPet);
         if (updatedPet && this.petIndex !== null ) {
             this.user.pet = {
                 name: updatedPet.name,
                 type: updatedPet.type,
                 stage: updatedPet.stage,
                 baseData: updatedPet.baseData,
-                customData: updatedPet.stats
+                customData: updatedPet.customData
             }
             this.monsters[this.petIndex] = this.user.pet;
             
         }
+        console.log(this.monsters);
         const db = getDatabase();
         await set(ref(db, 'users/' + this.user.uid), {
             user: this.user.email,
@@ -55,7 +58,7 @@ export class UserModel {
     }
 
     async updateCurrentMonsterName(name) {
-        this.monsters[0].stats.name = name;
+        this.monsters[this.petIndex].name = name;
         await this.updateUser();
     }
 
@@ -109,7 +112,7 @@ export class UserModel {
         // }];
         // await this.updateUser();
         if  (userData && userData.monsters && userData.monsters.length > 0) {
-                this.monsters = userData.monsters
+            this.monsters = userData.monsters
         } else {
             this.monsters = [];
         }

@@ -20,6 +20,8 @@ export class Fish extends Pet
                 }
             };
         }
+        this.type = baseData.type;
+        this.stage = baseData.stage;
         console.log('fish', baseData, customData);
     }
 

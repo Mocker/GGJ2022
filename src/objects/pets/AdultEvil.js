@@ -16,6 +16,8 @@ export class AdultEvil extends Pet
                 }
             };
         }
+        this.type = baseData.type;
+        this.stage = baseData.stage;
         console.log('adult evil', baseData, customData);
     }
 
