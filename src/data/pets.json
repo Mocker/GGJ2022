@@ -55,7 +55,7 @@
             "egg": "pets/test-A-_0001_green-egg.png",
             "baby": "pets/test-A-_0004_germ.png",
             "adultCute": "pets/test-A-_0004_germ.png",
-            "adultEvil": "pets/test-A-_0004_germ.png"
+            "adultEvil": "pets/Dino_.png"
         },
         "sounds": {
             "cryGerm": "cry_germ.mp3",
@@ -95,11 +95,62 @@
                 "stage": "adultEvil",
                 "name": "Evil Bacteria",
                 "displayName": "Evil Bacteria",
-                "className": "EvilBacteria",
+                "className": "AdultEvil",
                 "type": "bacteria",
                 "evolveDots": 4
             }
         }
+    },
+    "fish": {
+        "images": {
+            "egg": "pets/test-A-_0003_yellow-egg.png",
+            "baby": "pets/test-A-_0005_fish.png",
+            "adultCute": "pets/test-A-_0007_Cute-guy-1.png",
+            "adultEvil": "pets/Dino_.png"
+        },
+        "sounds": {
+            "cryGerm": "cry_germ.mp3",
+            "cryFish": "cry_fish.mp3",
+            "cryCutie": "cry_cutie.mp3",
+            "hatch": "hatch.mp3",
+            "money": "money.mp3",
+            "eat": "eat.mp3",
+            "swipeTwo": "swipe_2.mp3"
+        },
+        "stages" : {
+            "egg" : {
+                "stage": "egg",
+                "name": "yellow egg",
+                "displayName": "?? EGG ??",
+                "className": "YellowEgg",
+                "type": "fish",
+                "evolveDots": 1
+            },
+            "baby" : {
+                "stage": "baby",
+                "name": "bacteria",
+                "displayName": "Bacteria",
+                "className": "Fish",
+                "type": "fish",
+                "evolveDots": 2
+            },
+            "adultCute" : {
+                "stage": "adultCute",
+                "name": "Cure Fish",
+                "displayName": "Cute Fish",
+                "className": "AdultCute",
+                "type": "fish",
+                "evolveDots": 3
+            },
+            "adultEvil" : {
+                "stage": "adultEvil",
+                "name": "Evil Fish",
+                "displayName": "Evil Fish",
+                "className": "AdultEvil",
+                "type": "fish",
+                "evolveDots": 4
+            }
+        }
     }
- }   
+  } 
 }

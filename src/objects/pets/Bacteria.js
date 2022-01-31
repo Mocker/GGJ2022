@@ -45,7 +45,7 @@ export class Bacteria extends Pet
         this.scene.isPaused = true;
         this.explode(1500);
         setTimeout(()=>{
-            const newBaby = this.scene.createPet('bacteria','adultCute', this.customData);
+            const newBaby = this.scene.createPet('bacteria','adultEvil', this.customData);
             newBaby.customData.timers.lived = 0;
             this.scene.activatePet(newBaby);
             this.clearPieces();

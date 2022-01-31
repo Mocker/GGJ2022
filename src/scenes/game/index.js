@@ -164,9 +164,9 @@ class GameScene extends Phaser.Scene
         this.ui.buildMenu(itemData, itemIndex);
     }
 
-    buildShopMenu () {
+    buildShopMenu (itemIndex=0) {
         let itemData = this.getShopItems();
-        this.ui.buildMenu(itemData);
+        this.ui.buildMenu(itemData, itemIndex=0);
     }
 
     // return list of items that user can by, disabled if they dont have the moneys
@@ -216,6 +216,7 @@ class GameScene extends Phaser.Scene
             this.user.items.splice(itemIndex, 1);
             itemIndex = 0;
         }
+        this.user.updateUser(this.pet);
         this.buildItemMenu(itemIndex);
     }
 

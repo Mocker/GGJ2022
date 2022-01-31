@@ -2,42 +2,65 @@ import { Pet } from '../pet';
 import { playAnimationByName } from '../../tweensanimations';
 import * as petData from '../../data/pets.json';
 
-export class AdultEvil extends Pet
+export class Fish extends Pet
 {
     constructor(baseData, customData)
     {
         super(baseData, customData);
+        // TODO:: set random range of evolve timer
+        this.customData.msLeftToEvolve = 500; //1000 * 60000 * 1;
         this.name = this.customData.name || this.baseData.name;
-        if (!this.customData.stats) {
+        if (!this.customData.stats) { 
+            // starter stats? this should be passed in from the egg stage though
             this.customData.stats = {
                 energy: { min: 0, current: 90, max: 100 },
+                name: "?? FISH ??",
                 timers: {
                     lived: 60000*5 //5 minutes?
                 }
             };
         }
-        console.log('adult evil', baseData, customData);
+        console.log('fish', baseData, customData);
     }
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;
         this.implode(500);
-        if (this.scene.sfx.cryTadpole) {
-            this.scene.sfx.cryCutie.play();
+        if (this.scene.sfx.cryFish) {
+            this.scene.sfx.cryFish.play();
         }
         setTimeout(()=>{
-            this.scene.isPaused = false;
+            
+            if (this.customData.name) {
+                this.scene.isPaused = false;
+            } else {
+                this.scene.promptNewPetName();
+            }
         }, 500);
     }
 
     Evolve () {
-        console.log("cannot evolve further");
+        super.Evolve();
+        // transition to tadpole
+        //this.scene.ui.closeMenu();
+        this.scene.isPaused = true;
+        this.explode(1500);
+        const whichEvolve = (0.5 < Math.random()) ? 'adultCute' : 'adultEvil';
+        setTimeout(()=>{
+            const newBaby = this.scene.createPet('fish',whichEvolve, this.customData);
+            newBaby.customData.timers.lived = 0;
+            this.scene.activatePet(newBaby);
+            this.clearPieces();
+            this.scene.playLayer.remove(this.sprite);
+            this.sprite.destroy();
+        },1500);
+
     }
 
     getActionMenu () {
         return [
-            ['Roar', this.shakeIt.bind(this), true],
+            ['Flop', this.shakeIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
@@ -47,8 +70,8 @@ export class AdultEvil extends Pet
     }
 
     getBattleMenu () {
-        return [
-            ['To Battle!', this.doBattle.bind(this), true],
+        return [ //Too young to be battlin
+            ['To Battle!', this.scene.ui.showMessage.bind(this.scene.ui, 'Too young to be battlin', 1200)], 
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];
@@ -56,9 +79,6 @@ export class AdultEvil extends Pet
 
     doBattle () {
         this.scene.isPaused = true;
-        if (this.scene.sfx.swipe) {
-            this.scene.sfx.swipe.play();
-        }
         playAnimationByName('tintInOut', this.scene, this.sprite, {
             duration: 2500
         });
@@ -91,7 +111,7 @@ export class AdultEvil extends Pet
         // TODO:: fill in exploration rewards here
         if  (rando > 0.8) {
             this.scene.foundItem({
-                name: 'Bone',
+                name: 'Cake',
                 quantity: 2
             });
         } else {
@@ -101,6 +121,6 @@ export class AdultEvil extends Pet
     }
 
     update (time, delta) {
-
+        super.update(time, delta);
     }
 }

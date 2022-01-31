@@ -9,6 +9,7 @@ export class UserModel {
         }
         this.user = null;
         this.monsters = [];
+        this.petIndex = null;
         this.pet = null;
         this.items = [];
         this.userCallback = null;
@@ -32,7 +33,18 @@ export class UserModel {
         this.userCallback = callback;
     }
 
-    async updateUser() {
+    async updateUser(updatedPet=null) {
+        if (updatedPet && this.petIndex !== null ) {
+            this.user.pet = {
+                name: updatedPet.name,
+                type: updatedPet.type,
+                stage: updatedPet.stage,
+                baseData: updatedPet.baseData,
+                customData: updatedPet.stats
+            }
+            this.monsters[this.petIndex] = this.user.pet;
+            
+        }
         const db = getDatabase();
         await set(ref(db, 'users/' + this.user.uid), {
             user: this.user.email,

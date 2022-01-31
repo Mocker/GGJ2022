@@ -69,7 +69,7 @@ export class Tadpole extends Pet
 
     getBattleMenu () {
         return [ //Too young to be battlin
-            //['To Battle!', this.doBattle.bind(this), true],
+            ['To Battle!', this.scene.ui.showMessage.bind(this.scene.ui, 'Too young to be battlin', 1200)], 
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];

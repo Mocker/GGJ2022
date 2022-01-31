@@ -51,6 +51,7 @@ export class SelectMonsterScene extends Phaser.Scene
                 image.image.setVisible(false);
                 this.newMonsterOptions.push(image);
             }
+            console.log(this.newMonsterOptions);
             for ( let monster of this.user.monsters ) {
                 const image = new Image(this, `${monster.type}-${monster.stage}`, COMING_MONSTER_X, ACTIVE_MONSTER_Y);
                 image.image.setVisible(false);
