@@ -267,6 +267,7 @@ class GameScene extends Phaser.Scene
         this.pet.name = petName;
         this.pet.customData.name = petName;
         this.ui.txtPetName.setText(petName);
+        console.log("stop monster scene");
         this.game.scene.stop('MonsterNameScene');
         this.isPaused = false;
         this.game.scene.getScene('BGScene').events.off('button-one-clicked');
