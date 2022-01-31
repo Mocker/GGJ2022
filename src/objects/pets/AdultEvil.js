@@ -50,7 +50,7 @@ export class AdultEvil extends Pet
 
     getBattleMenu () {
         return [
-            ['To Battle!', this.doBattle.bind(this), true],
+            ['Roar!', this.doBattle.bind(this), true],
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];

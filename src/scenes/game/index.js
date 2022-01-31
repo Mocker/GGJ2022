@@ -36,6 +36,15 @@ class GameScene extends Phaser.Scene
                 this.load.audio(`${petType}-${soundFile}`, 'images/sfx/'+petData.types[petType].sounds[soundFile]);
             }
         }
+
+        for(let i = 0; i < 15; i++) {
+            if(i < 10) {
+                this.load.image(`germidle${i}`, `images/pets/germ/Germ%20idle/Germ_Idle0000${i}.png`);
+            }
+            else {
+                this.load.image(`germidle${i}`, `images/pets/germ/Germ%20idle/Germ_Idle000${i}.png`);
+            }
+        }
     }
 
     createPet(petType, stage, customData={})
@@ -47,6 +56,16 @@ class GameScene extends Phaser.Scene
 
     create ()
     {   
+        console.log("created idle germ");
+        console.log(([...Array(15).keys()].map((index) => ({key: `germidle${index}`}))));
+        this.anims.create({
+            key: 'idlegerm',
+            frames: [
+                ...([...Array(15).keys()].map((index) => ({key: `germidle${index}`})))
+            ],
+            frameRate: 5,
+            repeat: -1
+        });
         clearButtonEvents(this.game);
         this.game.scene.getScene('BGScene').events.off('button-one-clicked');
         this.game.scene.getScene('BGScene').events.off('button-two-clicked');
@@ -118,7 +137,7 @@ class GameScene extends Phaser.Scene
         const actionData = [
             ...this.pet.getActionMenu(),
             ['Force Evolve', this.pet.Evolve.bind(this.pet), true],
-            ['Logout', this.logout.bind(this)],
+            //['Logout', this.logout.bind(this)],
             
         ];
         this.ui.buildMenu(actionData);

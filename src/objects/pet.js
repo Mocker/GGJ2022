@@ -34,10 +34,7 @@ export class Pet
             this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage}`);
             this.sprite.setDisplaySize(300,300);
             this.buildPieces();
-        }
-
-        
-        
+        }        
     }
 
 
