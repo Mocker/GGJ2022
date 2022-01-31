@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { Image } from './images'
 
 export class Pet
 {

@@ -21,6 +21,8 @@ export class BlueEgg extends Egg
                 }
             };
         }
+        this.type = baseData.type;
+        this.stage = baseData.stage;
         console.log('blueegg', baseData, customData);
     }
 

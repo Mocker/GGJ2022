@@ -19,6 +19,8 @@ export class Bacteria extends Pet
                 }
             };
         }
+        this.type = baseData.type;
+        this.stage = baseData.stage;
         console.log('bacteria', baseData, customData);
     }
 

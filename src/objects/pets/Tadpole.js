@@ -5,8 +5,10 @@ import * as petData from '../../data/pets.json';
 export class Tadpole extends Pet
 {
     constructor(baseData, customData)
-    {
+    {   
         super(baseData, customData);
+        console.log("customData");
+        console.log(customData);
         // TODO:: set random range of evolve timer
         this.customData.msLeftToEvolve = 500; //1000 * 60000 * 1;
         this.name = this.customData.name || this.baseData.name;
@@ -16,9 +18,13 @@ export class Tadpole extends Pet
                 name: "?? EGG ??",
                 timers: {
                     lived: 60000*5 //5 minutes?
-                }
+                },
+                type: baseData.type,
+                stage: baseData.stage,
             };
         }
+        this.type = baseData.type;
+        this.stage = baseData.stage;
         console.log('tadpole', baseData, customData);
     }
 
