@@ -26,6 +26,12 @@ export class YellowEgg extends Egg
         console.log('yellowegg', baseData, customData);
     }
 
+    getBattleMenu () {
+        return [ //Too young to be a battlin
+            ...super.getBattleMenu()
+        ];
+    }
+
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;

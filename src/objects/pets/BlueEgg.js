@@ -33,10 +33,14 @@ export class BlueEgg extends Egg
         setTimeout(()=>{
             this.scene.isPaused = false;
         }, 500);
-
     }
 
-    
+    getBattleMenu () {
+        return [ //Too young to be a battlin
+            ...super.getBattleMenu()
+        ];
+    }
+
 
     OnActionOne () {
         playAnimationByName('play', this.scene, this.sprite);

@@ -30,11 +30,9 @@ class GameScene extends Phaser.Scene
     {
         for (let petType in petData.types) {
             for (let imageFile in petData.types[petType].images) {
-                console.log('preloading', `${petType}-${imageFile}`);
                 this.load.image(`${petType}-${imageFile}`, 'images/'+petData.types[petType].images[imageFile]);
             }
             for (let soundFile in petData.types[petType].sounds) {
-                console.log('preloading', `${petType}-${soundFile}`);
                 this.load.audio(`${petType}-${soundFile}`, 'images/sfx/'+petData.types[petType].sounds[soundFile]);
             }
         }
@@ -58,7 +56,6 @@ class GameScene extends Phaser.Scene
         for (let petType in petData.types) {
             for (let soundFile in petData.types[petType].sounds) {
                 if (!this.sfx[`${soundFile}`]) {
-                    console.log('preloading', `${petType}-${soundFile}`);
                     this.sfx[`${soundFile}`] = this.sound.add(`${petType}-${soundFile}`);
                 }
             }
