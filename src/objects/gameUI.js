@@ -17,6 +17,7 @@ export class GameUI   {
         playMaskShape.fillRect(200,200,400,600);
         const playMask = new Phaser.Display.Masks.GeometryMask(this.scene, playMaskShape);
         this.layer.setMask(playMask);
+        this.welcomeHasBeenDone = false;
 
         this.menu = [
             {
@@ -269,10 +270,13 @@ export class GameUI   {
     
 
     onPetActivated () {
-        this.txtMoneyNumber.setText('$'+this.scene.user.money);
-        this.txtPetName.setText(this.scene.pet.name);
-        this.drawEvolveDots(220, 580, 10, this.scene.pet.baseData.evolveDots, 3);
-        this.showMessage(`${this.scene.pet.name} welcomes you back`, 1500);
+        if(!this.welcomeHasBeenDone) {
+            this.welcomeHasBeenDone = true;
+            this.txtMoneyNumber.setText('$'+this.scene.user.money);
+            this.txtPetName.setText(this.scene.pet.name);
+            this.drawEvolveDots(220, 580, 10, this.scene.pet.baseData.evolveDots, 3);
+            this.showMessage(`${this.scene.pet.name} welcomes you back`, 1500);
+        }
     }
 
     emit (eventName, eventData) {

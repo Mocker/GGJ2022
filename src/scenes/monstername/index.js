@@ -17,19 +17,7 @@ export class MonsterNameScene extends Phaser.Scene
     create ()
     {   
         clearButtonEvents(this.game);
-        var textLabel = document.createElement('textLabel');
 
-        textLabel.style.color = "white";
-        textLabel.style.fontFamily = "gameFont"
-        textLabel.style.fontSize = "3vw";
-
-        const switchMessage = (message, fontSize) => {
-            textLabel.style.fontSize = fontSize;
-            textLabel.innerText = message;
-        }
-
-        this.add.dom(170, 30, textLabel);
-    
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
@@ -37,16 +25,14 @@ export class MonsterNameScene extends Phaser.Scene
     
         element.setPerspective(800);
 
-        const createMonsterButton = document.getElementById( 'createMonsterButton' );
-
-        createMonsterButton.onclick = (event) => {
+        this.game.scene.getScene('BGScene').events.on('button-two-clicked', () => {
             const inputMonsterName = document.getElementById("monstername");
 
             if(inputMonsterName.value !== '' && inputMonsterName.value.length < 9) {
                 UserModel.getInstance().updateCurrentMonsterName(inputMonsterName.value);
                 this.game.scene.getScene('GameScene').setPetName(inputMonsterName.value);
             }
-        }
+        });
 
     }
     

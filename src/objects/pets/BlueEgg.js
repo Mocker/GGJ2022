@@ -81,8 +81,7 @@ export class BlueEgg extends Egg
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);
             this.sprite.destroy();
-            setTimeout( this.scene.promptNewPetName.bind(this.scene)
-                ,500);
+            
         },1500);
 
     }

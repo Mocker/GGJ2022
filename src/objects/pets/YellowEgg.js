@@ -21,15 +21,7 @@ export class YellowEgg extends Egg
                 }
             };
         }
-        this.type = baseData.type;
-        this.stage = baseData.stage;
         console.log('yellowegg', baseData, customData);
-    }
-
-    getBattleMenu () {
-        return [ //Too young to be a battlin
-            ...super.getBattleMenu()
-        ];
     }
 
     SetActive (scene, x, y) {
