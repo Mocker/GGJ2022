@@ -206,7 +206,7 @@ export class Pet
     }
 
     getBattleMenu() {
-        return [];
+        return [["Coming Soon!", () => console.log("coming soon!")]];
     }
 
     doBattle () {
