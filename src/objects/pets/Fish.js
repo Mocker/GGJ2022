@@ -34,7 +34,7 @@ export class Fish extends Pet
         }
         setTimeout(()=>{
             
-            if (this.customData.name) {
+            if (this.name) {
                 this.scene.isPaused = false;
             } else {
                 this.scene.promptNewPetName();

@@ -31,8 +31,11 @@ export class Bacteria extends Pet
         if (this.scene.sfx.cryBacteria) {
             this.scene.sfx.cryBacteria.play();
         }
+        console.log("playing animation");
+        this.sprite.play("idlegerm");
+        this.sprite.setScale(1.1);
         setTimeout(()=>{
-            if (this.customData.name) {
+            if (this.name) {
                 this.scene.isPaused = false;
             } else {
                 this.scene.promptNewPetName();
@@ -59,7 +62,7 @@ export class Bacteria extends Pet
 
     getActionMenu () {
         return [
-            ['Germ things', this.shakeIt.bind(this), true],
+            ['Shake It!', this.shakeIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
