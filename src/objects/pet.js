@@ -226,6 +226,7 @@ export class Pet
             ? 'delicious!'
             : 'meh');
         this.scene.ui.showMessage(msg, 1500);
+        return true;
     }
 
     resume () {

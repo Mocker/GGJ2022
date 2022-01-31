@@ -8,5 +8,10 @@ export class Egg extends Pet
 
     }
 
+    useItem (item) {
+        //can't use items
+        return false;
+    }
+
     
 }

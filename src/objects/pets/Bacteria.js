@@ -2,42 +2,63 @@ import { Pet } from '../pet';
 import { playAnimationByName } from '../../tweensanimations';
 import * as petData from '../../data/pets.json';
 
-export class AdultCute extends Pet
+export class Bacteria extends Pet
 {
     constructor(baseData, customData)
     {
         super(baseData, customData);
+        // TODO:: set random range of evolve timer
+        this.customData.msLeftToEvolve = 500; //1000 * 60000 * 1;
         this.name = this.customData.name || this.baseData.name;
         if (!this.customData.stats) {
             this.customData.stats = {
                 energy: { min: 0, current: 90, max: 100 },
+                name: "?? EGG ??",
                 timers: {
                     lived: 60000*5 //5 minutes?
                 }
             };
         }
-        console.log('adult cute', baseData, customData);
+        console.log('bacteria', baseData, customData);
     }
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;
         this.implode(500);
-        if (this.scene.sfx.cryTadpole) {
-            this.scene.sfx.cryCutie.play();
+        if (this.scene.sfx.cryBacteria) {
+            this.scene.sfx.cryBacteria.play();
         }
         setTimeout(()=>{
-            this.scene.isPaused = false;
+            if (this.customData.name) {
+                this.scene.isPaused = false;
+            } else {
+                this.scene.promptNewPetName();
+            }
         }, 500);
     }
 
     Evolve () {
-        console.log("cannot evolve further");
+        super.Evolve();
+        // transition to cute/evil aduilt
+        //this.scene.ui.closeMenu();
+        this.scene.isPaused = true;
+        this.explode(1500);
+        setTimeout(()=>{
+            const newBaby = this.scene.createPet('bacteria','adultCute', this.customData);
+            this.scene.activatePet(newBaby);
+            this.clearPieces();
+            this.scene.playLayer.remove(this.sprite);
+            this.sprite.destroy();
+            setTimeout( this.scene.promptNewPetName.bind(this.scene)
+                ,500);
+        },1500);
+
     }
 
     getActionMenu () {
         return [
-            ['Cuddle', this.shakeIt.bind(this), true],
+            ['Germ things', this.shakeIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
@@ -47,8 +68,8 @@ export class AdultCute extends Pet
     }
 
     getBattleMenu () {
-        return [
-            ['To Battle!', this.doBattle.bind(this), true],
+        return [ //Too young to be a battlin
+            //['To Battle!', this.doBattle.bind(this), true],
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];
@@ -56,9 +77,6 @@ export class AdultCute extends Pet
 
     doBattle () {
         this.scene.isPaused = true;
-        if (this.scene.sfx.swipe) {
-            this.scene.sfx.swipe.play();
-        }
         playAnimationByName('tintInOut', this.scene, this.sprite, {
             duration: 2500
         });

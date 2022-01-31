@@ -19,14 +19,18 @@ export class Tadpole extends Pet
                 }
             };
         }
-        console.log('blueegg', baseData, customData);
+        console.log('tadpole', baseData, customData);
     }
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;
         this.implode(500);
+        if (this.scene.sfx.cryTadpole) {
+            this.scene.sfx.cryTadpole.play();
+        }
         setTimeout(()=>{
+            
             if (this.customData.name) {
                 this.scene.isPaused = false;
             } else {
@@ -65,8 +69,8 @@ export class Tadpole extends Pet
     }
 
     getBattleMenu () {
-        return [
-            ['To Battle!', this.doBattle.bind(this), true],
+        return [ //Too young to be battlin
+            //['To Battle!', this.doBattle.bind(this), true],
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];

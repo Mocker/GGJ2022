@@ -33,8 +33,11 @@ class GameScene extends Phaser.Scene
                 console.log('preloading', `${petType}-${imageFile}`);
                 this.load.image(`${petType}-${imageFile}`, 'images/'+petData.types[petType].images[imageFile]);
             }
+            for (let soundFile in petData.types[petType].sounds) {
+                console.log('preloading', `${petType}-${soundFile}`);
+                this.load.audio(`${petType}-${soundFile}`, 'images/sfx/'+petData.types[petType].sounds[soundFile]);
+            }
         }
-        //image = new Image(this, 'monster', 'monster_test_01-big.png', 400, 400);
     }
 
     createPet(petType, stage, customData={})
@@ -50,6 +53,17 @@ class GameScene extends Phaser.Scene
         this.game.scene.getScene('BGScene').events.off('button-one-clicked');
         this.game.scene.getScene('BGScene').events.off('button-two-clicked');
         this.game.scene.getScene('BGScene').events.off('button-three-clicked');
+
+        this.sfx = {};
+        for (let petType in petData.types) {
+            for (let soundFile in petData.types[petType].sounds) {
+                if (!this.sfx[`${soundFile}`]) {
+                    console.log('preloading', `${petType}-${soundFile}`);
+                    this.sfx[`${soundFile}`] = this.sound.add(`${petType}-${soundFile}`);
+                }
+            }
+        }
+        console.log(this.sfx);
 
         this.user = UserModel.getInstance();
 
@@ -128,6 +142,14 @@ class GameScene extends Phaser.Scene
     }
 
     buildItemMenu (itemIndex=0) {
+        let menuData = [
+            ['Check Bag', this.buildInventoryMenu.bind(this)],
+            ['Visit Shop', this.buildShopMenu.bind(this)]
+        ];
+        this.ui.buildMenu(menuData, itemIndex);
+    }
+
+    buildInventoryMenu (itemIndex=0) {
         let itemData = [];
         for (let i=0; i<this.user.items.length; i++) {
             itemData.push([
@@ -138,8 +160,13 @@ class GameScene extends Phaser.Scene
                 this.consumeItem.bind(this)
             ]);
         }
-        itemData.push(...this.getShopItems());
+        //itemData.push(...this.getShopItems());
         this.ui.buildMenu(itemData, itemIndex);
+    }
+
+    buildShopMenu () {
+        let itemData = this.getShopItems();
+        this.ui.buildMenu(itemData);
     }
 
     // return list of items that user can by, disabled if they dont have the moneys
@@ -160,7 +187,7 @@ class GameScene extends Phaser.Scene
 
     buyItem (itemIndex) {
         // this index relates to menu position, we are assuming user items are first in the menu, this might not always be true
-        let item = shopData.items[itemIndex - this.user.items.length];
+        let item = shopData.items[itemIndex];
         console.log('buyItem', item);
         if (this.user.money < item.shopValue) {
             // Todo: sound?
@@ -174,7 +201,15 @@ class GameScene extends Phaser.Scene
 
     consumeItem (itemIndex) {
         console.log('consume item', itemIndex, this.user.items[itemIndex]);
-        this.pet.useItem(this.user.items[itemIndex]);
+        if (!this.pet.useItem(this.user.items[itemIndex])) {
+            //returns false when pet cant use the item
+            console.log('cant use item');
+            return;
+        }
+        if (this.sfx.eat) {
+            this.sfx.eat.play();
+        }
+        
         if (this.user.items[itemIndex].quantity && this.user.items[itemIndex].quantity > 1) {
             this.user.items[itemIndex].quantity--;
         } else {
@@ -203,6 +238,9 @@ class GameScene extends Phaser.Scene
     }
 
     foundMoney (coins) {
+        if (this.sfx.money) {
+            this.sfx.money.play();
+        }
         this.user.money += coins;
         this.ui.txtMoneyNumber.setText('$'+this.user.money);
         this.ui.showMessage(`Found ${coins} shiny coins`, 1200);

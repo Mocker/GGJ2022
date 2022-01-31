@@ -203,6 +203,7 @@ export class GameUI   {
         this.tabLeft.clearTint().setScale(1);
         this.tabMid.clearTint().setScale(1);
         this.tabRight.clearTint().setScale(1);
+        this.scene.game.scene.getScene('BGScene').sfxBack.play();
     }
 
 

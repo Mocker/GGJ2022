@@ -32,15 +32,7 @@ export class BGScene extends Phaser.Scene
     }
 
     preload () {
-        //this.load.image('bg-frame', 'images/ui/DEVICE_A01_0008_device body.png');
-        this.load.image('bg-frame', 'images/ui/Mountain Steel/MiteByte_Mountain Steel.png');
         this.load.image('bg-solid', 'images/ui/test-A-_0000_BG.png');
-        this.load.image('ui-btn-left', 'images/ui/DEVICE_A01_crop_0000s_0004_L-.png');
-        this.load.image('ui-btn-circle', 'images/ui/DEVICE_A01_crop_0000s_0002_circle.png');
-        this.load.image('ui-btn-right', 'images/ui/DEVICE_A01_crop_0000s_0006_R.png');
-        this.load.image('ui-btn-left-on', 'images/ui/DEVICE_A01_crop_0000s_0005_L-push.png');
-        this.load.image('ui-btn-circle-on', 'images/ui/DEVICE_A01_crop_0000s_0003_circle-push.png');
-        this.load.image('ui-btn-right-on', 'images/ui/DEVICE_A01_crop_0000s_0007_R-push.png');
 
         const themeKeys = Object.keys(this.themes);
         for (let i=0; i<themeKeys.length; i++) {
@@ -53,6 +45,9 @@ export class BGScene extends Phaser.Scene
             this.load.image(`ui-btn-circle${themeKeys[i]}-on`, `images/ui/${themeKeys[i]}/B 1 push_${theme.suffix}.png`);
             this.load.image(`ui-btn-right${themeKeys[i]}-on`, `images/ui/${themeKeys[i]}/R push_${theme.suffix}.png`);
         }
+
+        this.load.audio('sfx-back', 'images/sfx/back.mp3');
+        this.load.audio('sfx-select', 'images/sfx/select.mp3');
 
         
     }
@@ -67,6 +62,9 @@ export class BGScene extends Phaser.Scene
         this.bgSolid = this.add.sprite(400, 400, 'bg-solid')
             .setAlpha(0)
             .setDisplaySize(400, 400);
+
+        this.sfxBack = this.sound.add('sfx-back');
+        this.sfxSelect = this.sound.add('sfx-select');
 
         this.powerLight = new Phaser.GameObjects.Graphics(this).setAlpha(0);
         this.powerLight.fillStyle(0xff0000);
@@ -132,6 +130,7 @@ export class BGScene extends Phaser.Scene
     }
 
     onButtonTwo () {
+        this.sfxSelect.play();
         this.events.emit('button-two-clicked');
     }
     onButtonThree () {
