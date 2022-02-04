@@ -170,6 +170,7 @@ export class GameUI   {
         const MENU_PADDING_RIGHT = 40;
         const MENU_PADDING_UP = 30;
         this.MENU_PADDING_UP = MENU_PADDING_UP;
+        console.log(menuData, selectOption);
         menuData.push(['Close', this.closeMenu.bind(this)]);
         for(let i=0; i<menuData.length; i++){
             const menuObject = new Phaser.GameObjects.Text(this.scene,
@@ -194,6 +195,7 @@ export class GameUI   {
     }
 
     closeMenu () {
+        console.log("close menu");
         for(let i=0; i<this.menuOptions.length; i++){
             this.menuOptions[i].destroy();
         }
@@ -229,9 +231,13 @@ export class GameUI   {
         if (this.isMenuShown) {
             if (this.menuOptionSelected !== null && this.menuOptionsData[this.menuOptionSelected]) {
                 console.log(this.menuOptionsData[this.menuOptionSelected]);
-                this.menuOptionsData[this.menuOptionSelected][1](this.menuOptionSelected);
-                if (this.isMenuShown && this.menuOptionsData[this.menuOptionSelected].length > 2 && this.menuOptionsData[this.menuOptionSelected][2]) {
+                
+                if (this.isMenuShown && this.menuOptionsData[this.menuOptionSelected].length > 2 && this.menuOptionsData[this.menuOptionSelected][2] === true) {
+                    this.menuOptionsData[this.menuOptionSelected][1](this.menuOptionSelected);
+                    console.log("closing menu after selection");
                     this.closeMenu();
+                } else {
+                    this.menuOptionsData[this.menuOptionSelected][1](this.menuOptionSelected);
                 }
             }
         }

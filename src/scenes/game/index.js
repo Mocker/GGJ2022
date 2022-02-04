@@ -158,7 +158,7 @@ class GameScene extends Phaser.Scene
     buildItemMenu (itemIndex=0) {
         let menuData = [
             ['Check Bag', this.buildInventoryMenu.bind(this)],
-            ['Visit Shop', this.buildShopMenu.bind(this)]
+            ['Visit Shop', this.buildShopMenu.bind(this), false]
         ];
         this.ui.buildMenu(menuData, itemIndex);
     }
@@ -181,6 +181,7 @@ class GameScene extends Phaser.Scene
     buildShopMenu (itemIndex=0) {
         let itemData = this.getShopItems();
         this.ui.buildMenu(itemData, itemIndex=0);
+        return false;
     }
 
     // return list of items that user can by, disabled if they dont have the moneys
