@@ -26,18 +26,20 @@ export class YellowEgg extends Egg
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
-        this.scene.isPaused = true;
-        this.implode(500);
-        setTimeout(()=>{
-            this.scene.isPaused = false;
-        }, 500);
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-egg-yellow-idle`);
+            this.sprite.setDisplaySize(300,300);
+        }   
+        
+        this.sprite.play('pet-egg-yellow-idle');
 
     }
 
     
 
     OnActionOne () {
-        playAnimationByName('play', this.scene, this.sprite);
+        //playAnimationByName('play', this.scene, this.sprite);
     }
 
     OnActionTwo () {
@@ -48,7 +50,7 @@ export class YellowEgg extends Egg
     }
 
     OnActionThree () {
-        playAnimationByName('attack', this.scene, this.sprite);
+        //playAnimationByName('attack', this.scene, this.sprite);
     }
 
     update (time, delta) {
@@ -57,27 +59,36 @@ export class YellowEgg extends Egg
         // if (this.customData.energy.current > 0 && this.customData.msLeftToEvolve > 0) {
         //     this.customData.msLeftToEvolve -= delta;
         //     if (this.customData.msLeftToEvolve <= 0) {
-        //         this.Evolve();
+        //         //this.Evolve();
         //     }
         // }
     }
 
-    Evolve () {
-        super.Evolve();
-        // transition to tadpole
-        //this.scene.ui.closeMenu();
-        this.scene.isPaused = true;
-        this.explode(1500);
-        setTimeout(()=>{
-            const newBaby = this.scene.createPet('fish','baby', this.customData);
-            newBaby.customData.timers.lived = 0;
-            this.scene.activatePet(newBaby);
-            this.clearPieces();
-            this.scene.playLayer.remove(this.sprite);
-            this.sprite.destroy();
-            setTimeout( this.scene.promptNewPetName.bind(this.scene)
-                ,500);
-        },1500);
+    onPeek () {
+        if (!this.scene.isPaused) {
+            this.playOnce('pet-egg-yellow-peek', 'pet-egg-yellow-idle', 0);
+        }
+    }
 
+    Evolve () {
+        this.scene.isPaused = true;
+        if (this.scene.sfx['hatch']) this.scene.sfx['hatch'].play();
+        this.playOnce('pet-egg-yellow-hatch', 'pet-egg-yellow-hatch', 1, this.makeNewPet.bind(this));
+        
+
+    }
+
+    makeNewPet () {
+        const self = this;
+        setTimeout(() => {
+            const newBaby = self.scene.createPet('fish','baby', this.customData);
+            newBaby.customData.timers.lived = 0;
+            self.scene.activatePet(newBaby);
+            //this.clearPieces();
+            self.scene.playLayer.remove(self.sprite);
+            self.sprite.destroy();
+            setTimeout( this.scene.promptNewPetName.bind(self.scene)
+                ,500);
+        }, 1500);
     }
 }

@@ -46,9 +46,14 @@ export class BGScene extends Phaser.Scene
             this.load.image(`ui-btn-right${themeKeys[i]}-on`, `images/ui/${themeKeys[i]}/R push_${theme.suffix}.png`);
         }
 
+
+        this.load.image(`ui-power-on`, `images/ui/light.png`);
+        
+
         this.load.audio('sfx-back', 'images/sfx/back.mp3');
         this.load.audio('sfx-select', 'images/sfx/select.mp3');
 
+        this.load.audio('sfx-startup', 'images/sfx/startup.mp3');
         
     }
 
@@ -65,13 +70,13 @@ export class BGScene extends Phaser.Scene
 
         this.sfxBack = this.sound.add('sfx-back');
         this.sfxSelect = this.sound.add('sfx-select');
+        this.sfxStartup = this.sound.add('sfx-startup');
 
-        this.powerLight = new Phaser.GameObjects.Graphics(this).setAlpha(0);
-        this.powerLight.fillStyle(0xff0000);
-        this.powerLight.fillCircle(269, 170, 10);
+        this.powerLight = new Phaser.GameObjects.Sprite(this, 334 * 0.8, 207 * 0.8,  'ui-power-on').setAlpha(0);
         this.add.existing(this.powerLight);
 
         this.buttonLayer = this.add.layer();
+        this.buttonLayer.depth = 0;
 
         const button = new Button(321 * 0.8, 852 * 0.8, 'Play', 'ui-btn-left'+this.currentTheme, this, this.onButtonOne.bind(this));
         const button2 = new Button(504 * 0.8, 862 * 0.8, 'Attack', 'ui-btn-circle'+this.currentTheme, this, this.onButtonTwo.bind(this));
@@ -86,11 +91,9 @@ export class BGScene extends Phaser.Scene
     onPowerOn () {
         if (this.isPowerOn) return;
         this.isPowerOn = true;
-        this.tweens.add({
-            duration: 1500,
-            targets: this.powerLight,
-            alpha: 1
-        });
+        this.powerLight.alpha = 1;
+        this.sfxStartup.play();
+        
         this.tweens.add({
             duration: 3000,
             targets: this.bgSolid,

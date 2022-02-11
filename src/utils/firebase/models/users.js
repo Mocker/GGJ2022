@@ -13,6 +13,7 @@ export class UserModel {
         this.pet = null;
         this.items = [];
         this.userCallback = null;
+        this.loadedDemoUser = false;
         return UserModel._instance;
     }
 
@@ -48,6 +49,7 @@ export class UserModel {
             
         }
         console.log(this.monsters);
+        if  (this.loadedDemoUser) return; //for demo we dont update the server
         const db = getDatabase();
         await set(ref(db, 'users/' + this.user.uid), {
             user: this.user.email,
@@ -64,6 +66,29 @@ export class UserModel {
 
     addMonster(monster) {
         this.monsters.push(monster);
+    }
+
+    setDemoUser() {
+        console.log('Loading blank user for demo purposes');
+        this.money = 5;
+        this.monsters = [];
+        this.items = [{
+                name: 'Cake',
+                effects: {
+                    happiness: 25
+                },
+                quantity: 3
+            }];
+        this.user = {
+            money: this.money,
+            monsters: this.monsters,
+            items: this.items
+        };
+        this.loadedDemoUser = true;
+        if (this.userCallback) {
+            this.userCallback(this);
+        }
+        return this;
     }
 
     async setUser(user) {

@@ -23,14 +23,17 @@ export class AdultCute extends Pet
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-snuffler-idle`);
+            this.sprite.setDisplaySize(300,300);
+        }   
         this.scene.isPaused = true;
-        this.implode(500);
-        if (this.scene.sfx.cryTadpole) {
+        if (this.scene.sfx.cryCutie) {
             this.scene.sfx.cryCutie.play();
         }
-        setTimeout(()=>{
-            this.scene.isPaused = false;
-        }, 500);
+        this.sprite.play('pet-snuffler-idle');
+        this.scene.isPaused = false;
     }
 
     Evolve () {
