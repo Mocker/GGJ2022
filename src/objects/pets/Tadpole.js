@@ -71,8 +71,9 @@ export class Tadpole extends Pet
 
     shakeIt () {
         //const prevSprite = this.sprite;
-        this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `tadpole-happy`);
+        this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-tadpole-happy`);
         this.sprite.setDisplaySize(300,300);
+        this.sprite.play('pet-tadpole-happy');
         setTimeout(this.reloadSprite.bind(this), 2000);
         //playAnimationByName('play', this.scene, this.sprite);
     }
