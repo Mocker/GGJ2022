@@ -6,7 +6,13 @@ import { GameUI } from '../../objects/gameUI';
 import { UserModel, clearButtonEvents } from '../../utils';
 
 // Our game scene
-
+const petAnimFiles = {
+    "dino" : ["idle"],
+    "germ" : ["chomp","explore","happy","idle","sick","sleep","weak"],
+    "snuffler": ["eating","explore","flinch","happy","hurt","idle","mad","sleep"],
+    "sunfish": ["explore","happy","idle","mad","sleep","weak"],
+    "tadpole": ["eat","explore","flinch","happy","idle","mad","sleep","weak"]
+};
 
 class GameScene extends Phaser.Scene
 {
@@ -24,10 +30,13 @@ class GameScene extends Phaser.Scene
         };
         this.ui = null;
         this.user = null;
+        
+        
     }
 
     preload ()
     {
+        //TODO:: we dont really need to preload everything, we could just load when we select the current pet
         for (let petType in petData.types) {
             for (let imageFile in petData.types[petType].images) {
                 this.load.image(`${petType}-${imageFile}`, 'images/'+petData.types[petType].images[imageFile]);
@@ -37,14 +46,17 @@ class GameScene extends Phaser.Scene
             }
         }
 
-        for(let i = 0; i < 15; i++) {
-            if(i < 10) {
-                this.load.image(`germidle${i}`, `images/pets/germ/Germ%20idle/Germ_Idle0000${i}.png`);
-            }
-            else {
-                this.load.image(`germidle${i}`, `images/pets/germ/Germ%20idle/Germ_Idle000${i}.png`);
+        //but quick hack.. load everyyyything
+        
+        const petAnimTypes = Object.keys(petAnimFiles);
+        for(let petType in petAnimTypes) {
+            for(let i=0; i<petAnimFiles[petType].length; i++) {
+                this.load.atlas(`pet-${petType}-${petAnimFiles[petType][i]}`, `images/pets/${petType}/${petAnimFiles[petType][i]}.png`, `images/pets/${petType}/${petAnimFiles[petType][i]}.json`);
+    
             }
         }
+        
+
     }
 
     createPet(petType, stage, customData={})
@@ -56,16 +68,6 @@ class GameScene extends Phaser.Scene
 
     create ()
     {   
-        console.log("created idle germ");
-        console.log(([...Array(15).keys()].map((index) => ({key: `germidle${index}`}))));
-        this.anims.create({
-            key: 'idlegerm',
-            frames: [
-                ...([...Array(15).keys()].map((index) => ({key: `germidle${index}`})))
-            ],
-            frameRate: 5,
-            repeat: -1
-        });
         clearButtonEvents(this.game);
         this.game.scene.getScene('BGScene').events.off('button-one-clicked');
         this.game.scene.getScene('BGScene').events.off('button-two-clicked');
@@ -77,6 +79,25 @@ class GameScene extends Phaser.Scene
                 if (!this.sfx[`${soundFile}`]) {
                     this.sfx[`${soundFile}`] = this.sound.add(`${petType}-${soundFile}`);
                 }
+            }
+        }
+
+        //but quick hack.. load everyyyything
+        const petAnimTypes = Object.keys(petAnimFiles);
+        for(let petType in petAnimTypes) {
+            for(let i=0; i<petAnimFiles[petType].length; i++) {
+                const frameNames = this.textures.get(`pet-${petType}-${petAnimFiles[petType][i]}`).getFrameNames();
+                const frames = frameNames.map(o => {
+                    return { key: `pet-${petType}-${petAnimFiles[petType][i]}`, frame: o};
+                });
+                this.anims.create({
+                    frames: frames,
+                    frameRate: 5,
+                    repeat: (
+                        petAnimFiles[petType][i] == 'idle' ||
+                        petAnimFiles[petType][i] == 'sleep'
+                    ) ? -1 : 0
+                });
             }
         }
 

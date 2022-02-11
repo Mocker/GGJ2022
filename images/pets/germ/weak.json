@@ -1,0 +1,375 @@
+{
+	"frames": {
+		"Germ_weak_tired_flinch00000.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 284,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00001.png": {
+			"frame": {
+				"x": 287,
+				"y": 1,
+				"w": 284,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00002.png": {
+			"frame": {
+				"x": 573,
+				"y": 1,
+				"w": 289,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 253
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 253
+			}
+		},
+		"Germ_weak_tired_flinch00003.png": {
+			"frame": {
+				"x": 864,
+				"y": 1,
+				"w": 289,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 253
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 253
+			}
+		},
+		"Germ_weak_tired_flinch00004.png": {
+			"frame": {
+				"x": 573,
+				"y": 256,
+				"w": 289,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00005.png": {
+			"frame": {
+				"x": 864,
+				"y": 256,
+				"w": 289,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00006.png": {
+			"frame": {
+				"x": 1,
+				"y": 516,
+				"w": 284,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00007.png": {
+			"frame": {
+				"x": 287,
+				"y": 516,
+				"w": 284,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00008.png": {
+			"frame": {
+				"x": 573,
+				"y": 516,
+				"w": 289,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 253
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 253
+			}
+		},
+		"Germ_weak_tired_flinch00009.png": {
+			"frame": {
+				"x": 864,
+				"y": 516,
+				"w": 289,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 253
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 253
+			}
+		},
+		"Germ_weak_tired_flinch00010.png": {
+			"frame": {
+				"x": 573,
+				"y": 771,
+				"w": 289,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00011.png": {
+			"frame": {
+				"x": 864,
+				"y": 771,
+				"w": 289,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00012.png": {
+			"frame": {
+				"x": 1155,
+				"y": 1,
+				"w": 284,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00013.png": {
+			"frame": {
+				"x": 1155,
+				"y": 261,
+				"w": 284,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00014.png": {
+			"frame": {
+				"x": 1,
+				"y": 261,
+				"w": 289,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 253
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 253
+			}
+		},
+		"Germ_weak_tired_flinch00015.png": {
+			"frame": {
+				"x": 1155,
+				"y": 521,
+				"w": 289,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 253
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 253
+			}
+		},
+		"Germ_weak_tired_flinch00016.png": {
+			"frame": {
+				"x": 1,
+				"y": 776,
+				"w": 289,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 258
+			}
+		},
+		"Germ_weak_tired_flinch00017.png": {
+			"frame": {
+				"x": 1155,
+				"y": 776,
+				"w": 289,
+				"h": 258
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 289,
+				"h": 258
+			},
+			"sourceSize": {
+				"w": 289,
+				"h": 258
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "spritesheet.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 1445,
+			"h": 1035
+		},
+		"scale": "1"
+	}
+}
