@@ -27,11 +27,13 @@ export class Fish extends Pet
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
-        this.scene.isPaused = true;
-        this.implode(500);
-        if (this.scene.sfx.cryFish) {
-            this.scene.sfx.cryFish.play();
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-sunfish-idle`);
+            this.sprite.setDisplaySize(300,300);
         }
+        this.scene.isPaused = true;
+        this.sprite.play('pet-sunfish-idle');
         setTimeout(()=>{
             
             if (this.name) {

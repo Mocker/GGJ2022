@@ -9,7 +9,9 @@ export class GameUI   {
     constructor (scene) {
         this.scene = scene;
         this.layer = scene.add.layer();
+        this.layer.depth = 10;
         this.buttonLayer = scene.add.layer();
+        this.buttonLayer.depth = 11;
         this.eventListeners = {};
         const playMaskShape = this.scene.make.graphics();
         playMaskShape.fillStyle(0xffffff);
@@ -74,6 +76,7 @@ export class GameUI   {
         this.menuBG.fillRoundedRect(this.MENU_RIGHT, this.MENU_TOP, 370, 350, 4);
         this.scene.add.existing(this.menuBG);
         this.menuLayer = this.scene.add.layer([this.menuBG]);
+        this.menuLayer.depth = 12;
         this.menuPointer = new Phaser.GameObjects.Text(this.scene, this.MENU_RIGHT+5, this.MENU_TOP+25, '->', {
             fontFamily: 'beryl-digivice',
             fontSize: 15
@@ -87,7 +90,6 @@ export class GameUI   {
         ];
         this.menuOptions = [];
         this.menuOptionSelected = false;
-        //this.buildMenu(testMenu);
         this.menuLayer.setVisible(false);
 
         this.txtPetName = new Phaser.GameObjects.Text(this.scene, 220, 550, 'PET NAME')
@@ -129,6 +131,7 @@ export class GameUI   {
 
 
         this.msgLayer = this.scene.add.layer();
+        this.msgLayer.depth = 20;
         this.msgBG = new Phaser.GameObjects.Graphics(this.scene);
         this.msgBG.fillStyle(0x333311, 0.9);
         this.msgBG.fillRoundedRect(this.MENU_RIGHT+50, this.MENU_TOP+50, 270, 200, 4);

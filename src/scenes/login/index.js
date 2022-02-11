@@ -132,6 +132,14 @@ class LoginScene extends Phaser.Scene
 
         }
 
+        const startDemoLinkButton = document.getElementById( 'start-demo' );
+        startDemoLinkButton.onclick = (event) => {
+            const userModel = UserModel.getInstance();
+            userModel.setDemoUser();
+            this.waitingForSignIn = true;
+            this.onAuthChange(userModel);
+        };
+
         const forgotPasswordLinkButton = document.getElementById( 'forgot-password' );
         
         forgotPasswordLinkButton.onclick = (event) => {
@@ -157,6 +165,8 @@ class LoginScene extends Phaser.Scene
                 }
                 
             };
+
+            
 
             this.fireBaseAppHelper.forgotPassword(inputUsername.value, errorCallback, successCallback);
         }

@@ -11,7 +11,10 @@ const petAnimFiles = {
     "germ" : ["chomp","explore","happy","idle","sick","sleep","weak"],
     "snuffler": ["eating","explore","flinch","happy","hurt","idle","mad","sleep"],
     "sunfish": ["explore","happy","idle","mad","sleep","weak"],
-    "tadpole": ["eat","explore","flinch","happy","idle","mad","sleep","weak"]
+    "tadpole": ["eat","explore","flinch","happy","idle","mad","sleep","weak"],
+    "egg-yellow": ["idle","peek","hatch","shatter"],
+    "egg-blue": ["idle","peek","hatch","shatter"],
+    "egg-green": ["idle","peek","hatch","shatter"]
 };
 
 class GameScene extends Phaser.Scene
@@ -49,9 +52,10 @@ class GameScene extends Phaser.Scene
         //but quick hack.. load everyyyything
         
         const petAnimTypes = Object.keys(petAnimFiles);
-        for(let petType in petAnimTypes) {
-            for(let i=0; i<petAnimFiles[petType].length; i++) {
-                this.load.atlas(`pet-${petType}-${petAnimFiles[petType][i]}`, `images/pets/${petType}/${petAnimFiles[petType][i]}.png`, `images/pets/${petType}/${petAnimFiles[petType][i]}.json`);
+        for(let petAnimTypeI in petAnimTypes) {
+            const petAnimType = petAnimTypes[petAnimTypeI];
+            for(let i=0; i<petAnimFiles[petAnimType].length; i++) {
+                this.load.atlas(`pet-${petAnimType}-${petAnimFiles[petAnimType][i]}`, `images/pets/${petAnimType}/${petAnimFiles[petAnimType][i]}.png`, `images/pets/${petAnimType}/${petAnimFiles[petAnimType][i]}.json`);
     
             }
         }
@@ -77,6 +81,7 @@ class GameScene extends Phaser.Scene
         for (let petType in petData.types) {
             for (let soundFile in petData.types[petType].sounds) {
                 if (!this.sfx[`${soundFile}`]) {
+                    console.log(`sfx ${soundFile}`);
                     this.sfx[`${soundFile}`] = this.sound.add(`${petType}-${soundFile}`);
                 }
             }
@@ -84,13 +89,16 @@ class GameScene extends Phaser.Scene
 
         //but quick hack.. load everyyyything
         const petAnimTypes = Object.keys(petAnimFiles);
-        for(let petType in petAnimTypes) {
+        for(let petAnimTypeIndex in petAnimTypes) {
+            const petType = petAnimTypes[petAnimTypeIndex];
             for(let i=0; i<petAnimFiles[petType].length; i++) {
                 const frameNames = this.textures.get(`pet-${petType}-${petAnimFiles[petType][i]}`).getFrameNames();
                 const frames = frameNames.map(o => {
                     return { key: `pet-${petType}-${petAnimFiles[petType][i]}`, frame: o};
                 });
+                console.log(`pet-${petType}-${petAnimFiles[petType][i]}`);
                 this.anims.create({
+                    key:  `pet-${petType}-${petAnimFiles[petType][i]}`,
                     frames: frames,
                     frameRate: 5,
                     repeat: (
@@ -104,6 +112,7 @@ class GameScene extends Phaser.Scene
         this.user = UserModel.getInstance();
 
         this.playLayer = this.add.layer();
+        this.playLayer.depth = 1;
         const playMaskShape = this.make.graphics();
         playMaskShape.fillStyle(0xffffff);
         playMaskShape.beginPath();

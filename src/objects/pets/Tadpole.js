@@ -30,11 +30,17 @@ export class Tadpole extends Pet
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-tadpole-idle`);
+            this.sprite.setDisplaySize(300,300);
+        }   
         this.scene.isPaused = true;
-        this.implode(500);
         if (this.scene.sfx.cryTadpole) {
             this.scene.sfx.cryTadpole.play();
         }
+        this.sprite.play('pet-tadpole-idle');
+        
         setTimeout(()=>{
             
             if (this.name) {
@@ -42,7 +48,7 @@ export class Tadpole extends Pet
             } else {
                 this.scene.promptNewPetName();
             }
-        }, 500);
+        }, 1);
     }
 
     Evolve () {
@@ -50,7 +56,8 @@ export class Tadpole extends Pet
         // transition to tadpole
         //this.scene.ui.closeMenu();
         this.scene.isPaused = true;
-        this.explode(1500);
+        this.playOnce('pet-tadpole-happy', null, -1);
+        this.sprite.setScale(400,400);
         setTimeout(()=>{
             const newBaby = this.scene.createPet('tadpole','adultCute', this.customData);
             newBaby.customData.timers.lived = 0;
@@ -71,10 +78,7 @@ export class Tadpole extends Pet
 
     shakeIt () {
         //const prevSprite = this.sprite;
-        this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `tadpole-happy`);
-        this.sprite.setDisplaySize(300,300);
-        setTimeout(this.reloadSprite.bind(this), 2000);
-        //playAnimationByName('play', this.scene, this.sprite);
+        this.playOnce(`pet-tadpole-happy`, `pet-tadpole-idle`, 0);
     }
 
     getBattleMenu () {
@@ -86,32 +90,12 @@ export class Tadpole extends Pet
     }
 
     doBattle () {
-        this.scene.isPaused = true;
-        playAnimationByName('tintInOut', this.scene, this.sprite, {
-            duration: 2500
-        });
-        this.scene.tweens.add({
-            targets: this.sprite,
-            duration: 750,
-            scale: 2.5,
-            yoyo: true,
-            repeat: 3,
-            onComplete: this.resume.bind(this)
-        });
+        // no battling for this er boy
     }
 
     doExplore () {
         this.scene.isPaused = true;
-        this.scene.tweens.add({
-            targets: this.sprite,
-            duration: 2500,
-            rotation: 6,
-            x: 800,
-            y: 800,
-            scale: 0.1,
-            yoyo: true,
-            onComplete: this.doneExploring.bind(this)
-        });
+        this.playOnce(`pet-tadpole-explore`, `pet-tadpole-idle`, 2, this.doneExploring.bind(this));
     }
 
     doneExploring () {
