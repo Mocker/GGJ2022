@@ -70,7 +70,11 @@ export class Tadpole extends Pet
     }
 
     shakeIt () {
-        playAnimationByName('play', this.scene, this.sprite);
+        //const prevSprite = this.sprite;
+        this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `tadpole-happy`);
+        this.sprite.setDisplaySize(300,300);
+        setTimeout(this.reloadSprite.bind(this), 2000);
+        //playAnimationByName('play', this.scene, this.sprite);
     }
 
     getBattleMenu () {
