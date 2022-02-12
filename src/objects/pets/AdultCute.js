@@ -84,7 +84,7 @@ export class AdultCute extends Pet
 
     getBattleMenu () {
         return [
-            ['To Battle!', this.doBattle.bind(this), true],
+            ['To Battle!', this.scene.ui.showMessage.bind(this.scene.ui, 'Coming soon', 1200)],
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];
@@ -93,7 +93,8 @@ export class AdultCute extends Pet
     useItem (item) { //should probably do something with the items
         this.setSleepyTimer();
         this.status = 'idle';
-        this.playOnce('pet-snuffler-eat', 'pet-snuffler-idle', 0);
+        this.hungerMeter = (Math.random()*120+60)*1000;
+        this.playOnce('pet-snuffler-eating', 'pet-snuffler-idle', 0);
         return true;
     }
 

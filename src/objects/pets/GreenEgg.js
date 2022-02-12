@@ -67,14 +67,14 @@ export class GreenEgg extends Egg
     Evolve () {
         this.scene.isPaused = true;
         if (this.scene.sfx['hatch']) this.scene.sfx['hatch'].play();
-        this.playOnce('pet-egg-green-hatch', 'pet-egg-green-hatch', 1, this.makeNewPet.bind(this));
+        this.playOnce('pet-egg-green-hatch', null, 0, this.makeNewPet.bind(this));
         
 
     }
 
     makeNewPet () {
         const self = this;
-        this.playOnce('pet-egg-green-shatter', 'pet-egg-green-shatter', 1);
+        this.playOnce('pet-egg-green-shatter', null, 0);
         setTimeout(() => {
             const newBaby = self.scene.createPet('bacteria','baby', this.customData);
             newBaby.customData.timers.lived = 0;

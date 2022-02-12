@@ -73,14 +73,14 @@ export class YellowEgg extends Egg
     Evolve () {
         this.scene.isPaused = true;
         if (this.scene.sfx['hatch']) this.scene.sfx['hatch'].play();
-        this.playOnce('pet-egg-yellow-hatch', 'pet-egg-yellow-hatch', 1, this.makeNewPet.bind(this));
+        this.playOnce('pet-egg-yellow-hatch', null, 0, this.makeNewPet.bind(this));
         
 
     }
 
     makeNewPet () {
         const self = this;
-        this.playOnce('pet-egg-yellow-shatter', null, -1);
+        this.playOnce('pet-egg-yellow-shatter', null, 0);
         setTimeout(() => {
             const newBaby = self.scene.createPet('fish','baby', this.customData);
             newBaby.customData.timers.lived = 0;

@@ -51,6 +51,7 @@ export class Bacteria extends Pet
         this.scene.isPaused = true;
         this.playOnce('pet-germ-happy', 'pet-germ-idle', -1);
         this.sprite.setScale(400, 400);
+        this.scene.isEvolving = true;
         setTimeout(()=>{
             const newBaby = this.scene.createPet('bacteria','adultEvil', this.customData);
             newBaby.customData.timers.lived = 0;
@@ -58,6 +59,7 @@ export class Bacteria extends Pet
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);
             this.sprite.destroy();
+            this.scene.isEvolving = false;
         },1500);
 
     }
@@ -96,6 +98,7 @@ export class Bacteria extends Pet
     useItem () {
         this.status = 'idle';
         this.playOnce('pet-germ-chomp', 'pet-germ-idle', 0);
+        this.hungerMeter = (Math.random()*120+60)*1000;
         return true;
     }
 

@@ -65,14 +65,13 @@ export class BlueEgg extends Egg
     Evolve () {
         this.scene.isPaused = true;
         if (this.scene.sfx['hatch']) this.scene.sfx['hatch'].play();
-        this.playOnce('pet-egg-blue-hatch', 'pet-egg-blue-hatch', 1, this.makeNewPet.bind(this));
-        
+        this.playOnce('pet-egg-blue-hatch', null, 0, this.makeNewPet.bind(this));
 
     }
 
     makeNewPet () {
         const self = this;
-        this.playOnce('pet-egg-blue-shatter', null, -1);
+        this.playOnce('pet-egg-blue-shatter', null, 0);
         setTimeout(() => {
             const newBaby = self.scene.createPet('tadpole','baby', this.customData);
             newBaby.customData.timers.lived = 0;

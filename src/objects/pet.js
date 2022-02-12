@@ -59,7 +59,7 @@ export class Pet
             key: animName,
             repeat: repeat
         };
-        if (repeat !== -1 && idleAnim) {
+        if (repeat !== -1) {
             this.sprite.once('animationcomplete', this.onAnimationComplete.bind(this, idleAnim, cb));
         }
         this.sprite.play(aConf);
@@ -69,11 +69,13 @@ export class Pet
 
     onAnimationComplete(idleAnim, cb) {
         console.log(`done playing, back to idle ${idleAnim} - cb ${cb}`);
-        this.sprite.destroy();
-        this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, idleAnim);
-        this.sprite.setDisplaySize(300,300);
-        this.sprite.play(idleAnim);
-        this.scene.add.existing(this.sprite);
+        if (idleAnim) {
+            this.sprite.destroy();
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, idleAnim);
+            this.sprite.setDisplaySize(300,300);
+            this.sprite.play(idleAnim);
+            this.scene.add.existing(this.sprite);
+        }
         if (cb) cb(this);
     }
 

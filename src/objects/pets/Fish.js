@@ -50,6 +50,7 @@ export class Fish extends Pet
         // transition to tadpole
         //this.scene.ui.closeMenu();
         this.scene.isPaused = true;
+        this.scene.isEvolving = true;
         this.playOnce('pet-sunfish-happy', 'pet-sunfish-idle', -1);
         this.sprite.setScale(400, 400);
         const whichEvolve = (0.5 < Math.random()) ? 'adultCute' : 'adultEvil';
@@ -60,6 +61,7 @@ export class Fish extends Pet
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);
             this.sprite.destroy();
+            this.scene.isEvolving = false;
         },1500);
 
     }
@@ -128,6 +130,7 @@ export class Fish extends Pet
     useItem (item) { //should probably do something with the items
         this.setSleepyTimer();
         this.status = 'idle';
+        this.hungerMeter = (Math.random()*120+60)*1000;
         this.playOnce('pet-sunfish-happy', 'pet-sunfish-idle', 0);
         return true;
     }

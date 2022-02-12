@@ -58,6 +58,7 @@ export class Tadpole extends Pet
         this.scene.isPaused = true;
         this.playOnce('pet-tadpole-happy', null, -1);
         this.sprite.setScale(400,400);
+        this.scene.isEvolving = true;
         setTimeout(()=>{
             const newBaby = this.scene.createPet('tadpole','adultCute', this.customData);
             newBaby.customData.timers.lived = 0;
@@ -65,6 +66,7 @@ export class Tadpole extends Pet
             this.clearPieces();
             this.scene.playLayer.remove(this.sprite);
             this.sprite.destroy();
+            this.scene.isEvolving = false;
         },1500);
 
     }
@@ -97,11 +99,12 @@ export class Tadpole extends Pet
         this.status = 'hungry';
         this.sleepyTimer = 9999999;
         this.playOnce('pet-tadpole-weak', 'pet-tadpole-weak', -1);
-        this.scene.ui.showMessage(this.name+' is hungry!', 1200)
+        this.scene.ui.showMessage.bind(this.scene.ui)(this.name+' is hungry!');
     }
 
     useItem (item) { //should probably do something with the items
         this.setSleepyTimer();
+        this.hungerMeter = (Math.random()*120+60)*1000;
         this.playOnce('pet-tadpole-eat', 'pet-tadpole-idle', 0);
         this.status = 'idle';
         return true;

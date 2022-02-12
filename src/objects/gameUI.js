@@ -155,11 +155,16 @@ export class GameUI   {
 
     hideMessage () {
         this.msgLayer.setVisible(false);
+        this.msgShown = false;
+        this.msgBG.setVisible(false);
+        this.msgText.setVisible(false);
     }
 
     showMessage (content, duration=0) {
+        this.msgShown = true;
         this.msgText.setText(content);
         this.msgText.setWordWrapWidth(250);
+        this.msgText.setVisible(true);
         this.msgBG.setVisible(true);
         this.msgLayer.setVisible(true);
         if (duration) {
@@ -214,9 +219,8 @@ export class GameUI   {
 
 
     onButtonOne () {
-        if (this.msgLayer.visible) {
+        if (this.msgShown) {
             this.hideMessage();
-            return;
         }
         if (this.isMenuShown) {
             this.menuOptionSelected--;
@@ -227,9 +231,8 @@ export class GameUI   {
         }
     }
     onButtonTwo () {
-        if (this.msgLayer.visible) {
+        if (this.msgShown) {
             this.hideMessage();
-            return;
         }
         if (this.isMenuShown) {
             if (this.menuOptionSelected !== null && this.menuOptionsData[this.menuOptionSelected]) {
@@ -246,9 +249,8 @@ export class GameUI   {
         }
     }
     onButtonThree () {
-        if (this.msgLayer.visible) {
+        if (this.msgShown) {
             this.hideMessage();
-            return;
         }
         if (this.isMenuShown) {
             this.menuOptionSelected++;

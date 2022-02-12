@@ -132,6 +132,7 @@ class GameScene extends Phaser.Scene
 
     // always passing to the ui for now because all pet interaction will be done via menus
     onButtonOne () {
+        if (this.isEvolving) return;
         if  (this.ui.isMenuShown) {
             this.ui.onButtonOne();
         } else if (!this.isPaused) { // build menu one (items)
@@ -142,6 +143,7 @@ class GameScene extends Phaser.Scene
     }
     onButtonTwo () {
         console.log('clicked button two');
+        if (this.isEvolving) return;
         if  (this.ui.isMenuShown) {
             console.log("menu shown");
             this.ui.onButtonTwo();
@@ -155,6 +157,7 @@ class GameScene extends Phaser.Scene
 
     }
     onButtonThree () {
+        if (this.isEvolving) return;
         if  (this.ui.isMenuShown) {
             this.ui.onButtonThree();
         } else if (!this.isPaused) { // build menu 3 battle/explore
@@ -312,6 +315,7 @@ class GameScene extends Phaser.Scene
 
 
     promptNewPetName () {
+        this.isPaused = true;
         this.game.scene.start('MonsterNameScene');
     }
     setPetName (petName) {

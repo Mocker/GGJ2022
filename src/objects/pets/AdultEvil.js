@@ -57,7 +57,7 @@ export class AdultEvil extends Pet
 
     getBattleMenu () {
         return [
-            ['Roar!', this.doBattle.bind(this), true],
+            ['Roar!', this.scene.ui.showMessage.bind(this.scene.ui, 'Coming soon..', 1200)],
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];
@@ -87,8 +87,8 @@ export class AdultEvil extends Pet
             targets: this.sprite,
             duration: 2500,
             rotation: 6,
-            x: 800,
-            y: 800,
+            x: 400,
+            y: 400,
             scale: 0.1,
             yoyo: true,
             onComplete: this.doneExploring.bind(this)
@@ -114,6 +114,14 @@ export class AdultEvil extends Pet
         if (!this.scene.isPaused && this.scene.sfx.cryDino) {
             this.scene.sfx.cryDino.play();
         }
+    }
+
+    useItem (item) { //should probably do something with the items
+        this.setSleepyTimer();
+        this.status = 'idle';
+        this.hungerMeter = (Math.random()*120+60)*1000;
+        this.playOnce('pet-dino-ido', 'pet-dino-idle', 0);
+        return true;
     }
 
     update (time, delta) {
