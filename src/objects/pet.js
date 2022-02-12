@@ -21,7 +21,7 @@ export class Pet
         this.pieces = [];
     }
 
-    SetActive(scene, x, y) {
+    SetActive(scene, x, y, loaded, displaySizeX, displaySizeY) {
         this.active = true;
         if (scene && this.scene != scene) this.scene=scene;
         if (x) this.x=x;
@@ -32,8 +32,8 @@ export class Pet
         } else {
             //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
             this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage}`);
-            this.sprite.setDisplaySize(300,300);
-            this.buildPieces();
+            this.sprite.setDisplaySize(displaySizeX ? displaySizeX : 300, displaySizeY ? displaySizeY : 300);
+            this.buildPieces(loaded);
         }        
     }
 
@@ -48,8 +48,24 @@ export class Pet
         this.buildPieces();
     }
 
-    buildPieces () {
-        if (this.pieces.length < 1) {
+    buildPieces (loaded) {
+        if(loaded) {
+            const source = this.scene.textures.get(`${this.baseData.type}-${this.baseData.stage}-pieces`);
+            this.FRAME_WIDTH = 32;
+            this.piecesSpritesFrames = source.frameTotal;
+            this.pieces = [];
+
+        
+            for (let i=0; i<this.piecesSpritesFrames; i++){
+                
+                this.pieces.push(this.scene.add.image(0, 0, `${this.baseData.type}-${this.baseData.stage}-pieces`, i));
+                this.pieces[i].setVisible(false);
+                this.pieces[i].setScale(this.sprite.scale);
+                
+            }
+            this.scene.playLayer.add(this.pieces);
+        }
+        else if (this.pieces.length < 1) {
             const source = this.scene.textures.get(`${this.baseData.type}-${this.baseData.stage}`).source[0].image;
             this.FRAME_WIDTH = 32;
             this.piecesSprite = this.scene.textures.addSpriteSheet(`${this.baseData.type}-${this.baseData.stage}-pieces`, source, {
@@ -207,7 +223,8 @@ export class Pet
     }
 
     doBattle () {
-        console.log("Get battlin");
+        console.log(this);
+        this.scene.scene.start('BattleScene');
     }
 
     doExplore () {

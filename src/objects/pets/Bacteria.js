@@ -16,16 +16,17 @@ export class Bacteria extends Pet
                 name: "?? EGG ??",
                 timers: {
                     lived: 60000*5 //5 minutes?
-                }
+                },
+                hp: 150,
+                atk: 44
             };
         }
         this.type = baseData.type;
         this.stage = baseData.stage;
-        console.log('bacteria', baseData, customData);
     }
 
-    SetActive (scene, x, y) {
-        super.SetActive(scene, x, y);
+    SetActive (scene, x, y, loaded) {
+        super.SetActive(scene, x, y, loaded);
         this.scene.isPaused = true;
         this.implode(500);
         if (this.scene.sfx.cryBacteria) {
@@ -75,12 +76,14 @@ export class Bacteria extends Pet
         return [ //Too young to be a battlin
             //['To Battle!', this.doBattle.bind(this), true],
             ['Go Explorin', this.doExplore.bind(this), true],
-            ...super.getBattleMenu()
+            ['Go Battle!', super.doBattle.bind(this), true],
+            //...super.getBattleMenu()
         ];
     }
 
     doBattle () {
         this.scene.isPaused = true;
+        
         playAnimationByName('tintInOut', this.scene, this.sprite, {
             duration: 2500
         });

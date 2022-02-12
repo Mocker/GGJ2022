@@ -3,7 +3,7 @@ import * as petData from '../../data/pets.json';
 import * as shopData from '../../data/shop.json';
 import { PetFactory } from '../../objects/pets/index';
 import { GameUI } from '../../objects/gameUI';
-import { UserModel, clearButtonEvents } from '../../utils';
+import { UserModel, clearButtonEvents, createPet } from '../../utils';
 
 // Our game scene
 
@@ -47,13 +47,6 @@ class GameScene extends Phaser.Scene
         }
     }
 
-    createPet(petType, stage, customData={})
-    {   
-        const baseData = this.petData.types[petType].stages[stage];
-        console.log(petType, stage, baseData, customData);
-        return PetFactory(baseData.className)(baseData, customData);
-    }
-
     create ()
     {   
         console.log("created idle germ");
@@ -89,7 +82,7 @@ class GameScene extends Phaser.Scene
         playMaskShape.fillRect(200,200,400,400);
         const playMask = new Phaser.Display.Masks.GeometryMask(this, playMaskShape);
         this.playLayer.setMask(playMask);
-        const pet = this.createPet(this.user.pet.type, this.user.pet.stage, this.user.pet.stats);
+        const pet = createPet(this.user.pet.type, this.user.pet.stage, this.user.pet.stats);
         this.ui = new GameUI(this);
         this.bgScene = this.game.scene.getScene('BGScene');
         this.activatePet(pet);        

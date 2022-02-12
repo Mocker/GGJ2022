@@ -68,7 +68,7 @@ export class BGScene extends Phaser.Scene
 
         this.powerLight = new Phaser.GameObjects.Graphics(this).setAlpha(0);
         this.powerLight.fillStyle(0xff0000);
-        this.powerLight.fillCircle(269, 170, 10);
+        this.powerLight.fillCircle(269, 166, 10);
         this.add.existing(this.powerLight);
 
         this.buttonLayer = this.add.layer();
