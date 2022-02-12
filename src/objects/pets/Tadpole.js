@@ -72,13 +72,39 @@ export class Tadpole extends Pet
     getActionMenu () {
         return [
             ['Ribbit', this.shakeIt.bind(this), true],
+            ['Poke', this.pokeIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
 
     shakeIt () {
-        //const prevSprite = this.sprite;
+        this.setSleepyTimer();
         this.playOnce(`pet-tadpole-happy`, `pet-tadpole-idle`, 0);
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+        }
+    }
+
+    pokeIt () {
+        this.setSleepyTimer();
+        this.playOnce(`pet-tadpole-mad`, `pet-tadpole-idle`, 0);
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+        }
+    }
+
+    onIsHungry () {
+        this.status = 'hungry';
+        this.sleepyTimer = 9999999;
+        this.playOnce('pet-tadpole-weak', 'pet-tadpole-weak', -1);
+        this.scene.ui.showMessage(this.name+' is hungry!', 1200)
+    }
+
+    useItem (item) { //should probably do something with the items
+        this.setSleepyTimer();
+        this.playOnce('pet-tadpole-eat', 'pet-tadpole-idle', 0);
+        this.status = 'idle';
+        return true;
     }
 
     getBattleMenu () {
@@ -94,6 +120,7 @@ export class Tadpole extends Pet
     }
 
     doExplore () {
+        this.setSleepyTimer();
         this.scene.isPaused = true;
         this.playOnce(`pet-tadpole-explore`, `pet-tadpole-idle`, 2, this.doneExploring.bind(this));
     }
@@ -110,6 +137,15 @@ export class Tadpole extends Pet
             this.scene.foundMoney(5);
         }
         this.resume();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+        }
+    }
+
+    onSleepyTimer () {
+        if (!this.scene.isPaused) {
+            this.playOnce('pet-tadpole-sleep', 'pet-tadpole-sleep', 0);
+        }
     }
 
     update (time, delta) {

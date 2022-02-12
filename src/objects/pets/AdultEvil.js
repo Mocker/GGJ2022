@@ -19,19 +19,26 @@ export class AdultEvil extends Pet
         this.type = baseData.type;
         this.stage = baseData.stage;
         console.log('adult evil', baseData, customData);
+        this.setSleepyTimer();
     }
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;
-        this.implode(500);
-        if (this.scene.sfx.cryTadpole) {
-            this.scene.sfx.cryCutie.play();
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-dino-idle`);
+            this.sprite.setDisplaySize(300,300);
+        }   
+        if (this.scene.sfx.cryDino) {
+            this.scene.sfx.cryDino.play();
         }
+        this.sprite.play('pet-dino-idle');
         setTimeout(()=>{
             this.scene.isPaused = false;
         }, 500);
     }
+
 
     Evolve () {
         console.log("cannot evolve further");
@@ -97,12 +104,19 @@ export class AdultEvil extends Pet
                 quantity: 2
             });
         } else {
-            this.scene.foundMoney(5);
+            this.scene.foundMoney(Math.floor(Math.random()*5+2));
         }
         this.resume();
     }
 
-    update (time, delta) {
+    onSleepyTimer () {
+        // no sleep anim
+        if (!this.scene.isPaused && this.scene.sfx.cryDino) {
+            this.scene.sfx.cryDino.play();
+        }
+    }
 
+    update (time, delta) {
+        super.update(time, delta);
     }
 }

@@ -20,6 +20,8 @@ export class Pet
         this.name = this.customData.name || this.baseData.name;
         this.pieces = [];
         this.status = 'idle';
+        this.sleepyTimer = 0;
+        this.hungerMeter = (Math.random()*120+60)*1000;
     }
 
     SetActive(scene, x, y) {
@@ -36,7 +38,12 @@ export class Pet
             //this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `${this.baseData.type}-${this.baseData.stage}`);
             //this.sprite.setDisplaySize(300,300);
             //this.buildPieces();
-        }        
+        } 
+        this.setSleepyTimer();       
+    }
+
+    setSleepyTimer () {
+        this.sleepyTimer = Math.random()*60*1000; //time of inactivity until it sleeps
     }
 
     resume() {
@@ -157,8 +164,8 @@ export class Pet
         //         pY++;
         //     }
         // }
-        this.sprite.setVisible(false);
-        setTimeout(this.hideExplodeys.bind(this, true), duration /*+ (this.pieces.length/3.5)*/); 
+        //this.sprite.setVisible(false);
+        //setTimeout(this.hideExplodeys.bind(this, true), duration /*+ (this.pieces.length/3.5)*/); 
     }
 
     explode (duration=4000) {
@@ -203,8 +210,8 @@ export class Pet
         //         pY++;
         //     }
         // }
-        this.sprite.setVisible(false);
-        setTimeout(this.hideExplodeys.bind(this, false), duration + (this.pieces.length/3.5));
+        //this.sprite.setVisible(false);
+        //setTimeout(this.hideExplodeys.bind(this, false), duration + (this.pieces.length/3.5));
     }
 
     hideExplodeys (setSpriteVisible=true) {
@@ -265,7 +272,24 @@ export class Pet
         this.scene.isPaused = true;
     }
 
+    onSleepyTimer () {
+        //override with sleep animation
+    }
+
+    onIsHungry () {
+        //override if you care about hunger you monster
+    }
+
     update (time, delta) {
         this.customData.timers.lived += delta;
+        if (this.active && this.scene && this.scene.isPaused == false) {
+            this.sleepyTimer -= delta;
+            if (this.sleepyTimer < 0 ) {
+                this.setSleepyTimer();
+                this.onSleepyTimer();
+            }
+            if (this.hungerMeter >= 0 ) this.hungerMeter -= delta;
+            if (this.hungerMeter < 0 ) this.onIsHungry();
+        }
     }
 }

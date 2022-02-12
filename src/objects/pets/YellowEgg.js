@@ -80,10 +80,12 @@ export class YellowEgg extends Egg
 
     makeNewPet () {
         const self = this;
+        this.playOnce('pet-egg-yellow-shatter', null, -1);
         setTimeout(() => {
             const newBaby = self.scene.createPet('fish','baby', this.customData);
             newBaby.customData.timers.lived = 0;
             self.scene.activatePet(newBaby);
+            if (self.scene.sfx['evolve']) self.scene.sfx['evolve'].play();
             //this.clearPieces();
             self.scene.playLayer.remove(self.sprite);
             self.sprite.destroy();

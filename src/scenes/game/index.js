@@ -269,6 +269,7 @@ class GameScene extends Phaser.Scene
     // acquired, add or increment user items
     // should add most logic to users class
     foundItem (newItem) {
+        if (this.sfx.swipe) this.sfx.swipe.play();
         let incrementedItem = false;
         for (let i=0; i<this.user.items.length; i++) {
             if (this.user.items[i].name == newItem.name) {
