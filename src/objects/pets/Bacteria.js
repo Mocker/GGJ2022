@@ -135,7 +135,7 @@ export class Bacteria extends Pet
         // TODO:: fill in exploration rewards here
         if  (rando > 0.8) {
             this.scene.foundItem({
-                name: 'Cake',
+                name: 'T Cell',
                 quantity: 2
             });
         } else {

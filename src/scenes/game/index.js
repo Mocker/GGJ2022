@@ -138,7 +138,7 @@ class GameScene extends Phaser.Scene
         } else if (!this.isPaused) { // build menu one (items)
             
             this.buildItemMenu();
-            this.ui.tabLeft.setTint(0xffffff, 0xff0000).setScale(1.2);
+            this.ui.tabLeft.setTint(0xffffff).setScale(1.2);
         }
     }
     onButtonTwo () {
@@ -150,7 +150,7 @@ class GameScene extends Phaser.Scene
         } else if (!this.isPaused) { // show menu 2 ('action')
             console.log("show action menu");
             this.buildActionMenu();
-            this.ui.tabMid.setTint(0xffffff, 0xff0000).setScale(1.2);
+            this.ui.tabMid.setTint(0xffffff).setScale(1.2);
         } else {
             console.log("GameScene paused");
         }
@@ -162,7 +162,7 @@ class GameScene extends Phaser.Scene
             this.ui.onButtonThree();
         } else if (!this.isPaused) { // build menu 3 battle/explore
             this.buildBattleMenu();
-            this.ui.tabRight.setTint(0xffffff, 0xff0000).setScale(1.2);
+            this.ui.tabRight.setTint(0xffffff).setScale(1.2);
         }
     }
 
@@ -170,7 +170,7 @@ class GameScene extends Phaser.Scene
         const actionData = [
             ...this.pet.getActionMenu(),
             ['Force Evolve', this.pet.Evolve.bind(this.pet), true],
-            //['Logout', this.logout.bind(this)],
+            ['Logout', this.logout.bind(this)],
             
         ];
         this.ui.buildMenu(actionData);
@@ -185,7 +185,9 @@ class GameScene extends Phaser.Scene
 
     //
     logout () {
+        this.isPaused = true;
         this.game.scene.getScene('BGScene').logout();
+        this.game.scene.bringToTop('TitleScene');
     }
 
     buildItemMenu (itemIndex=0) {

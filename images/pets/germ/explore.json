@@ -1,363 +1,363 @@
 {
 	"frames": {
-		"Germ_explore00000.png": {
+		"Germ_explore00001.png": {
 			"frame": {
 				"x": 1,
 				"y": 1,
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 284,
-				"h": 258
-			}
-		},
-		"Germ_explore00001.png": {
-			"frame": {
-				"x": 287,
-				"y": 1,
-				"w": 284,
-				"h": 258
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 284,
-				"h": 258
-			},
-			"sourceSize": {
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00002.png": {
 			"frame": {
-				"x": 573,
+				"x": 515,
 				"y": 1,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00003.png": {
 			"frame": {
-				"x": 864,
+				"x": 1029,
 				"y": 1,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00004.png": {
 			"frame": {
-				"x": 573,
-				"y": 256,
-				"w": 289,
-				"h": 258
+				"x": 1543,
+				"y": 1,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00005.png": {
 			"frame": {
-				"x": 864,
-				"y": 256,
-				"w": 289,
-				"h": 258
+				"x": 1,
+				"y": 515,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00006.png": {
 			"frame": {
-				"x": 1,
-				"y": 516,
-				"w": 284,
-				"h": 258
+				"x": 515,
+				"y": 515,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00007.png": {
 			"frame": {
-				"x": 287,
-				"y": 516,
-				"w": 284,
-				"h": 258
+				"x": 1029,
+				"y": 515,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00008.png": {
 			"frame": {
-				"x": 573,
-				"y": 516,
-				"w": 289,
-				"h": 253
+				"x": 1543,
+				"y": 515,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00009.png": {
 			"frame": {
-				"x": 864,
-				"y": 516,
-				"w": 289,
-				"h": 253
+				"x": 1,
+				"y": 1029,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00010.png": {
 			"frame": {
-				"x": 573,
-				"y": 771,
-				"w": 289,
-				"h": 258
+				"x": 515,
+				"y": 1029,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00011.png": {
 			"frame": {
-				"x": 864,
-				"y": 771,
-				"w": 289,
-				"h": 258
+				"x": 1029,
+				"y": 1029,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00012.png": {
 			"frame": {
-				"x": 1155,
-				"y": 1,
-				"w": 284,
-				"h": 258
+				"x": 1543,
+				"y": 1029,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00013.png": {
 			"frame": {
-				"x": 1155,
-				"y": 261,
-				"w": 284,
-				"h": 258
+				"x": 1,
+				"y": 1543,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 284,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00014.png": {
 			"frame": {
-				"x": 1,
-				"y": 261,
-				"w": 289,
-				"h": 253
+				"x": 515,
+				"y": 1543,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00015.png": {
 			"frame": {
-				"x": 1155,
-				"y": 521,
-				"w": 289,
-				"h": 253
+				"x": 1029,
+				"y": 1543,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 253
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00016.png": {
 			"frame": {
-				"x": 1,
-				"y": 776,
-				"w": 289,
-				"h": 258
+				"x": 1543,
+				"y": 1543,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			}
 		},
 		"Germ_explore00017.png": {
 			"frame": {
-				"x": 1155,
-				"y": 776,
-				"w": 289,
-				"h": 258
+				"x": 2057,
+				"y": 1,
+				"w": 512,
+				"h": 512
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
 			},
 			"sourceSize": {
-				"w": 289,
-				"h": 258
+				"w": 512,
+				"h": 512
+			}
+		},
+		"_Germ_explore00000.png": {
+			"frame": {
+				"x": 2057,
+				"y": 515,
+				"w": 512,
+				"h": 512
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 512,
+				"h": 512
+			},
+			"sourceSize": {
+				"w": 512,
+				"h": 512
 			}
 		}
 	},
@@ -367,8 +367,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 1445,
-			"h": 1035
+			"w": 2570,
+			"h": 2056
 		},
 		"scale": "1"
 	}

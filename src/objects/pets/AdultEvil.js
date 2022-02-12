@@ -120,7 +120,7 @@ export class AdultEvil extends Pet
         this.setSleepyTimer();
         this.status = 'idle';
         this.hungerMeter = (Math.random()*120+60)*1000;
-        this.playOnce('pet-dino-ido', 'pet-dino-idle', 0);
+        this.playOnce('pet-dino-idle', 'pet-dino-idle', 0);
         return true;
     }
 
