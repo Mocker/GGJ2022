@@ -11,9 +11,14 @@
             "cryTadpole": "cry_tadpole.mp3",
             "cryFish": "cry_fish.mp3",
             "cryCutie": "cry_cutie.mp3",
+            "cryGerm": "cry_germ.mp3",
+            "cryDino": "cry_dino.mp3",
             "hatch": "hatch.mp3",
             "eat": "eat.mp3",
-            "swipe": "swipe_1.mp3"
+            "swipe": "swipe_1.mp3",
+            "swipe2": "swipe_2.mp3",
+            "evolve": "evolve.mp3",
+            "money": "money.mp3"
         },
         "stages" : {
             "egg" : {

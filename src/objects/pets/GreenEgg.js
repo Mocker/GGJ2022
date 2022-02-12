@@ -74,12 +74,13 @@ export class GreenEgg extends Egg
 
     makeNewPet () {
         const self = this;
+        this.playOnce('pet-egg-green-shatter', 'pet-egg-green-shatter', 1);
         setTimeout(() => {
             const newBaby = self.scene.createPet('bacteria','baby', this.customData);
             newBaby.customData.timers.lived = 0;
             self.scene.activatePet(newBaby);
+            if (self.scene.sfx['evolve']) self.scene.sfx['evolve'].play();
             //this.clearPieces();
-            self.scene.playLayer.remove(self.sprite);
             self.sprite.destroy();
             setTimeout( this.scene.promptNewPetName.bind(self.scene)
                 ,500);

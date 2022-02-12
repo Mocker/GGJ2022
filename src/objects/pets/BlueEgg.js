@@ -72,10 +72,12 @@ export class BlueEgg extends Egg
 
     makeNewPet () {
         const self = this;
+        this.playOnce('pet-egg-blue-shatter', null, -1);
         setTimeout(() => {
             const newBaby = self.scene.createPet('tadpole','baby', this.customData);
             newBaby.customData.timers.lived = 0;
             self.scene.activatePet(newBaby);
+            if (this.scene.sfx['evolve']) this.scene.sfx['evolve'].play();
             //this.clearPieces();
             self.scene.playLayer.remove(self.sprite);
             self.sprite.destroy();
