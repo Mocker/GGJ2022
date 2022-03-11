@@ -1,6 +1,7 @@
 import { Pet } from '../pet';
 import { playAnimationByName } from '../../tweensanimations';
 import * as petData from '../../data/pets.json';
+import { reauthenticateWithRedirect } from 'firebase/auth';
 
 export class Fish extends Pet
 {
@@ -27,11 +28,13 @@ export class Fish extends Pet
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
-        this.scene.isPaused = true;
-        this.implode(500);
-        if (this.scene.sfx.cryFish) {
-            this.scene.sfx.cryFish.play();
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-sunfish-idle`);
+            this.sprite.setDisplaySize(300,300);
         }
+        this.scene.isPaused = true;
+        this.sprite.play('pet-sunfish-idle');
         setTimeout(()=>{
             
             if (this.name) {
@@ -47,7 +50,8 @@ export class Fish extends Pet
         // transition to tadpole
         //this.scene.ui.closeMenu();
         this.scene.isPaused = true;
-        this.explode(1500);
+        this.playOnce('pet-sunfish-happy', 'pet-sunfish-idle', -1);
+        this.sprite.setScale(400, 400);
         const whichEvolve = (0.5 < Math.random()) ? 'adultCute' : 'adultEvil';
         setTimeout(()=>{
             const newBaby = this.scene.createPet('fish',whichEvolve, this.customData);
@@ -60,15 +64,50 @@ export class Fish extends Pet
 
     }
 
+    setSleepyTimer () {
+        this.sleepyTimer = Math.random()*30*1000 ; //sleeps a lot
+    }
+
+    onSleepyTimer () {
+        if (!this.scene.isPaused) {
+            this.playOnce('pet-sunfish-sleep', 'pet-sunfish-sleep', 0);
+        }
+    }
+
     getActionMenu () {
         return [
-            ['Flop', this.shakeIt.bind(this), true],
+            ['Flop', this.flopIt.bind(this), true],
+            ['Go on a walk', this.walkIt.bind(this), true],
+            ['Lift some weights bro', this.gymIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
 
-    shakeIt () {
-        playAnimationByName('play', this.scene, this.sprite);
+    flopIt () {
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-sunfish-happy', 'pet-sunfish-idle', 0);
+    }
+
+    walkIt () {
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-sunfish-mad', 'pet-sunfish-idle', 0);
+    }
+
+    gymIt () {
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-sunfish-weak', 'pet-sunfish-idle', 0);
     }
 
     getBattleMenu () {
@@ -77,6 +116,20 @@ export class Fish extends Pet
             ['Go Explorin', this.doExplore.bind(this), true],
             ...super.getBattleMenu()
         ];
+    }
+
+    onIsHungry () {
+        this.status = 'hungry';
+        this.sleepyTimer = 9999999;
+        this.playOnce('pet-sunfish-weak', 'pet-sunfish-weak', -1);
+        this.scene.ui.showMessage(this.name+' is hungry!', 1200)
+    }
+
+    useItem (item) { //should probably do something with the items
+        this.setSleepyTimer();
+        this.status = 'idle';
+        this.playOnce('pet-sunfish-happy', 'pet-sunfish-idle', 0);
+        return true;
     }
 
     doBattle () {
@@ -96,16 +149,7 @@ export class Fish extends Pet
 
     doExplore () {
         this.scene.isPaused = true;
-        this.scene.tweens.add({
-            targets: this.sprite,
-            duration: 2500,
-            rotation: 6,
-            x: 800,
-            y: 800,
-            scale: 0.1,
-            yoyo: true,
-            onComplete: this.doneExploring.bind(this)
-        });
+        this.playOnce('pet-sunfish-explore', 'pet-sunfish-idle', 0, this.doneExploring.bind(this));
     }
 
     doneExploring () {

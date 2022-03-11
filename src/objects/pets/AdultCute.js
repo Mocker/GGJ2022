@@ -19,18 +19,28 @@ export class AdultCute extends Pet
         this.type = baseData.type;
         this.stage = baseData.stage;
         console.log('adult cute', baseData, customData);
+        this.sleepyTimer = 0;
     }
 
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-snuffler-idle`);
+            this.sprite.setDisplaySize(300,300);
+        }   
         this.scene.isPaused = true;
-        this.implode(500);
-        if (this.scene.sfx.cryTadpole) {
+        if (this.scene.sfx.cryCutie) {
             this.scene.sfx.cryCutie.play();
         }
-        setTimeout(()=>{
-            this.scene.isPaused = false;
-        }, 500);
+        this.sprite.play('pet-snuffler-idle');
+        this.scene.isPaused = false;
+        this.setSleepyTimer();
+        this.status = 'idle';
+    }
+
+    setSleepyTimer () {
+        this.sleepyTimer = Math.random()*60*1000; //time of inactivity until it sleeps
     }
 
     Evolve () {
@@ -39,13 +49,37 @@ export class AdultCute extends Pet
 
     getActionMenu () {
         return [
-            ['Cuddle', this.shakeIt.bind(this), true],
+            ['Cuddle', this.cuddleIt.bind(this), true],
+            ['Poke', this.pokeIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
 
-    shakeIt () {
-        playAnimationByName('play', this.scene, this.sprite);
+    cuddleIt () {
+        this.scene.isPaused = true;
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-snuffler-happy', 'pet-snuffler-idle', 0, this.resume.bind(this));
+    }
+
+    pokeIt () {
+        this.scene.isPaused = true;
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-snuffler-mad', 'pet-snuffler-idle', 0, this.resume.bind(this));
+    }
+
+    onIsHungry () {
+        this.status = 'hungry';
+        this.sleepyTimer = 9999999;
+        this.playOnce('pet-snuffler-weak', 'pet-snuffler-weak', -1);
+        this.scene.ui.showMessage(this.name+' is hungry!', 1200)
     }
 
     getBattleMenu () {
@@ -56,8 +90,16 @@ export class AdultCute extends Pet
         ];
     }
 
+    useItem (item) { //should probably do something with the items
+        this.setSleepyTimer();
+        this.status = 'idle';
+        this.playOnce('pet-snuffler-eat', 'pet-snuffler-idle', 0);
+        return true;
+    }
+
     doBattle () {
         this.scene.isPaused = true;
+        this.setSleepyTimer();
         if (this.scene.sfx.swipe) {
             this.scene.sfx.swipe.play();
         }
@@ -76,16 +118,8 @@ export class AdultCute extends Pet
 
     doExplore () {
         this.scene.isPaused = true;
-        this.scene.tweens.add({
-            targets: this.sprite,
-            duration: 2500,
-            rotation: 6,
-            x: 800,
-            y: 800,
-            scale: 0.1,
-            yoyo: true,
-            onComplete: this.doneExploring.bind(this)
-        });
+        this.setSleepyTimer();
+        this.playOnce('pet-snuffler-explore', 'pet-snuffler-explore', 0, this.doneExploring.bind(this));
     }
 
     doneExploring () {
@@ -97,12 +131,18 @@ export class AdultCute extends Pet
                 quantity: 2
             });
         } else {
-            this.scene.foundMoney(5);
+            this.scene.foundMoney(Math.random()*10+2);
         }
         this.resume();
     }
 
     update (time, delta) {
-
+        if (!this.scene.isPaused) {
+            this.sleepyTimer -= delta;
+            if (this.sleepyTimer < 0) {
+                this.playOnce('pet-snuffler-sleep', null, -1);
+                this.setSleepyTimer();
+            }
+        }
     }
 }

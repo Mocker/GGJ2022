@@ -27,13 +27,14 @@ export class Bacteria extends Pet
     SetActive (scene, x, y) {
         super.SetActive(scene, x, y);
         this.scene.isPaused = true;
-        this.implode(500);
+        if(!this.sprite){
+            //this.sprite = this.scene.add.sprite(this.x, this.y, `${this.baseData.type}-${this.baseData.stage.stage}`);
+            this.sprite = new Phaser.GameObjects.Sprite(this.scene, this.x, this.y, `pet-germ-idle`);
+            this.sprite.setDisplaySize(300,300);
+        }
         if (this.scene.sfx.cryBacteria) {
             this.scene.sfx.cryBacteria.play();
         }
-        console.log("playing animation");
-        this.sprite.play("idlegerm");
-        this.sprite.setScale(1.1);
         setTimeout(()=>{
             if (this.name) {
                 this.scene.isPaused = false;
@@ -48,7 +49,8 @@ export class Bacteria extends Pet
         // transition to cute/evil aduilt
         //this.scene.ui.closeMenu();
         this.scene.isPaused = true;
-        this.explode(1500);
+        this.playOnce('pet-germ-happy', 'pet-germ-idle', -1);
+        this.sprite.setScale(400, 400);
         setTimeout(()=>{
             const newBaby = this.scene.createPet('bacteria','adultEvil', this.customData);
             newBaby.customData.timers.lived = 0;
@@ -63,12 +65,38 @@ export class Bacteria extends Pet
     getActionMenu () {
         return [
             ['Shake It!', this.shakeIt.bind(this), true],
+            ['Take Antibiotics!', this.antibioticsIt.bind(this), true],
             ...super.getActionMenu()
         ];
     }
 
     shakeIt () {
-        playAnimationByName('play', this.scene, this.sprite);
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-germ-happy', 'pet-germ-idle', 0);
+    }
+    antibioticsIt () {
+        this.setSleepyTimer();
+        if (this.status == 'hungry' ) {
+            this.onIsHungry();
+            return;
+        }
+        this.playOnce('pet-germ-sick', 'pet-germ-idle', 0);
+    }
+    onIsHungry () {
+        this.status = 'hungry';
+        this.sleepyTimer = 9999999;
+        this.playOnce('pet-germ-weak', 'pet-germ-weak', -1);
+        this.scene.ui.showMessage(this.name+' is hungry!', 30)
+    }
+
+    useItem () {
+        this.status = 'idle';
+        this.playOnce('pet-germ-chomp', 'pet-germ-idle', 0);
+        return true;
     }
 
     getBattleMenu () {
@@ -96,16 +124,7 @@ export class Bacteria extends Pet
 
     doExplore () {
         this.scene.isPaused = true;
-        this.scene.tweens.add({
-            targets: this.sprite,
-            duration: 2500,
-            rotation: 6,
-            x: 800,
-            y: 800,
-            scale: 0.1,
-            yoyo: true,
-            onComplete: this.doneExploring.bind(this)
-        });
+        this.playOnce('pet-germ-explore', 'pet-germ-idle', 0, this.doneExploring.bind(this));
     }
 
     doneExploring () {
@@ -120,6 +139,12 @@ export class Bacteria extends Pet
             this.scene.foundMoney(5);
         }
         this.resume();
+    }
+
+    onSleepyTimer () {
+        if (!this.scene.isPaused) {
+            this.playOnce('pet-germ-sleep', 'pet-germ-sleep', 0);
+        }
     }
 
     update (time, delta) {
