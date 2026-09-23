@@ -1,0 +1,22 @@
+{
+  "name": "They Might Byte - Virtual Pet Digivice",
+  "short_name": "TheyMightByte",
+  "description": "Retro LCD Virtual Pet Digivice Simulator & Cyber Focus Companion",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#38bdf8",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./images/pets/test-A-_0002_blue-egg.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/pets/test-A-_0006_Tadpole.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

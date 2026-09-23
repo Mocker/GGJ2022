@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { StorageService } from '../services/storage';
 import { SoundService } from '../services/audio';
 import { PetModel, EggType, PetType } from '../types/pet';
+import { generateRandomGenome } from '../genetics/evolutionEngine';
 
 interface CarouselOption {
   isNew: boolean;
@@ -157,6 +158,14 @@ export class SelectPetScene extends Phaser.Scene {
           hunger: { min: 0, current: 80, max: 100 },
           happiness: { min: 0, current: 60, max: 100 },
           cleanliness: { min: 0, current: 100, max: 100 },
+          discipline: 70,
+          careMistakes: 0,
+          poopCount: 0,
+          generation: 1,
+          battlesWon: 0,
+          battlesTotal: 0,
+          focusMinutes: 0,
+          focusTokens: 0,
           timers: { lived: 0, lastFed: Date.now() },
           msLeftToEvolve: 12000,
           level: 1,
@@ -166,6 +175,8 @@ export class SelectPetScene extends Phaser.Scene {
           defense: 3,
         },
         status: 'idle',
+        isSleeping: false,
+        genome: generateRandomGenome(1, selected.name),
         createdAt: Date.now(),
       };
       storage.addPet(newPet);

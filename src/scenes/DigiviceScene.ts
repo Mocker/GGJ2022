@@ -45,9 +45,18 @@ export class DigiviceScene extends Phaser.Scene {
     this.shell.setTheme(themeName);
     StorageService.getInstance().setTheme(themeName);
   }
-
   private dispatchToActiveScene(methodName: 'onButton1' | 'onButton2' | 'onButton3'): void {
-    const activeScenes = ['PetScene', 'SelectPetScene', 'BattleScene', 'TitleScene', 'LoginScene'];
+    const activeScenes = [
+      'PedigreeScene',
+      'VisitorArenaScene',
+      'MiniGameScene',
+      'FocusScene',
+      'HallOfFameScene',
+      'BattleScene',
+      'PetScene',
+      'SelectPetScene',
+      'TitleScene',
+    ];
     for (const key of activeScenes) {
       if (this.scene.isActive(key)) {
         const target = this.scene.get(key) as unknown as Record<string, () => void>;

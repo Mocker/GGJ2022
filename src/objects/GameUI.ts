@@ -138,7 +138,8 @@ export class GameUI {
 
   public updateStatus(pet: PetModel | null): void {
     const profile = StorageService.getInstance().getProfile();
-    this.txtMoney.setText(`🪙 ${profile.money}`);
+    const soundIcon = StorageService.getInstance().isSoundEnabled() ? '🔊' : '🔇';
+    this.txtMoney.setText(`${soundIcon} 🪙 ${profile.money}`);
 
     if (!pet) {
       this.txtName.setText('NO PET');
@@ -146,8 +147,14 @@ export class GameUI {
       return;
     }
 
-    this.txtName.setText(`${pet.name.toUpperCase()} [${pet.stage.toUpperCase()}]`);
-    this.txtStats.setText(`HUNGER: ${pet.stats.hunger.current}% | HAPPY: ${pet.stats.happiness.current}%`);
+    let statusBadge = '';
+    if (pet.isSleeping) statusBadge = ' [💤SLEEP]';
+    else if (pet.status === 'sick') statusBadge = ' [💀SICK]';
+    else if ((pet.stats.poopCount ?? 0) > 0) statusBadge = ` [💩x${pet.stats.poopCount}]`;
+
+    const disc = pet.stats.discipline ?? 70;
+    this.txtName.setText(`${pet.name.toUpperCase()} Lvl ${pet.stats.level}${statusBadge}`);
+    this.txtStats.setText(`HUN:${pet.stats.hunger.current}% HAP:${pet.stats.happiness.current}% CLN:${pet.stats.cleanliness.current}% DSC:${disc}%`);
   }
 
   public openMenu(items: MenuItem[], tabIndex: 1 | 2 | 3): void {

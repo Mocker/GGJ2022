@@ -4,17 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>They Might Byte - Virtual Pet Digivice</title>
+    <meta name="theme-color" content="#38bdf8" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <div id="game-wrapper">
       <div id="game"></div>
       <div id="controls-guide">
-        <span><kbd>A</kbd> or <kbd>◀</kbd> Left / Items</span>
-        <span><kbd>SPACE</kbd> or <kbd>S</kbd> Power / Action</span>
-        <span><kbd>D</kbd> or <kbd>▶</kbd> Right / Battle</span>
+        <span><kbd>A</kbd> / <kbd>Z</kbd> / <kbd>◀</kbd> Items</span>
+        <span><kbd>SPACE</kbd> / <kbd>S</kbd> / <kbd>X</kbd> Power / Action</span>
+        <span><kbd>D</kbd> / <kbd>C</kbd> / <kbd>▶</kbd> Battle</span>
+        <span><kbd>M</kbd> Mute Audio</span>
       </div>
     </div>
     <script type="module" src="./src/main.ts"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch((err) => {
+            console.log('ServiceWorker registration omitted:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

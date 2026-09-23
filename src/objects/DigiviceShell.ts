@@ -64,6 +64,12 @@ export class DigiviceShell {
   }
 
   public onButtonPress(btnIndex: 1 | 2 | 3): void {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try {
+        navigator.vibrate(25);
+      } catch (e) {}
+    }
+
     if (btnIndex === 1) {
       SoundService.getInstance().playSelect();
       this.triggerButtonAnim(this.btn1, `ui-btn-left-${this.themeKey}`);
@@ -90,12 +96,14 @@ export class DigiviceShell {
     this.scene.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       if (event.repeat) return;
       const code = event.code;
-      if (code === 'KeyA' || code === 'ArrowLeft' || code === 'Digit1') {
+      if (code === 'KeyA' || code === 'ArrowLeft' || code === 'Digit1' || code === 'KeyZ') {
         this.onButtonPress(1);
-      } else if (code === 'KeyS' || code === 'Space' || code === 'Enter' || code === 'Digit2') {
+      } else if (code === 'KeyS' || code === 'Space' || code === 'Enter' || code === 'Digit2' || code === 'KeyX' || code === 'ArrowDown') {
         this.onButtonPress(2);
-      } else if (code === 'KeyD' || code === 'ArrowRight' || code === 'Digit3' || code === 'Escape') {
+      } else if (code === 'KeyD' || code === 'ArrowRight' || code === 'Digit3' || code === 'Escape' || code === 'KeyC') {
         this.onButtonPress(3);
+      } else if (code === 'KeyM') {
+        SoundService.getInstance().toggleMute();
       }
     });
   }

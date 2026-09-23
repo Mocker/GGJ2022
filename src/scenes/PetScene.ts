@@ -4,6 +4,7 @@ import { SoundService } from '../services/audio';
 import { PetEntity } from '../objects/PetEntity';
 import { GameUI, MenuItem } from '../objects/GameUI';
 import { PetModel, PetStage } from '../types/pet';
+import { evaluateEvolution } from '../data/evolutionTree';
 import { DIGIVICE_THEMES, THEME_NAMES } from '../services/theme';
 import { DigiviceScene } from './DigiviceScene';
 
@@ -11,6 +12,7 @@ export class PetScene extends Phaser.Scene {
   private petEntity: PetEntity | null = null;
   public ui!: GameUI;
   private statDecayTimer!: Phaser.Time.TimerEvent;
+  private sleepOverlay!: Phaser.GameObjects.Graphics;
 
   constructor() {
     super('PetScene');
@@ -26,6 +28,15 @@ export class PetScene extends Phaser.Scene {
       currentPet = storage.getCurrentPet()!;
     }
 
+    // Masked sleep overlay for Lights Out mode
+    const maskGfx = this.make.graphics();
+    maskGfx.fillStyle(0xffffff);
+    maskGfx.fillRect(200, 200, 400, 400);
+    const mask = new Phaser.Display.Masks.GeometryMask(this, maskGfx);
+
+    this.sleepOverlay = this.add.graphics().setDepth(12).setMask(mask);
+    this.updateSleepOverlay(currentPet.isSleeping);
+
     // Initialize HUD and UI overlay
     this.ui = new GameUI(this);
 
@@ -38,6 +49,17 @@ export class PetScene extends Phaser.Scene {
       loop: true,
       callback: () => this.tickPetStats(),
     });
+
+    // Start ambient procedural BGM
+    SoundService.getInstance().playBgm('ambient');
+  }
+
+  private updateSleepOverlay(isSleeping: boolean): void {
+    this.sleepOverlay.clear();
+    if (isSleeping) {
+      this.sleepOverlay.fillStyle(0x020617, 0.75);
+      this.sleepOverlay.fillRect(200, 200, 400, 400);
+    }
   }
 
   private spawnPet(petData: PetModel): void {
@@ -47,6 +69,7 @@ export class PetScene extends Phaser.Scene {
     }
     this.petEntity = new PetEntity(this, petData);
     this.ui.updateStatus(petData);
+    this.updateSleepOverlay(petData.isSleeping);
   }
 
   private tickPetStats(): void {
@@ -54,24 +77,46 @@ export class PetScene extends Phaser.Scene {
     const pet = storage.getCurrentPet();
     if (!pet || this.ui.isMenuOpen) return;
 
-    // Decay stats slowly
     storage.updateCurrentPet((p) => {
       p.stats.timers.lived += 10000;
+
+      // Sleep mechanics: recover HP & Energy, slower metabolism
+      if (p.isSleeping) {
+        p.stats.energy.current = Math.min(100, p.stats.energy.current + 5);
+        p.stats.hp = Math.min(p.stats.maxHp, p.stats.hp + 2);
+        p.stats.hunger.current = Math.max(0, p.stats.hunger.current - 1);
+        p.status = 'sleeping';
+        return;
+      }
+
       if (p.stage !== 'egg') {
         p.stats.hunger.current = Math.max(0, p.stats.hunger.current - 2);
         p.stats.happiness.current = Math.max(0, p.stats.happiness.current - 1);
         p.stats.cleanliness.current = Math.max(0, p.stats.cleanliness.current - 1);
 
-        if (p.stats.hunger.current <= 15) {
-          p.status = 'hungry';
-        } else if (p.stats.cleanliness.current <= 10) {
+        // Waste generation chance if fed and awake
+        if (p.stats.hunger.current > 30 && Math.random() < 0.20 && (p.stats.poopCount ?? 0) < 4) {
+          p.stats.poopCount = (p.stats.poopCount ?? 0) + 1;
+          p.stats.cleanliness.current = Math.max(0, p.stats.cleanliness.current - 15);
+        }
+
+        // Sickness trigger from low hygiene or excessive waste
+        if (p.stats.cleanliness.current <= 10 || (p.stats.poopCount ?? 0) >= 3) {
+          if (p.status !== 'sick') {
+            p.stats.careMistakes = (p.stats.careMistakes ?? 0) + 1;
+          }
           p.status = 'sick';
+        } else if (p.stats.hunger.current <= 15) {
+          p.status = 'hungry';
+        } else if ((p.stats.poopCount ?? 0) > 0) {
+          p.status = 'poopy';
         } else {
           p.status = 'idle';
         }
       }
     });
 
+    this.petEntity?.updateStatusVisuals();
     this.ui.updateStatus(pet);
   }
 
@@ -106,7 +151,6 @@ export class PetScene extends Phaser.Scene {
     const profile = storage.getProfile();
     const items: MenuItem[] = [];
 
-    // Bag items
     profile.items.forEach((item) => {
       items.push({
         label: `${item.name} (x${item.quantity})`,
@@ -142,7 +186,7 @@ export class PetScene extends Phaser.Scene {
       { id: 'cake', name: 'Cake', cost: 5, hunger: 30, happiness: 40, energy: 20 },
       { id: 'candy-cane', name: 'Candy Cane', cost: 3, hunger: 15, happiness: 25, energy: 25 },
       { id: 'parsnip', name: 'Parsnip', cost: 2, hunger: 25, energy: 15, cleanliness: 5 },
-      { id: 'medicine', name: 'Vaccine Spray', cost: 10, hunger: 0, cureSick: true, cleanliness: 50 },
+      { id: 'medicine', name: 'Vaccine Spray', cost: 8, hunger: 0, cureSick: true, cleanliness: 50 },
     ];
 
     const items: MenuItem[] = shopList.map((shopItem) => ({
@@ -202,6 +246,20 @@ export class PetScene extends Phaser.Scene {
         },
       });
     } else {
+      // Sleep Toggle (Lights Out)
+      items.push({
+        label: pet.isSleeping ? '☀️ Wake Up (Lights On)' : '💤 Lights Out (Sleep)',
+        action: () => {
+          const sleeping = storage.toggleSleep();
+          this.petEntity?.setSleeping(sleeping);
+          this.updateSleepOverlay(sleeping);
+          this.ui.showToast(sleeping ? 'Lights out. Rest well!' : 'Good morning, Tamer!');
+          this.ui.updateStatus(storage.getCurrentPet());
+          this.ui.closeMenu();
+        },
+      });
+
+      // Quick Feed
       items.push({
         label: '🍖 Feed Quick Snack',
         action: () => {
@@ -216,11 +274,13 @@ export class PetScene extends Phaser.Scene {
         },
       });
 
+      // Pet & Cheer
       items.push({
         label: '💖 Pet & Cheer',
         action: () => {
           storage.updateCurrentPet((p) => {
             p.stats.happiness.current = Math.min(100, p.stats.happiness.current + 20);
+            p.stats.discipline = Math.min(100, (p.stats.discipline ?? 70) + 2);
           });
           this.petEntity?.playHappy();
           this.ui.showToast(`${pet.name} is cheerful!`);
@@ -229,50 +289,133 @@ export class PetScene extends Phaser.Scene {
         },
       });
 
+      // Bath & Flush Poop
       items.push({
-        label: '🚿 Clean & Wash',
+        label: '🚿 Bath & Flush Poop',
         action: () => {
-          storage.updateCurrentPet((p) => {
-            p.stats.cleanliness.current = 100;
-            if (p.status === 'poopy') p.status = 'idle';
-          });
-          this.petEntity?.clean();
-          this.ui.showToast('Sparkling clean!');
-          this.ui.updateStatus(storage.getCurrentPet());
-          this.ui.closeMenu();
-        },
-      });
-
-      items.push({
-        label: '⚡ Train & Exercise',
-        action: () => {
-          storage.updateCurrentPet((p) => {
-            p.stats.energy.current = Math.max(0, p.stats.energy.current - 15);
-            p.stats.level += 1;
-            p.stats.attack += 2;
-            p.stats.maxHp += 5;
-            p.stats.hp = p.stats.maxHp;
-          });
-          storage.addMoney(3);
-          SoundService.getInstance().playSwipe(1);
-          this.petEntity?.playAction('explore', 1200, () => {
-            SoundService.getInstance().playMoney();
-            this.ui.showToast(`Level up! Lvl ${pet.stats.level} (+3🪙)`);
+          storage.cleanPoop();
+          this.petEntity?.clean(() => {
+            this.ui.showToast('Flushed and sparkling clean!');
             this.ui.updateStatus(storage.getCurrentPet());
           });
           this.ui.closeMenu();
         },
       });
 
+      // Medicine if sick
+      if (pet.status === 'sick') {
+        items.push({
+          label: '💉 Administer Medicine',
+          action: () => {
+            storage.updateCurrentPet((p) => {
+              p.status = 'idle';
+              p.stats.hp = p.stats.maxHp;
+            });
+            SoundService.getInstance().playStartup();
+            this.petEntity?.updateStatusVisuals();
+            this.ui.showToast('Vaccine administered! Cured!');
+            this.ui.updateStatus(storage.getCurrentPet());
+            this.ui.closeMenu();
+          },
+        });
+      }
+
+      // Interactive Mini-Game
       items.push({
-        label: '✨ Force Evolution',
+        label: '⚡ Digi-Workout (Mini-Game)',
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('MiniGameScene');
+          this.scene.stop('PetScene');
+        },
+      });
+
+      // Focus Companion Mode (GOAL-002)
+      items.push({
+        label: '🧘 Cyber Focus (Pomodoro)',
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('FocusScene');
+          this.scene.stop('PetScene');
+        },
+      });
+
+      // Branching Evolution
+      items.push({
+        label: '✨ Branch Evolution',
         action: () => this.triggerEvolve(),
+      });
+
+      // Hall of Fame
+      items.push({
+        label: '🏛️ Hall of Fame & Lineage',
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('HallOfFameScene');
+          this.scene.stop('PetScene');
+        },
+      });
+
+      // Pedigree & Genetics
+      items.push({
+        label: '🧬 Pedigree & Genetics',
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('PedigreeScene');
+          this.scene.stop('PetScene');
+        },
+      });
+
+      // Export Tamer Card (PNG)
+      items.push({
+        label: '📇 Export Tamer Card (PNG)',
+        action: async () => {
+          this.ui.closeMenu();
+          try {
+            const { CardExportService } = await import('../services/cardExport');
+            await CardExportService.exportTamerCard(pet, storage.getProfile());
+            this.ui.showToast('Downloaded Tamer Card PNG!');
+          } catch (e) {
+            console.error('Card export error:', e);
+            this.ui.showToast('Card export failed');
+          }
+        },
+      });
+
+      // Share Pet Passport
+      items.push({
+        label: '🔗 Copy Pet Passport URL',
+        action: async () => {
+          this.ui.closeMenu();
+          try {
+            const { PetPassportService } = await import('../services/network/petPassport');
+            const url = PetPassportService.generateShareableUrl(pet, storage.getProfile().username);
+            if (typeof navigator !== 'undefined' && navigator.clipboard) {
+              await navigator.clipboard.writeText(url);
+              this.ui.showToast('Copied Pet URL to Clipboard!');
+            } else {
+              this.ui.showToast('Passport Generated!');
+            }
+          } catch (e) {
+            this.ui.showToast('Passport copy failed');
+          }
+        },
       });
     }
 
     items.push({
       label: '🎨 Change Shell Color',
       action: () => this.cycleTheme(),
+    });
+
+    items.push({
+      label: StorageService.getInstance().isSoundEnabled() ? '🔇 Mute Audio (M)' : '🔊 Enable Audio (M)',
+      action: () => {
+        const enabled = SoundService.getInstance().toggleMute();
+        this.ui.showToast(enabled ? 'Sound Enabled' : 'Sound Muted');
+        this.ui.updateStatus(storage.getCurrentPet());
+        this.ui.closeMenu();
+      },
     });
 
     items.push({
@@ -285,12 +428,46 @@ export class PetScene extends Phaser.Scene {
 
   // 3. Battle Menu (Tab 3)
   private openBattleMenu(): void {
+    const storage = StorageService.getInstance();
+    const pet = storage.getCurrentPet();
+
     const items: MenuItem[] = [
       {
         label: '⚔ Enter Battle Arena',
         action: () => {
           this.ui.closeMenu();
           this.scene.start('BattleScene');
+          this.scene.stop('PetScene');
+        },
+      },
+      {
+        label: '🌐 Global Tamer Showcase',
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('VisitorArenaScene');
+          this.scene.stop('PetScene');
+        },
+      },
+      {
+        label: '🚀 Publish Pet to Lobby',
+        action: async () => {
+          if (!pet) return;
+          this.ui.closeMenu();
+          try {
+            const { MockLocalPetServerClient } = await import('../services/network/serverClient');
+            await MockLocalPetServerClient.getInstance().publishPet(pet, storage.getProfile().username);
+            SoundService.getInstance().playMoney();
+            this.ui.showToast('Published to Global Lobby!');
+          } catch (e) {
+            this.ui.showToast('Publish failed');
+          }
+        },
+      },
+      {
+        label: '🎮 Arcade Mini-Games',
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('MiniGameScene');
           this.scene.stop('PetScene');
         },
       },
@@ -323,13 +500,22 @@ export class PetScene extends Phaser.Scene {
     this.ui.closeMenu();
     this.petEntity?.hatch(() => {
       const storage = StorageService.getInstance();
+      const pet = storage.getCurrentPet()!;
+      const evo = evaluateEvolution(pet);
+
       storage.updateCurrentPet((p) => {
-        p.stage = 'baby';
-        p.name = p.type === 'tadpole' ? 'Cute Tadpole' : p.type === 'bacteria' ? 'Baby Germ' : 'Mini Dino';
+        p.stage = evo.nextStage;
+        p.name = evo.nextName;
+        p.type = evo.nextType;
+        p.stats.hp += evo.bonusHp;
+        p.stats.maxHp += evo.bonusHp;
+        p.stats.attack += evo.bonusAttack;
+        p.stats.defense += evo.bonusDefense;
       });
+
       const updated = storage.getCurrentPet()!;
       this.spawnPet(updated);
-      this.ui.showToast(`Hatched into ${updated.name}!`);
+      this.ui.showToast(evo.evolutionMessage);
     });
   }
 
@@ -344,20 +530,25 @@ export class PetScene extends Phaser.Scene {
       return;
     }
 
-    const nextStage: PetStage = pet.stage === 'baby' ? 'adultCute' : 'adultEvil';
+    const evo = evaluateEvolution(pet);
     SoundService.getInstance().playEvolve();
 
     this.petEntity?.playAction('happy', 2000, () => {
       storage.updateCurrentPet((p) => {
-        p.stage = nextStage;
-        p.name = nextStage === 'adultCute' ? 'Mega ' + p.name : 'Shadow ' + p.name;
-        p.stats.attack += 10;
-        p.stats.maxHp += 20;
-        p.stats.hp = p.stats.maxHp;
+        p.stage = evo.nextStage;
+        p.name = evo.nextName;
+        p.type = evo.nextType;
+        p.stats.branchType = evo.branch;
+        p.stats.hp += evo.bonusHp;
+        p.stats.maxHp += evo.bonusHp;
+        p.stats.attack += evo.bonusAttack;
+        p.stats.defense += evo.bonusDefense;
+        p.stats.careMistakes = 0; // Reset care mistakes for new stage
       });
+
       const updated = storage.getCurrentPet()!;
       this.spawnPet(updated);
-      this.ui.showToast(`Evolved to ${updated.stage.toUpperCase()}!`);
+      this.ui.showToast(evo.evolutionMessage);
     });
   }
 
