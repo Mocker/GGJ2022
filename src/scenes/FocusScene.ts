@@ -132,6 +132,30 @@ export class FocusScene extends Phaser.Scene {
     this.progressGfx.fillRoundedRect(x, y, width * Math.min(1, Math.max(0, ratio)), height, 4);
   }
 
+  public onNavLeft(): void {
+    this.onButton1();
+  }
+
+  public onNavRight(): void {
+    this.onButton1();
+  }
+
+  public onNavUp(): void {
+    this.onButton1();
+  }
+
+  public onNavDown(): void {
+    this.onButton1();
+  }
+
+  public onConfirm(): void {
+    this.onButton2();
+  }
+
+  public onCancel(): void {
+    this.onButton3();
+  }
+
   public onButton1(): void {
     if (this.isFinished) {
       this.returnToPetScene();

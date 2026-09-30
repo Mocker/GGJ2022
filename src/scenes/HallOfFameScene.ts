@@ -70,6 +70,14 @@ export class HallOfFameScene extends Phaser.Scene {
     }).setOrigin(0.5).setMask(mask);
   }
 
+  public onConfirm(): void {
+    this.returnToPetScene();
+  }
+
+  public onCancel(): void {
+    this.returnToPetScene();
+  }
+
   public onButton1(): void {
     const storage = StorageService.getInstance();
     const pet = storage.getCurrentPet();

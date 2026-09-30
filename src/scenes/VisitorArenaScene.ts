@@ -94,6 +94,30 @@ export class VisitorArenaScene extends Phaser.Scene {
     this.dnaText.setText(`DNA: ${current.dnaHash} • RANK: [${current.ivGrade}] • GEN: ${current.generation}`);
   }
 
+  public onNavUp(): void {
+    this.onButton1();
+  }
+
+  public onNavDown(): void {
+    this.onButton1();
+  }
+
+  public onNavLeft(): void {
+    this.onButton1();
+  }
+
+  public onNavRight(): void {
+    this.onButton1();
+  }
+
+  public onConfirm(): void {
+    this.onButton2();
+  }
+
+  public onCancel(): void {
+    this.onButton3();
+  }
+
   public onButton1(): void {
     if (this.lobbyPets.length > 0) {
       this.selectedIdx = (this.selectedIdx + 1) % this.lobbyPets.length;

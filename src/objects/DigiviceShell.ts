@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { DIGIVICE_THEMES, ThemeConfig } from '../services/theme';
+import { DIGIVICE_THEMES } from '../services/theme';
 import { SoundService } from '../services/audio';
 
 export class DigiviceShell {
@@ -63,24 +63,33 @@ export class DigiviceShell {
     return btn;
   }
 
-  public onButtonPress(btnIndex: 1 | 2 | 3): void {
+  public triggerButtonVisual(btnIndex: 1 | 2 | 3): void {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       try {
         navigator.vibrate(25);
       } catch (e) {}
     }
+    const theme = DIGIVICE_THEMES[this.themeKey] || DIGIVICE_THEMES['Mountain Steel'];
+    if (btnIndex === 1) {
+      this.triggerButtonAnim(this.btn1, `ui-btn-left-${theme.name}`);
+    } else if (btnIndex === 2) {
+      this.triggerButtonAnim(this.btn2, `ui-btn-circle-${theme.name}`);
+    } else if (btnIndex === 3) {
+      this.triggerButtonAnim(this.btn3, `ui-btn-right-${theme.name}`);
+    }
+  }
+
+  public onButtonPress(btnIndex: 1 | 2 | 3): void {
+    this.triggerButtonVisual(btnIndex);
 
     if (btnIndex === 1) {
       SoundService.getInstance().playSelect();
-      this.triggerButtonAnim(this.btn1, `ui-btn-left-${this.themeKey}`);
       this.scene.events.emit('hardware-btn-1');
     } else if (btnIndex === 2) {
       SoundService.getInstance().playSelect();
-      this.triggerButtonAnim(this.btn2, `ui-btn-circle-${this.themeKey}`);
       this.scene.events.emit('hardware-btn-2');
     } else if (btnIndex === 3) {
       SoundService.getInstance().playBack();
-      this.triggerButtonAnim(this.btn3, `ui-btn-right-${this.themeKey}`);
       this.scene.events.emit('hardware-btn-3');
     }
   }
@@ -96,14 +105,63 @@ export class DigiviceShell {
     this.scene.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       if (event.repeat) return;
       const code = event.code;
-      if (code === 'KeyA' || code === 'ArrowLeft' || code === 'Digit1' || code === 'KeyZ') {
+
+      // 1. Direct Hardware Digivice Buttons (1, 2, 3 or J, K, L)
+      if (code === 'Digit1' || code === 'KeyJ') {
         this.onButtonPress(1);
-      } else if (code === 'KeyS' || code === 'Space' || code === 'Enter' || code === 'Digit2' || code === 'KeyX' || code === 'ArrowDown') {
+        return;
+      }
+      if (code === 'Digit2' || code === 'KeyK') {
         this.onButtonPress(2);
-      } else if (code === 'KeyD' || code === 'ArrowRight' || code === 'Digit3' || code === 'Escape' || code === 'KeyC') {
+        return;
+      }
+      if (code === 'Digit3' || code === 'KeyL') {
         this.onButtonPress(3);
-      } else if (code === 'KeyM') {
+        return;
+      }
+
+      // 2. Vertical Navigation (ArrowUp / W and ArrowDown / S)
+      if (code === 'ArrowUp' || code === 'KeyW') {
+        this.triggerButtonVisual(1);
+        this.scene.events.emit('nav-up');
+        return;
+      }
+      if (code === 'ArrowDown' || code === 'KeyS') {
+        this.triggerButtonVisual(3);
+        this.scene.events.emit('nav-down');
+        return;
+      }
+
+      // 3. Horizontal Navigation / Tabs (ArrowLeft / A and ArrowRight / D)
+      if (code === 'ArrowLeft' || code === 'KeyA') {
+        this.triggerButtonVisual(1);
+        this.scene.events.emit('nav-left');
+        return;
+      }
+      if (code === 'ArrowRight' || code === 'KeyD') {
+        this.triggerButtonVisual(3);
+        this.scene.events.emit('nav-right');
+        return;
+      }
+
+      // 4. Confirm / Select / Action (Enter, Space, Z)
+      if (code === 'Enter' || code === 'Space' || code === 'KeyZ') {
+        this.triggerButtonVisual(2);
+        this.scene.events.emit('confirm');
+        return;
+      }
+
+      // 5. Cancel / Close / Back (Escape, Backspace, X)
+      if (code === 'Escape' || code === 'Backspace' || code === 'KeyX') {
+        this.triggerButtonVisual(3);
+        this.scene.events.emit('cancel');
+        return;
+      }
+
+      // 6. Sound Mute
+      if (code === 'KeyM') {
         SoundService.getInstance().toggleMute();
+        return;
       }
     });
   }

@@ -120,10 +120,59 @@ export class PetScene extends Phaser.Scene {
     this.ui.updateStatus(pet);
   }
 
+  // Semantic Navigation Handlers
+  public onNavUp(): void {
+    if (this.ui.isMenuOpen) {
+      this.ui.navigateUp();
+    } else {
+      this.petEntity?.playHappy();
+      this.ui.showToast(`${this.petEntity?.petData.name ?? 'Pet'} is cheerful!`);
+    }
+  }
+
+  public onNavDown(): void {
+    if (this.ui.isMenuOpen) {
+      this.ui.navigateDown();
+    } else {
+      this.openActionMenu();
+    }
+  }
+
+  public onNavLeft(): void {
+    if (this.ui.isMenuOpen) {
+      this.switchMenuTab(-1);
+    } else {
+      this.openItemsMenu();
+    }
+  }
+
+  public onNavRight(): void {
+    if (this.ui.isMenuOpen) {
+      this.switchMenuTab(1);
+    } else {
+      this.openBattleMenu();
+    }
+  }
+
+  public onConfirm(): void {
+    if (this.ui.isMenuOpen) {
+      this.ui.executeSelected();
+    } else {
+      this.openActionMenu();
+    }
+  }
+
+  public onCancel(): void {
+    if (this.ui.isMenuOpen) {
+      this.ui.closeMenu();
+      SoundService.getInstance().playBack();
+    }
+  }
+
   // Hardware Button Handlers
   public onButton1(): void {
     if (this.ui.isMenuOpen) {
-      this.ui.handleButton1();
+      this.ui.navigateUp();
     } else {
       this.openItemsMenu();
     }
@@ -131,7 +180,7 @@ export class PetScene extends Phaser.Scene {
 
   public onButton2(): void {
     if (this.ui.isMenuOpen) {
-      this.ui.handleButton2();
+      this.ui.executeSelected();
     } else {
       this.openActionMenu();
     }
@@ -139,10 +188,23 @@ export class PetScene extends Phaser.Scene {
 
   public onButton3(): void {
     if (this.ui.isMenuOpen) {
-      this.ui.handleButton3();
+      this.ui.navigateDown();
     } else {
       this.openBattleMenu();
     }
+  }
+
+  private switchMenuTab(direction: -1 | 1): void {
+    if (!this.ui.isMenuOpen) return;
+    const current = this.ui.activeTab || 2;
+    let nextTab = (current + direction) as 1 | 2 | 3;
+    if (nextTab < 1) nextTab = 3;
+    if (nextTab > 3) nextTab = 1;
+
+    SoundService.getInstance().playSelect();
+    if (nextTab === 1) this.openItemsMenu();
+    else if (nextTab === 2) this.openActionMenu();
+    else if (nextTab === 3) this.openBattleMenu();
   }
 
   // 1. Items Menu (Tab 1)
@@ -373,7 +435,7 @@ export class PetScene extends Phaser.Scene {
           this.ui.closeMenu();
           try {
             const { CardExportService } = await import('../services/cardExport');
-            await CardExportService.exportTamerCard(pet, storage.getProfile());
+            await CardExportService.exportTamerCard(pet, storage.getProfile(), this);
             this.ui.showToast('Downloaded Tamer Card PNG!');
           } catch (e) {
             console.error('Card export error:', e);

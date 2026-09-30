@@ -61,14 +61,17 @@ Train your pet's attributes through 3 distinct retro mini-games (`MiniGameScene`
 
 ## 🕹️ Controls & Keybindings
 
-The game emulates a 3-button handheld LCD device. You can click the tactile buttons on screen or use your keyboard:
+The game emulates a 3-button handheld LCD device with fully intuitive arcade and keyboard controls:
 
-| Hardware Button | Keyboard Keys | Action / Context |
+| Action / Context | Keyboard Keys | Hardware / On-Screen Button |
 | :--- | :--- | :--- |
-| **Button 1 (Left)** | <kbd>A</kbd> / <kbd>Z</kbd> / <kbd>◀</kbd> | Open Items Menu / Scroll & Cycle selections |
-| **Button 2 (Center)** | <kbd>SPACE</kbd> / <kbd>S</kbd> / <kbd>X</kbd> | Action Menu / Confirm / Feed / Pet / Bath / Sleep |
-| **Button 3 (Right)** | <kbd>D</kbd> / <kbd>C</kbd> / <kbd>▶</kbd> | Battle Arena / Mini-Games / Options / Cancel |
-| **Audio Toggle** | <kbd>M</kbd> | Mute or unmute procedural audio |
+| **Navigate Up / Previous** | <kbd>▲</kbd> / <kbd>W</kbd> | Left Button (in menu) |
+| **Navigate Down / Next** | <kbd>▼</kbd> / <kbd>S</kbd> | Right Button (in menu) |
+| **Switch Tabs / Horizontal** | <kbd>◀</kbd> / <kbd>▶</kbd> or <kbd>A</kbd> / <kbd>D</kbd> | Tabs 1 (Items), 2 (Action), 3 (Battle) |
+| **Confirm / Select / Action** | <kbd>ENTER</kbd> / <kbd>SPACE</kbd> / <kbd>Z</kbd> | Center Button (<kbd>2</kbd>) |
+| **Cancel / Close Menu / Back** | <kbd>ESC</kbd> / <kbd>BACKSPACE</kbd> / <kbd>X</kbd> | Exit current menu / Return |
+| **Direct Digivice Buttons** | <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd> or <kbd>J</kbd>, <kbd>K</kbd>, <kbd>L</kbd> | Direct Hardware Buttons 1, 2, 3 |
+| **Audio Toggle** | <kbd>M</kbd> | Toggle procedural chiptune sound |
 
 ---
 

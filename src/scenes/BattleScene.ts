@@ -175,6 +175,31 @@ export class BattleScene extends Phaser.Scene {
     this.enemyHpText.setText(`${this.enemyFighter.name}: ${this.enemyFighter.hp}/${this.enemyFighter.maxHp}`);
   }
 
+  public onNavUp(): void {
+    this.onButton1();
+  }
+
+  public onNavLeft(): void {
+    this.onButton1();
+  }
+
+  public onConfirm(): void {
+    if (this.battleEnded) {
+      this.returnToPetScene();
+      return;
+    }
+    // If player has enough SP, execute Mega Strike, otherwise regular attack
+    if (this.playerSp >= 50) {
+      this.onButton2();
+    } else {
+      this.onButton1();
+    }
+  }
+
+  public onCancel(): void {
+    this.onButton3();
+  }
+
   public onButton1(): void {
     if (this.battleEnded) {
       this.returnToPetScene();

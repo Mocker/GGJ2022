@@ -129,6 +129,32 @@ export class SelectPetScene extends Phaser.Scene {
     });
   }
 
+  public onNavLeft(): void {
+    this.onButton1();
+  }
+
+  public onNavRight(): void {
+    this.onButton3();
+  }
+
+  public onNavUp(): void {
+    this.onButton1();
+  }
+
+  public onNavDown(): void {
+    this.onButton3();
+  }
+
+  public onConfirm(): void {
+    this.onButton2();
+  }
+
+  public onCancel(): void {
+    SoundService.getInstance().playBack();
+    this.scene.start('TitleScene');
+    this.scene.stop('SelectPetScene');
+  }
+
   public onButton1(): void {
     SoundService.getInstance().playSelect();
     this.currentIndex = (this.currentIndex - 1 + this.options.length) % this.options.length;

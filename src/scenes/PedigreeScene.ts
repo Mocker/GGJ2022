@@ -127,6 +127,14 @@ export class PedigreeScene extends Phaser.Scene {
     }).setOrigin(0.5).setMask(mask);
   }
 
+  public onConfirm(): void {
+    this.onButton2();
+  }
+
+  public onCancel(): void {
+    this.onButton3();
+  }
+
   public onButton1(): void {
     // Reserved
   }

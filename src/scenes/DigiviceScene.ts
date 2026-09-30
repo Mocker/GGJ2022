@@ -15,17 +15,33 @@ export class DigiviceScene extends Phaser.Scene {
     const profile = StorageService.getInstance().getProfile();
     this.shell = new DigiviceShell(this, profile.selectedTheme || 'Mountain Steel');
 
-    // Forward hardware buttons to the active foreground screen
-    this.events.on('hardware-btn-1', () => this.dispatchToActiveScene('onButton1'));
+    // 1. Physical / direct hardware button events
+    this.events.on('hardware-btn-1', () => this.dispatchAction(['onButton1', 'onNavLeft']));
     this.events.on('hardware-btn-2', () => this.handleCenterButton());
-    this.events.on('hardware-btn-3', () => this.dispatchToActiveScene('onButton3'));
+    this.events.on('hardware-btn-3', () => this.dispatchAction(['onButton3', 'onNavRight']));
+
+    // 2. Ergonomic semantic navigation events
+    this.events.on('nav-up', () => this.dispatchAction(['onNavUp', 'onButton1']));
+    this.events.on('nav-down', () => this.dispatchAction(['onNavDown', 'onButton3']));
+    this.events.on('nav-left', () => this.dispatchAction(['onNavLeft', 'onButton1']));
+    this.events.on('nav-right', () => this.dispatchAction(['onNavRight', 'onButton3']));
+    this.events.on('confirm', () => this.handleConfirm());
+    this.events.on('cancel', () => this.dispatchAction(['onCancel', 'onButton3']));
   }
 
   private handleCenterButton(): void {
     if (!this.isPowered) {
       this.powerOn();
     } else {
-      this.dispatchToActiveScene('onButton2');
+      this.dispatchAction(['onButton2', 'onConfirm']);
+    }
+  }
+
+  private handleConfirm(): void {
+    if (!this.isPowered) {
+      this.powerOn();
+    } else {
+      this.dispatchAction(['onConfirm', 'onButton2']);
     }
   }
 
@@ -45,7 +61,8 @@ export class DigiviceScene extends Phaser.Scene {
     this.shell.setTheme(themeName);
     StorageService.getInstance().setTheme(themeName);
   }
-  private dispatchToActiveScene(methodName: 'onButton1' | 'onButton2' | 'onButton3'): void {
+
+  private dispatchAction(methodNames: string[]): void {
     const activeScenes = [
       'PedigreeScene',
       'VisitorArenaScene',
@@ -60,9 +77,11 @@ export class DigiviceScene extends Phaser.Scene {
     for (const key of activeScenes) {
       if (this.scene.isActive(key)) {
         const target = this.scene.get(key) as unknown as Record<string, () => void>;
-        if (typeof target[methodName] === 'function') {
-          target[methodName]();
-          return;
+        for (const methodName of methodNames) {
+          if (typeof target[methodName] === 'function') {
+            target[methodName]();
+            return;
+          }
         }
       }
     }
