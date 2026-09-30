@@ -1,12 +1,9 @@
-version: '3.4'
-
 services:
-  phaser3projecttemplate:
-    image: phaser3projecttemplate
+  they-might-byte:
     build:
       context: .
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production
+      dockerfile: Dockerfile
+    container_name: they-might-byte
     ports:
-      - 3000:3000
+      - "8085:80"
+    restart: unless-stopped
