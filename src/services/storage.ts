@@ -227,6 +227,19 @@ export class StorageService {
     if (item.effects.cureSick && pet.status === 'sick') {
       pet.status = 'idle';
     }
+    if (item.effects.attack) {
+      pet.stats.attack += item.effects.attack;
+    }
+    if (item.effects.defense) {
+      pet.stats.defense += item.effects.defense;
+    }
+    if (item.effects.maxHp) {
+      pet.stats.maxHp += item.effects.maxHp;
+      pet.stats.hp = Math.min(pet.stats.maxHp, pet.stats.hp + item.effects.maxHp);
+    }
+    if (item.effects.discipline) {
+      pet.stats.discipline = Math.min(100, (pet.stats.discipline ?? 70) + item.effects.discipline);
+    }
 
     item.quantity--;
     if (item.quantity <= 0) {

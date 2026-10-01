@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { StorageService } from '../services/storage';
 import { SoundService } from '../services/audio';
+import { expressPhenotype } from '../genetics/evolutionEngine';
 
 export class FocusScene extends Phaser.Scene {
   private timerText!: Phaser.GameObjects.Text;
@@ -53,6 +54,13 @@ export class FocusScene extends Phaser.Scene {
       .setDisplaySize(140, 140)
       .setDepth(10)
       .setMask(mask);
+
+    if (pet?.genome) {
+      const pheno = expressPhenotype(pet.genome);
+      this.petSprite.setTint(pheno.tintHex);
+      const sz = 140 * pheno.scaleMultiplier;
+      this.petSprite.setDisplaySize(sz, sz);
+    }
 
     if (this.anims.exists(petKey)) {
       this.petSprite.play({ key: petKey, repeat: -1 });

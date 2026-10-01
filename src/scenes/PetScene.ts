@@ -249,6 +249,10 @@ export class PetScene extends Phaser.Scene {
       { id: 'candy-cane', name: 'Candy Cane', cost: 3, hunger: 15, happiness: 25, energy: 25 },
       { id: 'parsnip', name: 'Parsnip', cost: 2, hunger: 25, energy: 15, cleanliness: 5 },
       { id: 'medicine', name: 'Vaccine Spray', cost: 8, hunger: 0, cureSick: true, cleanliness: 50 },
+      { id: 'cyber-meat', name: 'Prime Dino Ribs', cost: 4, hunger: 45, happiness: 15, energy: 15 },
+      { id: 'protein-shake', name: 'Mega Protein Shake', cost: 6, hunger: 20, attack: 2, defense: 1, discipline: 5 },
+      { id: 'power-bracer', name: 'Titan Bracer', cost: 12, maxHp: 5, attack: 2, defense: 2, discipline: 10 },
+      { id: 'golden-apple', name: 'Golden Digi-Apple', cost: 14, hunger: 50, happiness: 60, energy: 50, cureSick: true },
     ];
 
     const items: MenuItem[] = shopList.map((shopItem) => ({
@@ -266,6 +270,10 @@ export class PetScene extends Phaser.Scene {
               energy: shopItem.energy,
               cureSick: shopItem.cureSick,
               cleanliness: shopItem.cleanliness,
+              attack: (shopItem as any).attack,
+              defense: (shopItem as any).defense,
+              maxHp: (shopItem as any).maxHp,
+              discipline: (shopItem as any).discipline,
             },
             quantity: 1,
             shopValue: shopItem.cost,
@@ -468,6 +476,16 @@ export class PetScene extends Phaser.Scene {
     items.push({
       label: '🎨 Change Shell Color',
       action: () => this.cycleTheme(),
+    });
+
+    items.push({
+      label: '📺 Cycle LCD Filter (F)',
+      action: () => {
+        const digiScene = this.scene.get('DigiviceScene') as DigiviceScene;
+        const filterName = digiScene?.cycleLcdFilter ? digiScene.cycleLcdFilter() : 'Default';
+        this.ui.showToast(`LCD Filter: ${filterName}`);
+        this.ui.closeMenu();
+      },
     });
 
     items.push({

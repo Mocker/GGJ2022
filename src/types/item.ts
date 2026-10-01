@@ -4,6 +4,10 @@ export interface ItemEffects {
   happiness?: number;
   cleanliness?: number;
   cureSick?: boolean;
+  attack?: number;
+  defense?: number;
+  maxHp?: number;
+  discipline?: number;
 }
 
 export interface InventoryItem {

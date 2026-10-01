@@ -163,6 +163,15 @@ export class DigiviceShell {
         SoundService.getInstance().toggleMute();
         return;
       }
+
+      // 7. Toggle Retro LCD Filter (Clear / 1997 Dot-Matrix / Cyber Scanlines / Amber CRT)
+      if (code === 'KeyF') {
+        const digiScene = this.scene as unknown as { cycleLcdFilter?: () => string };
+        if (typeof digiScene.cycleLcdFilter === 'function') {
+          digiScene.cycleLcdFilter();
+        }
+        return;
+      }
     });
   }
 

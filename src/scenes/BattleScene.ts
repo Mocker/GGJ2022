@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { StorageService } from '../services/storage';
 import { SoundService } from '../services/audio';
+import { expressPhenotype } from '../genetics/evolutionEngine';
 
 interface Fighter {
   name: string;
@@ -81,6 +82,15 @@ export class BattleScene extends Phaser.Scene {
       .setDisplaySize(140, 140)
       .setDepth(10)
       .setMask(mask);
+
+    // Apply procedural genetics tint & scale in battle
+    if (pet && pet.genome && pet.stage !== 'egg') {
+      const pheno = expressPhenotype(pet.genome);
+      this.playerSprite.setTint(pheno.tintHex);
+      const sz = 140 * pheno.scaleMultiplier;
+      this.playerSprite.setDisplaySize(sz, sz);
+    }
+
     if (this.anims.exists(this.playerFighter.spriteKey)) {
       this.playerSprite.play({ key: this.playerFighter.spriteKey, repeat: -1 });
     }
@@ -128,7 +138,7 @@ export class BattleScene extends Phaser.Scene {
     const enemyType = enemyTypes[(stage - 1) % enemyTypes.length];
     const isBoss = stage === this.maxColosseumRounds;
 
-    const baseHp = 20 + stage * 12 + (isBoss ? 20 : 0);
+    const baseHp = 20 + stage * 12 + (isBoss ? 25 : 0);
     const baseAtk = 4 + stage * 3;
 
     this.enemyFighter = {
@@ -141,6 +151,15 @@ export class BattleScene extends Phaser.Scene {
 
     this.enemySprite.setTexture(this.enemyFighter.spriteKey);
     this.enemySprite.setAlpha(1);
+
+    // Elemental enemy colors
+    const enemyTints: Record<number, number> = {
+      1: 0xffffff,
+      2: 0x38bdf8, // Frost
+      3: 0xf43f5e, // Boss Flame
+    };
+    this.enemySprite.setTint(enemyTints[stage] || 0xffffff);
+
     if (this.anims.exists(this.enemyFighter.spriteKey)) {
       this.enemySprite.play({ key: this.enemyFighter.spriteKey, repeat: -1 });
     }
@@ -173,6 +192,32 @@ export class BattleScene extends Phaser.Scene {
     this.enemyHpBar.fillStyle(enemyRatio > 0.3 ? 0x10b981 : 0xef4444, 1);
     this.enemyHpBar.fillRect(410, 268, 120 * enemyRatio, 7);
     this.enemyHpText.setText(`${this.enemyFighter.name}: ${this.enemyFighter.hp}/${this.enemyFighter.maxHp}`);
+  }
+
+  private showFloatingDmg(x: number, y: number, text: string, color = '#f43f5e', isCrit = false): void {
+    const maskGfx = this.make.graphics();
+    maskGfx.fillRect(200, 200, 400, 400);
+    const mask = new Phaser.Display.Masks.GeometryMask(this, maskGfx);
+
+    const dmgTxt = this.add.text(x, y - 20, text, {
+      fontFamily: 'beryl-digivice',
+      fontSize: isCrit ? '18px' : '13px',
+      color,
+    }).setOrigin(0.5).setDepth(25).setMask(mask);
+
+    if (isCrit) {
+      dmgTxt.setStroke('#000000', 3);
+    }
+
+    this.tweens.add({
+      targets: dmgTxt,
+      y: y - 55,
+      alpha: 0,
+      scale: isCrit ? 1.3 : 1.1,
+      duration: 750,
+      ease: 'Quad.easeOut',
+      onComplete: () => dmgTxt.destroy(),
+    });
   }
 
   public onNavUp(): void {
@@ -237,12 +282,16 @@ export class BattleScene extends Phaser.Scene {
 
   private executePlayerAttack(isSpecial: boolean): void {
     this.isPlayerTurn = false;
+    const isCrit = Math.random() < 0.22 || isSpecial;
+    const critMult = isCrit ? 1.4 : 1.0;
+
     const dmg = isSpecial
-      ? Math.floor(this.playerFighter.attack * 2.2) + Phaser.Math.Between(3, 8)
-      : this.playerFighter.attack + Phaser.Math.Between(-1, 3);
+      ? Math.floor((this.playerFighter.attack * 2.2 + Phaser.Math.Between(3, 8)) * critMult)
+      : Math.floor((this.playerFighter.attack + Phaser.Math.Between(-1, 3)) * critMult);
 
     if (!isSpecial) {
       this.playerSp = Math.min(100, this.playerSp + 25);
+      this.showFloatingDmg(310, 360, '+25 SP', '#38bdf8');
     }
 
     SoundService.getInstance().playSwipe(isSpecial ? 2 : 1);
@@ -257,6 +306,8 @@ export class BattleScene extends Phaser.Scene {
         this.enemyFighter.hp = Math.max(0, this.enemyFighter.hp - dmg);
         this.updateHpBars();
         this.cameras.main.shake(120, isSpecial ? 0.02 : 0.01);
+
+        this.showFloatingDmg(490, 300, isCrit ? `CRIT! -${dmg}` : `-${dmg}`, isCrit ? '#facc15' : '#f43f5e', isCrit);
         this.logText.setText(`${isSpecial ? '💥 MEGA FINISHER' : '⚔ STRIKE'}! Dealt ${dmg} dmg!`);
 
         if (this.enemyFighter.hp <= 0) {
@@ -283,6 +334,8 @@ export class BattleScene extends Phaser.Scene {
         this.playerFighter.hp = Math.max(0, this.playerFighter.hp - dmg);
         this.updateHpBars();
         this.cameras.main.shake(100, 0.01);
+
+        this.showFloatingDmg(310, 390, `-${dmg}`, '#ef4444');
         this.logText.setText(`${this.enemyFighter.name} struck for ${dmg} dmg!`);
 
         if (this.playerFighter.hp <= 0) {
@@ -320,9 +373,24 @@ export class BattleScene extends Phaser.Scene {
   private handleColosseumChampion(): void {
     this.battleEnded = true;
     SoundService.getInstance().playEvolve();
-    const rewardCoins = 20;
+    const rewardCoins = 25;
     const storage = StorageService.getInstance();
     storage.addMoney(rewardCoins);
+
+    // Rare Boss loot drops deposited to inventory
+    const dropPool = [
+      { id: 'protein-shake', name: 'Mega Protein Shake', desc: 'Permanent training boost', effects: { attack: 2, defense: 1, discipline: 5 } },
+      { id: 'golden-apple', name: 'Golden Digi-Apple', desc: 'Miracle cure and energy', effects: { hunger: 50, happiness: 60, energy: 50, cureSick: true } },
+      { id: 'power-bracer', name: 'Titan Bracer', desc: 'Defensive battle relic', effects: { maxHp: 5, defense: 2, discipline: 10 } },
+    ];
+    const loot = dropPool[Math.floor(Math.random() * dropPool.length)];
+    storage.addItem({
+      id: loot.id,
+      name: loot.name,
+      description: loot.desc,
+      effects: loot.effects,
+      quantity: 1,
+    });
 
     // Save pet victories & HP
     storage.updateCurrentPet((p) => {
@@ -334,7 +402,7 @@ export class BattleScene extends Phaser.Scene {
       p.stats.happiness.current = Math.min(100, p.stats.happiness.current + 30);
     });
 
-    this.logText.setText(`COLOSSEUM CHAMPION! +${rewardCoins}🪙 Lvl Up! [Press any btn]`);
+    this.logText.setText(`CHAMPION! +${rewardCoins}🪙 & Loot: ${loot.name}! [Press any btn]`);
   }
 
   private handleDefeat(): void {
