@@ -2,6 +2,7 @@ import { UserProfile, HallOfFameEntry } from '../types/user';
 import { PetModel, PetType, EggType } from '../types/pet';
 import { InventoryItem } from '../types/item';
 import { generateRandomGenome, crossoverGenomes } from '../genetics/evolutionEngine';
+import { GeneticMutationTrait } from '../genetics/types';
 
 const STORAGE_KEY = 'they_might_byte_save_v2';
 
@@ -39,6 +40,10 @@ export class StorageService {
   private migrateProfile(prof: UserProfile): UserProfile {
     if (!prof.hallOfFame) prof.hallOfFame = [];
     if (prof.soundEnabled === undefined) prof.soundEnabled = true;
+    if (!prof.unlockedThemes) prof.unlockedThemes = ['Mountain Steel', 'Sage Bog'];
+    if (!prof.unlockedHabitats) prof.unlockedHabitats = ['default'];
+    if (!prof.selectedHabitat) prof.selectedHabitat = 'default';
+    if (!prof.lastSaved) prof.lastSaved = Date.now();
 
     prof.pets = prof.pets.map((pet, idx) => {
       if (!pet.stats) {
@@ -159,6 +164,10 @@ export class StorageService {
       pets: [defaultPet],
       items: defaultItems,
       hallOfFame: [],
+      unlockedThemes: ['Mountain Steel', 'Sage Bog'],
+      unlockedHabitats: ['default'],
+      selectedHabitat: 'default',
+      lastSaved: Date.now(),
     };
 
     this.saveProfile(newProfile);
@@ -173,6 +182,7 @@ export class StorageService {
     if (profile) {
       this.profile = profile;
     }
+    this.profile.lastSaved = Date.now();
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.profile));
     } catch (e) {
@@ -240,6 +250,19 @@ export class StorageService {
     if (item.effects.discipline) {
       pet.stats.discipline = Math.min(100, (pet.stats.discipline ?? 70) + item.effects.discipline);
     }
+    if (itemId === 'catalyst-stone' && pet.genome) {
+      const allTraits: GeneticMutationTrait[] = ['Bioluminescent', 'Titan', 'Armored', 'Cybernetic', 'Pyre', 'Zen', 'GlitchShift'];
+      const unacquired = allTraits.filter((t) => !pet.genome?.traits.includes(t));
+      if (unacquired.length > 0) {
+        const novel = unacquired[Math.floor(Math.random() * unacquired.length)];
+        pet.genome.traits.push(novel);
+        if (novel === 'Titan') {
+          pet.genome.chromosomes.scaleModifier = 1.22;
+          pet.stats.maxHp += 10;
+          pet.stats.hp += 10;
+        }
+      }
+    }
 
     item.quantity--;
     if (item.quantity <= 0) {
@@ -277,6 +300,111 @@ export class StorageService {
   public setTheme(themeName: string): void {
     this.profile.selectedTheme = themeName;
     this.saveProfile();
+  }
+
+  public getUnlockedThemes(): string[] {
+    return this.profile.unlockedThemes || ['Mountain Steel', 'Sage Bog'];
+  }
+
+  public unlockTheme(themeName: string): boolean {
+    if (!this.profile.unlockedThemes) {
+      this.profile.unlockedThemes = ['Mountain Steel', 'Sage Bog'];
+    }
+    if (!this.profile.unlockedThemes.includes(themeName)) {
+      this.profile.unlockedThemes.push(themeName);
+      this.saveProfile();
+      return true;
+    }
+    return false;
+  }
+
+  public getUnlockedHabitats(): string[] {
+    return this.profile.unlockedHabitats || ['default'];
+  }
+
+  public unlockHabitat(habitatId: string): boolean {
+    if (!this.profile.unlockedHabitats) {
+      this.profile.unlockedHabitats = ['default'];
+    }
+    if (!this.profile.unlockedHabitats.includes(habitatId)) {
+      this.profile.unlockedHabitats.push(habitatId);
+      this.saveProfile();
+      return true;
+    }
+    return false;
+  }
+
+  public setHabitat(habitatId: string): void {
+    this.profile.selectedHabitat = habitatId;
+    this.saveProfile();
+  }
+
+  public processOfflineCatchUp(): string | null {
+    const pet = this.getCurrentPet();
+    if (!pet) return null;
+
+    const last = this.profile.lastSaved;
+    if (!last || isNaN(last)) {
+      this.profile.lastSaved = Date.now();
+      this.saveProfile();
+      return null;
+    }
+
+    const elapsedMs = Date.now() - last;
+    if (elapsedMs < 60000) return null;
+
+    const simMs = Math.min(elapsedMs, 8 * 3600 * 1000);
+    const ticks = Math.floor(simMs / 30000);
+    const hours = (elapsedMs / (1000 * 60 * 60)).toFixed(1);
+
+    pet.stats.timers.lived += simMs;
+    let message = '';
+
+    if (pet.isSleeping) {
+      pet.stats.energy.current = 100;
+      pet.stats.hp = pet.stats.maxHp;
+      pet.stats.hunger.current = Math.max(25, pet.stats.hunger.current - Math.floor(ticks * 0.4));
+      message = `Welcome back! (${hours}h away) ${pet.name} slept soundly & restored Energy/HP!`;
+    } else {
+      const daycareBowl = this.profile.items.find((i) => i.id === 'daycare-bowl');
+      let bowlsUsed = 0;
+      if (daycareBowl && daycareBowl.quantity > 0) {
+        const needed = Math.min(daycareBowl.quantity, Math.ceil(ticks / 35));
+        bowlsUsed = needed;
+        daycareBowl.quantity -= needed;
+        if (daycareBowl.quantity <= 0) {
+          this.profile.items = this.profile.items.filter((i) => i.id !== 'daycare-bowl');
+        }
+      }
+
+      const netHungerDecay = Math.max(0, ticks - (bowlsUsed * 35));
+      pet.stats.hunger.current = Math.max(15, pet.stats.hunger.current - netHungerDecay);
+      pet.stats.cleanliness.current = Math.max(15, pet.stats.cleanliness.current - Math.floor(ticks * 0.5));
+      pet.stats.happiness.current = Math.max(20, pet.stats.happiness.current - Math.floor(ticks * 0.4));
+
+      if (pet.stage !== 'egg') {
+        const addedPoop = ticks > 40 ? 2 : ticks > 15 ? 1 : 0;
+        pet.stats.poopCount = Math.min(2, (pet.stats.poopCount || 0) + addedPoop);
+      }
+
+      if (pet.stats.hunger.current <= 15) {
+        pet.status = 'hungry';
+      } else if ((pet.stats.poopCount || 0) > 0) {
+        pet.status = 'poopy';
+      } else {
+        pet.status = 'idle';
+      }
+
+      if (bowlsUsed > 0) {
+        message = `Welcome back! (${hours}h away) Daycare Bowl auto-fed ${bowlsUsed} snack(s) to ${pet.name}!`;
+      } else {
+        message = `Welcome back! (${hours}h away) ${pet.name} was cared for while offline.`;
+      }
+    }
+
+    this.profile.lastSaved = Date.now();
+    this.saveProfile();
+    return message;
   }
 
   public isSoundEnabled(): boolean {

@@ -33,7 +33,7 @@ export class MiniGameScene extends Phaser.Scene {
     const registry = MiniGameRegistry.getInstance();
     if (!registry.get('digi-workout')) registry.register(new DigiWorkoutPlugin());
     if (!registry.get('memory-matrix')) registry.register(new MemoryMatrixPlugin());
-    if (!registry.get('digi-crawler')) registry.register(new DigiCrawlerPlugin());
+    // DigiCrawlerPlugin temporarily disabled pending focused rework sprint
 
     // 2. LCD Mask
     const maskGfx = this.make.graphics();

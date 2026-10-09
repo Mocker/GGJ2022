@@ -453,15 +453,136 @@ When an adult pet reaches Level 3+ or achieves Adult/Mega stage, Tamers can choo
 
 ## 4. Systems Balance Summary Matrix
 
-| System | Current State | Target Balanced State | Priority |
+| System | Current State | Target Balanced State | Status |
 | :--- | :--- | :--- | :--- |
-| **Stat Decay Rate** | 10s tick (-12 hunger/min) | 30s tick (-2 hunger/min awake, -0.5 sleeping) | **High** |
-| **Evolution Agency** | Manual menu click | Age/XP-gated + organic metamorphosis prompt | **High** |
-| **Offline Progression**| Frozen when tab closes | Capped 8h catch-up simulation with sleep auto-detect | **Medium** |
-| **Economy Sinks** | Cap at 🪙14 items | Add 🪙50–🪙150 cosmetic shells and room backgrounds | **Medium** |
-| **Dungeon Strategy** | 100% blind doors | Radar scanner hints based on pet Speed & Curiosity | **Low** |
-| **Colosseum Difficulty**| Linear static enemy stats | Dynamic enemy scaling based on player IV grade | **Low** |
+| **Stat Decay Rate** | 30s tick (-2 hunger/min awake, -0.6 sleeping) | 30s tick + Daycare Snack Bowl auto-feeder | **Implemented** |
+| **Evolution Agency** | Gated by Level, Battles, Focus & Life Timer | Metamorphosis Ceremony + Anticipatory Flash | **Implemented** |
+| **Offline Progression**| 8-hour capped offline delta processor on boot | Auto-recovers sleeping pets & consumes Daycare Bowls | **Implemented** |
+| **Economy Sinks** | Sinks up to 🪙75 (Shells, Gene Catalyst, Equipment) | Collectible shell chassis (Dragon Blood, Gold, Bronze) | **Implemented** |
+| **Dungeon Arcade** | Disabled pending dedicated rework sprint | Digi-Workout & Memory Matrix active in arcade | **Implemented** |
+| **Colosseum Rewards** | 🪙25 + Level Up + Rare Loot (Bracer, Shake, Apple) | Balanced against expanded shop prices | **Implemented** |
 
 ---
 
-*This document serves as the canonical technical, gameplay, and balancing specification for They Might Byte v2.0.*
+# PART III: Product Strategy, Platform Packaging & Market Fit Analysis
+
+---
+
+## 1. Market Opportunity & Target Audience
+
+### 1.1 The Convergence of Nostalgia & Cozy Productivity
+In recent years, the intersection of **retro virtual pets** and **passive/cozy desktop software** has evolved from a niche hobby into a commercially proven subgenre. Millions of players seek companions that enhance their daily workflow without demanding high-stress, full-screen commitment.
+
+### 1.2 Target Audience Personas
+
+1. **The 90s/2000s Nostalgia Purist (Ages 25–40)**:
+   - Grew up with 1997 Digimon Digital Monsters, Tamagotchi, and *Pokemon Red/Blue*.
+   - Craves authentic hardware aesthetics: 3-button actuation, audible piezo buzzer sounds, and dot-matrix LCD phosphor grids.
+   - Values deep, mechanical systems (Mendelian genetics, IV stats, branching evolutions) over simplistic mobile clickers.
+2. **The "Cozy Productivity" Remote Worker (Ages 20–35)**:
+   - Programmers, designers, writers, and students spending 6–10 hours a day in front of screens.
+   - Uses Pomodoro timers and lo-fi audio to sustain flow state.
+   - Wants a low-friction desk buddy that thrives alongside their workday, rewarding them for completing real-world focus sprints.
+3. **The Monster Breeder / Lineage Collector**:
+   - Enthusiasts of *Pokemon* IV breeding, *Cassette Beasts*, and *Dragon Quest Monsters*.
+   - Highly motivated by pedigree charts, Hall of Fame memorialization, gene mutation chasing (`Titan`, `Zen`, `Pyre`), and sharing collectible trading cards.
+
+---
+
+## 2. Competitive Landscape & Commercial Comps
+
+| Title | Platform | Commercial Trajectory & Model | Relevance to *They Might Byte* |
+| :--- | :--- | :--- | :--- |
+| **Rusty's Retirement** | Steam (PC) | $2.5M+ revenue, 250k+ copies sold in 2024. Desktop bottom-bar idle game. | Proves desktop-docked companions running unobtrusively during work are a massive commercial hit. |
+| **VPet-Simulator** | Steam (PC) | Viral hit, 95% Overwhelmingly Positive, 20k+ peak concurrent desktop players. | Confirms global hunger for interactive virtual pets living on the player's desktop. |
+| **Digimon Vital Bracelet** | Dedicated Bandai Hardware | Multi-million unit physical wearable line linking steps/exercise to monster evolution. | Validates that tying real-world human habits (activity/focus) to monster growth is inherently addictive. |
+| **Spirit City: Lofi Sessions** | Steam (PC) | 100k+ sales in launch months. Gamified Pomodoro timer with pets and ambient sound. | Demonstrates that knowledge workers happily pay $10–$15 for gamified productivity tools. |
+| **Habitica / Finch** | Mobile / Web | Multi-million user habit trackers. | Validates long-term retention of RPG caretaking loops. |
+
+### *They Might Byte*'s Competitive Moat:
+Unlike purely aesthetic desktop pets or generic habit trackers, *They Might Byte* delivers **hardware-authentic LCD simulation**, **uncompromising Mendelian genetics with 124-point IVs**, a **tactical Colosseum battle gauntlet**, and **100% offline-first autonomy with zero predatory monetization**.
+
+---
+
+## 3. Platform Architecture & Packaging Strategy
+
+```
+                          [ Phaser 3 / TS Core Engine ]
+                                       |
+          +----------------------------+----------------------------+
+          |                            |                            |
+  [ Web-First PWA ]           [ Desktop Wrapper ]          [ Community / Social ]
+  - Cloudflare Pages          - Tauri (Steam/Itch)         - Discord Activity
+  - Zero-install instant      - Micro binary (<15MB)       - In-voice sparring
+  - Mobile Home Screen app    - Dual Modes: Digivice /     - Trading card sharing
+  - Service Worker offline      Docked Desktop Overlay
+```
+
+### 3.1 Tier 1: Web-First Progressive Web App (PWA) — *Primary Entry Point*
+- **Rationale**: Immediate zero-friction access. Anyone with a URL can start raising a pet in under 2 seconds.
+- **Implementation**:
+  - Add standard Web App Manifest (`manifest.json`) with retro Digivice app icons.
+  - Implement a lightweight Service Worker for full asset caching (`dist/` precaching).
+  - Works 100% offline once visited.
+  - On iOS and Android, tapping **"Add to Home Screen"** launches the game in standalone fullscreen mode without browser chrome, perfectly mimicking a physical handheld device.
+
+### 3.2 Tier 2: Desktop Standalone & Overlay Mode (Steam / Itch Desktop via Tauri)
+- **Why Tauri over Electron?**
+  - **Memory Footprint**: Tauri utilizes the OS native WebView (WebKit on macOS, WebView2 on Windows) via Rust. Typical memory usage is **30–50 MB RAM**, compared to Electron's **250–400 MB RAM**. For a productivity companion meant to sit alongside IDEs and Figma, low RAM consumption is critical.
+  - **Binary Size**: Packaged installers are **10–15 MB**, whereas Electron bundles exceed **120 MB**.
+- **Dual Display Modes**:
+  1. *Classic Digivice Window*: Standard 800x800 retro handheld casing.
+  2. *Docked Desktop Companion (Overlay)*: Borderless, semi-transparent window that docks to the bottom edge or corner of the screen, staying "Always on Top" while the player works (directly capturing the *Rusty's Retirement* market).
+- **Steam Integration**:
+  - Steam Achievements (e.g. *"S-Rank Origin"*, *"Saint Ascension"*, *"100 Hours of Flow"*).
+  - Steam Cloud Saves (seamless synchronization between desktop rig and laptop).
+
+### 3.3 Tier 3: Discord Activity (Embedded App SDK)
+- Discord now supports embedded web applications directly inside voice and text channels.
+- *They Might Byte* can be packaged as a server activity, allowing community members to compare Tamer Cards, inspect each other's IV rankings, and run asynchronous sparring duels during study/coworking voice rooms.
+
+### 3.4 Tier 4: Mobile Native (Capacitor Wrapper)
+- Wrap the Vite build using **Capacitor** to deploy to Google Play and the Apple App Store.
+- Enables native mobile hardware features:
+  - Haptic feedback vibration on physical button depressions.
+  - Local background notifications (*"Your pet is hungry!"*, *"Evolution Cocoon ready!"*).
+
+---
+
+## 4. Hosting & Infrastructure Architecture
+
+### 4.1 Production Web Hosting: Cloudflare Pages
+- **Recommendation**: Deploy the production web client to **Cloudflare Pages**.
+- **Advantages**:
+  - **Zero Cost**: Cloudflare Pages free tier includes unlimited bandwidth, automated Git deployments, and global edge CDN caching across 300+ cities.
+  - **Performance**: Sub-50ms static asset delivery worldwide.
+  - **Edge Workers**: Future multiplayer lobbies or global Hall of Fame leaderboards can run directly on Cloudflare Python/JS Workers without dedicated server maintenance.
+  - **Custom Domain**: Instant SSL on custom apex domains (e.g., `theymightbyte.com` or `digivice.io`).
+
+### 4.2 Indie Gaming Hub: Itch.io
+- Deploy via the automated release pipeline (`pnpm run build:itch` &rarr; `they-might-byte-release.zip`).
+- **Features**:
+  - Direct in-browser HTML5 playable embed.
+  - Community forums, devlog updates, and review ratings.
+  - Tag visibility across `#virtual-pet`, `#tamagotchi`, `#retro`, `#digimon`, and `#productivity`.
+
+---
+
+## 5. Commercial Model & Monetization Ethics
+
+### 5.1 Pricing Strategy
+- **Web / Itch.io**:
+  - 100% Free-to-play in browser.
+  - "Name Your Own Price" option with a suggested $3.00–$5.00 tip jar for Tamers who want to support ongoing development.
+- **Steam / Desktop**:
+  - **Premium Single-Purchase: $4.99–$7.99 USD**.
+  - Bundled with Desktop Overlay mode, Steam Cloud saves, Steam Achievements, and exclusive commemorative shell chassis.
+
+### 5.2 Ethical Design Commitment (Anti-Pay-to-Win)
+- **Zero Predatory Mechanics**: No gacha loot boxes, no paid stat boosters, no real-money energy refills, and no intrusive interstitial ads.
+- **Player Respect**: Progression, rare mutations, and cosmetic shells are earned exclusively through genuine care, combat mastery, and real-world focus sprints.
+
+---
+
+*Document updated and verified for They Might Byte v2.0.*
+

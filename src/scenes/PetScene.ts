@@ -4,7 +4,7 @@ import { SoundService } from '../services/audio';
 import { PetEntity } from '../objects/PetEntity';
 import { GameUI, MenuItem } from '../objects/GameUI';
 import { PetModel, PetStage } from '../types/pet';
-import { evaluateEvolution } from '../data/evolutionTree';
+import { evaluateEvolution, checkEvolutionReadiness } from '../data/evolutionTree';
 import { DIGIVICE_THEMES, THEME_NAMES } from '../services/theme';
 import { DigiviceScene } from './DigiviceScene';
 
@@ -43,9 +43,22 @@ export class PetScene extends Phaser.Scene {
     // Spawn Pet Entity
     this.spawnPet(currentPet);
 
-    // Start stat decay timer (runs every 10 seconds)
+    // Process offline progression catch-up if returning after absence
+    const offlineReport = storage.processOfflineCatchUp();
+    if (offlineReport) {
+      this.time.delayedCall(1000, () => {
+        this.ui.showToast(offlineReport);
+        const updated = storage.getCurrentPet();
+        if (updated) {
+          this.spawnPet(updated);
+          this.ui.updateStatus(updated);
+        }
+      });
+    }
+
+    // Start stat decay timer (rebalanced to 30-second ticks for peaceful companion play)
     this.statDecayTimer = this.time.addEvent({
-      delay: 10000,
+      delay: 30000,
       loop: true,
       callback: () => this.tickPetStats(),
     });
@@ -78,24 +91,40 @@ export class PetScene extends Phaser.Scene {
     if (!pet || this.ui.isMenuOpen) return;
 
     storage.updateCurrentPet((p) => {
-      p.stats.timers.lived += 10000;
+      p.stats.timers.lived += 30000;
 
       // Sleep mechanics: recover HP & Energy, slower metabolism
       if (p.isSleeping) {
-        p.stats.energy.current = Math.min(100, p.stats.energy.current + 5);
-        p.stats.hp = Math.min(p.stats.maxHp, p.stats.hp + 2);
+        p.stats.energy.current = Math.min(100, p.stats.energy.current + 8);
+        p.stats.hp = Math.min(p.stats.maxHp, p.stats.hp + 3);
         p.stats.hunger.current = Math.max(0, p.stats.hunger.current - 1);
         p.status = 'sleeping';
         return;
       }
 
       if (p.stage !== 'egg') {
-        p.stats.hunger.current = Math.max(0, p.stats.hunger.current - 2);
+        p.stats.hunger.current = Math.max(0, p.stats.hunger.current - 1);
         p.stats.happiness.current = Math.max(0, p.stats.happiness.current - 1);
         p.stats.cleanliness.current = Math.max(0, p.stats.cleanliness.current - 1);
 
-        // Waste generation chance if fed and awake
-        if (p.stats.hunger.current > 30 && Math.random() < 0.20 && (p.stats.poopCount ?? 0) < 4) {
+        // Autopilot Daycare Snack Bowl: auto-feed if hungry and bowl is in inventory
+        if (p.stats.hunger.current <= 25) {
+          const profile = storage.getProfile();
+          const daycareBowl = profile.items.find((i) => i.id === 'daycare-bowl' && i.quantity > 0);
+          if (daycareBowl) {
+            daycareBowl.quantity--;
+            if (daycareBowl.quantity <= 0) {
+              profile.items = profile.items.filter((i) => i.id !== 'daycare-bowl');
+            }
+            p.stats.hunger.current = Math.min(100, p.stats.hunger.current + 35);
+            p.stats.happiness.current = Math.min(100, p.stats.happiness.current + 10);
+            this.ui.showToast(`🥣 Daycare Bowl auto-fed ${p.name}!`);
+            this.petEntity?.playHappy();
+          }
+        }
+
+        // Waste generation chance if fed and awake (15% per 30s)
+        if (p.stats.hunger.current > 30 && Math.random() < 0.15 && (p.stats.poopCount ?? 0) < 4) {
           p.stats.poopCount = (p.stats.poopCount ?? 0) + 1;
           p.stats.cleanliness.current = Math.max(0, p.stats.cleanliness.current - 15);
         }
@@ -245,31 +274,63 @@ export class PetScene extends Phaser.Scene {
   private openShopMenu(): void {
     const storage = StorageService.getInstance();
     const shopList = [
-      { id: 'cake', name: 'Cake', cost: 5, hunger: 30, happiness: 40, energy: 20 },
-      { id: 'candy-cane', name: 'Candy Cane', cost: 3, hunger: 15, happiness: 25, energy: 25 },
+      // Sustenance Consumables
       { id: 'parsnip', name: 'Parsnip', cost: 2, hunger: 25, energy: 15, cleanliness: 5 },
-      { id: 'medicine', name: 'Vaccine Spray', cost: 8, hunger: 0, cureSick: true, cleanliness: 50 },
-      { id: 'cyber-meat', name: 'Prime Dino Ribs', cost: 4, hunger: 45, happiness: 15, energy: 15 },
-      { id: 'protein-shake', name: 'Mega Protein Shake', cost: 6, hunger: 20, attack: 2, defense: 1, discipline: 5 },
-      { id: 'power-bracer', name: 'Titan Bracer', cost: 12, maxHp: 5, attack: 2, defense: 2, discipline: 10 },
-      { id: 'golden-apple', name: 'Golden Digi-Apple', cost: 14, hunger: 50, happiness: 60, energy: 50, cureSick: true },
+      { id: 'candy-cane', name: 'Candy Cane', cost: 3, hunger: 15, happiness: 25, energy: 25 },
+      { id: 'cyber-meat', name: 'Prime Dino Ribs', cost: 5, hunger: 45, happiness: 15, energy: 15 },
+      { id: 'cake', name: 'Cake', cost: 6, hunger: 30, happiness: 40, energy: 20 },
+      { id: 'medicine', name: 'Vaccine Spray', cost: 10, hunger: 0, cureSick: true, cleanliness: 50 },
+
+      // Training & Automation
+      { id: 'daycare-bowl', name: 'Daycare Snack Bowl', cost: 12, hunger: 35, desc: 'Auto-feeds pet when hungry' },
+      { id: 'protein-shake', name: 'Mega Protein Shake', cost: 15, hunger: 20, attack: 2, defense: 1, discipline: 5 },
+      { id: 'power-bracer', name: 'Titan Bracer', cost: 25, maxHp: 5, attack: 2, defense: 2, discipline: 10 },
+      { id: 'golden-apple', name: 'Golden Digi-Apple', cost: 30, hunger: 50, happiness: 60, energy: 50, cureSick: true },
+
+      // High-Tier Gene Sinks
+      { id: 'catalyst-stone', name: 'Ancient Gene Catalyst', cost: 65, desc: 'Induces rare spontaneous mutation' },
+
+      // Collectible Shell Casings
+      { id: 'shell-dragon', name: 'Crimson Red Shell', cost: 50, themeName: 'Dragon Blood', type: 'theme' },
+      { id: 'shell-bronze', name: 'Bronze Metal Shell', cost: 60, themeName: 'Cool Bronze', type: 'theme' },
+      { id: 'shell-gold', name: 'Solar Gold Shell', cost: 75, themeName: 'Golden Beam', type: 'theme' },
     ];
 
     const items: MenuItem[] = shopList.map((shopItem) => ({
       label: `Buy ${shopItem.name} (🪙${shopItem.cost})`,
       action: () => {
+        if ((shopItem as any).type === 'theme') {
+          const themeName = (shopItem as any).themeName;
+          if (storage.getUnlockedThemes().includes(themeName)) {
+            this.ui.showToast('Already unlocked & owned!');
+            return;
+          }
+          if (storage.spendMoney(shopItem.cost)) {
+            storage.unlockTheme(themeName);
+            storage.setTheme(themeName);
+            const digivice = this.scene.get('DigiviceScene') as DigiviceScene;
+            digivice?.setTheme(themeName);
+            SoundService.getInstance().playMoney();
+            this.ui.showToast(`Unlocked & equipped ${DIGIVICE_THEMES[themeName]?.displayName || themeName}!`);
+            this.ui.updateStatus(storage.getCurrentPet());
+          } else {
+            this.ui.showToast('Not enough coins!');
+          }
+          return;
+        }
+
         if (storage.spendMoney(shopItem.cost)) {
           SoundService.getInstance().playMoney();
           storage.addItem({
             id: shopItem.id,
             name: shopItem.name,
-            description: 'Purchased from Digi-Shop',
+            description: (shopItem as any).desc || 'Purchased from Digi-Shop',
             effects: {
-              hunger: shopItem.hunger,
-              happiness: shopItem.happiness,
-              energy: shopItem.energy,
-              cureSick: shopItem.cureSick,
-              cleanliness: shopItem.cleanliness,
+              hunger: (shopItem as any).hunger,
+              happiness: (shopItem as any).happiness,
+              energy: (shopItem as any).energy,
+              cureSick: (shopItem as any).cureSick,
+              cleanliness: (shopItem as any).cleanliness,
               attack: (shopItem as any).attack,
               defense: (shopItem as any).defense,
               maxHp: (shopItem as any).maxHp,
@@ -610,36 +671,59 @@ export class PetScene extends Phaser.Scene {
       return;
     }
 
+    const readiness = checkEvolutionReadiness(pet);
+    if (!readiness.canEvolve) {
+      SoundService.getInstance().playBack();
+      this.ui.showToast(readiness.reason || 'Not ready to evolve yet.');
+      return;
+    }
+
     const evo = evaluateEvolution(pet);
-    SoundService.getInstance().playEvolve();
+    SoundService.getInstance().playStartup();
+    this.ui.showToast(`✨ ${pet.name} is metamorphosing...!`);
 
-    this.petEntity?.playAction('happy', 2000, () => {
-      storage.updateCurrentPet((p) => {
-        p.stage = evo.nextStage;
-        p.name = evo.nextName;
-        p.type = evo.nextType;
-        p.stats.branchType = evo.branch;
-        p.stats.hp += evo.bonusHp;
-        p.stats.maxHp += evo.bonusHp;
-        p.stats.attack += evo.bonusAttack;
-        p.stats.defense += evo.bonusDefense;
-        p.stats.careMistakes = 0; // Reset care mistakes for new stage
+    // Suspenseful Metamorphosis Ceremony: camera flash, rapid sprite pulsing
+    this.cameras.main.flash(700, 56, 189, 248);
+    if (this.petEntity) {
+      this.tweens.add({
+        targets: this.petEntity.sprite,
+        scaleX: { from: 0.22, to: 0.40 },
+        scaleY: { from: 0.22, to: 0.40 },
+        duration: 160,
+        yoyo: true,
+        repeat: 7,
+        onComplete: () => {
+          SoundService.getInstance().playEvolve();
+          this.cameras.main.shake(220, 0.015);
+          storage.updateCurrentPet((p) => {
+            p.stage = evo.nextStage;
+            p.name = evo.nextName;
+            p.type = evo.nextType;
+            p.stats.branchType = evo.branch;
+            p.stats.hp += evo.bonusHp;
+            p.stats.maxHp += evo.bonusHp;
+            p.stats.attack += evo.bonusAttack;
+            p.stats.defense += evo.bonusDefense;
+            p.stats.careMistakes = 0; // Reset care mistakes for new stage
+          });
+
+          const updated = storage.getCurrentPet()!;
+          this.spawnPet(updated);
+          this.ui.showToast(evo.evolutionMessage);
+        },
       });
-
-      const updated = storage.getCurrentPet()!;
-      this.spawnPet(updated);
-      this.ui.showToast(evo.evolutionMessage);
-    });
+    }
   }
 
   private cycleTheme(): void {
     const storage = StorageService.getInstance();
+    const unlocked = storage.getUnlockedThemes();
     const profile = storage.getProfile();
-    const currentIdx = THEME_NAMES.indexOf(profile.selectedTheme);
-    const nextTheme = THEME_NAMES[(currentIdx + 1) % THEME_NAMES.length];
+    const currentIdx = unlocked.indexOf(profile.selectedTheme);
+    const nextTheme = unlocked[(currentIdx + 1) % unlocked.length];
 
     const digivice = this.scene.get('DigiviceScene') as DigiviceScene;
     digivice.setTheme(nextTheme);
-    this.ui.showToast(`Theme: ${DIGIVICE_THEMES[nextTheme].displayName}`);
+    this.ui.showToast(`Theme: ${DIGIVICE_THEMES[nextTheme]?.displayName || nextTheme}`);
   }
 }

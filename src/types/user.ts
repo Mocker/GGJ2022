@@ -25,4 +25,8 @@ export interface UserProfile {
   pets: PetModel[];
   items: InventoryItem[];
   hallOfFame?: HallOfFameEntry[];
+  lastSaved?: number;
+  unlockedThemes?: string[];
+  unlockedHabitats?: string[];
+  selectedHabitat?: string;
 }

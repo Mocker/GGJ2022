@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { evaluateEvolution } from '../src/data/evolutionTree';
+import { evaluateEvolution, checkEvolutionReadiness } from '../src/data/evolutionTree';
 import { PetModel } from '../src/types/pet';
 import { StorageService } from '../src/services/storage';
 
@@ -218,5 +218,80 @@ describe('StorageService & Lineage Mechanics', () => {
     expect(newPet?.stats.generation).toBe(2);
     expect(newPet?.stats.discipline).toBe(80); // Heirloom bonus
     expect(newPet?.stats.hp).toBe(25); // Heirloom HP bonus
+  });
+
+  it('enforces evolution readiness progression gates', () => {
+    const unreadyBaby = createMockPet({
+      stage: 'baby',
+      stats: {
+        ...createMockPet().stats,
+        level: 1,
+        battlesWon: 0,
+        focusMinutes: 0,
+        timers: { lived: 10000 },
+      },
+    });
+    expect(checkEvolutionReadiness(unreadyBaby).canEvolve).toBe(false);
+
+    const readyBaby = createMockPet({
+      stage: 'baby',
+      stats: {
+        ...createMockPet().stats,
+        level: 2,
+      },
+    });
+    expect(checkEvolutionReadiness(readyBaby).canEvolve).toBe(true);
+
+    const unreadyAdult = createMockPet({
+      stage: 'adultCute',
+      stats: {
+        ...createMockPet().stats,
+        level: 2,
+        battlesWon: 1,
+      },
+    });
+    expect(checkEvolutionReadiness(unreadyAdult).canEvolve).toBe(false);
+
+    const readyAdult = createMockPet({
+      stage: 'adultCute',
+      stats: {
+        ...createMockPet().stats,
+        level: 4,
+        battlesWon: 3,
+      },
+    });
+    expect(checkEvolutionReadiness(readyAdult).canEvolve).toBe(true);
+  });
+
+  it('processes offline catch-up simulation and daycare bowl feedings', () => {
+    const pet = storage.getCurrentPet()!;
+    pet.isSleeping = false;
+    pet.stats.hunger.current = 80;
+
+    // Give player a Daycare Snack Bowl
+    storage.addItem({
+      id: 'daycare-bowl',
+      name: 'Daycare Snack Bowl',
+      description: 'Auto-feeds',
+      effects: { hunger: 35 },
+      quantity: 2,
+    });
+
+    // Simulate 3 hours offline (10,800,000 ms)
+    storage.getProfile().lastSaved = Date.now() - 3 * 3600 * 1000;
+    const msg = storage.processOfflineCatchUp();
+    expect(msg).not.toBeNull();
+    expect(msg).toContain('Welcome back');
+    // Daycare bowl should have fed pet
+    expect(pet.stats.hunger.current).toBeGreaterThanOrEqual(15);
+  });
+
+  it('manages theme unlocking and persistence', () => {
+    expect(storage.getUnlockedThemes()).toContain('Mountain Steel');
+    expect(storage.getUnlockedThemes()).toContain('Sage Bog');
+
+    const unlocked = storage.unlockTheme('Dragon Blood');
+    expect(unlocked).toBe(true);
+    expect(storage.getUnlockedThemes()).toContain('Dragon Blood');
   });
 });

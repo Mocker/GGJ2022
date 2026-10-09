@@ -11,6 +11,49 @@ export interface EvolutionResult {
   evolutionMessage: string;
 }
 
+export interface EvolutionReadiness {
+  canEvolve: boolean;
+  reason?: string;
+}
+
+export function checkEvolutionReadiness(pet: PetModel): EvolutionReadiness {
+  if (pet.stage === 'egg') {
+    return { canEvolve: true };
+  }
+
+  const level = pet.stats.level ?? 1;
+  const battlesWon = pet.stats.battlesWon ?? 0;
+  const focusMinutes = pet.stats.focusMinutes ?? 0;
+  const livedMs = pet.stats.timers.lived ?? 0;
+
+  if (pet.stage === 'baby') {
+    const hasProgress = level >= 2 || battlesWon >= 1 || focusMinutes >= 5 || livedMs >= 120000;
+    if (!hasProgress) {
+      return {
+        canEvolve: false,
+        reason: 'Baby is still growing! (Train to Level 2, win 1 Battle, or complete a 5m Focus sprint)',
+      };
+    }
+    return { canEvolve: true };
+  }
+
+  if (pet.stage === 'adultCute' || pet.stage === 'adultEvil' || pet.stage === 'cyberMecha') {
+    const hasProgress = level >= 4 && (battlesWon >= 3 || focusMinutes >= 15 || livedMs >= 300000);
+    if (!hasProgress) {
+      return {
+        canEvolve: false,
+        reason: 'Adult must train further for Mega Ascension! (Reach Level 4 and win 3 Battles or 15m Focus)',
+      };
+    }
+    return { canEvolve: true };
+  }
+
+  return {
+    canEvolve: false,
+    reason: `${pet.name} has attained apex form! Ascend to Hall of Fame in the Lineage Shrine.`,
+  };
+}
+
 export function evaluateEvolution(pet: PetModel): EvolutionResult {
   const discipline = pet.stats.discipline ?? 50;
   const mistakes = pet.stats.careMistakes ?? 0;
