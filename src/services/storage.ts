@@ -1,10 +1,116 @@
-import { UserProfile, HallOfFameEntry } from '../types/user';
+import { UserProfile, HallOfFameEntry, DailyHabit, DailyStreakInfo, BioSyncState } from '../types/user';
 import { PetModel, PetType, EggType } from '../types/pet';
 import { InventoryItem } from '../types/item';
 import { generateRandomGenome, crossoverGenomes } from '../genetics/evolutionEngine';
 import { GeneticMutationTrait } from '../genetics/types';
 
 const STORAGE_KEY = 'they_might_byte_save_v2';
+
+export function getTodayDateString(offsetDays = 0): string {
+  const d = new Date();
+  if (offsetDays !== 0) {
+    d.setDate(d.getDate() + offsetDays);
+  }
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export interface DailyStreakReward {
+  day: number;
+  coins: number;
+  itemId?: string;
+  itemName?: string;
+  happinessBonus: number;
+  description: string;
+}
+
+export const STREAK_REWARDS: DailyStreakReward[] = [
+  { day: 1, coins: 5, happinessBonus: 15, description: '🪙 5 Coins + Happiness boost' },
+  { day: 2, coins: 10, itemId: 'parsnip', itemName: 'Parsnip', happinessBonus: 20, description: '🪙 10 Coins + Crunchy Parsnip' },
+  { day: 3, coins: 15, itemId: 'candy-cane', itemName: 'Candy Cane', happinessBonus: 25, description: '🪙 15 Coins + Peppermint Candy Cane' },
+  { day: 4, coins: 20, itemId: 'daycare-bowl', itemName: 'Daycare Snack Bowl', happinessBonus: 30, description: '🪙 20 Coins + Auto-feeding Daycare Bowl' },
+  { day: 5, coins: 25, itemId: 'protein-shake', itemName: 'Mega Protein Shake', happinessBonus: 35, description: '🪙 25 Coins + Mega Protein Shake' },
+  { day: 6, coins: 30, itemId: 'medicine', itemName: 'Vaccine Spray', happinessBonus: 40, description: '🪙 30 Coins + Vaccine Spray' },
+  { day: 7, coins: 50, itemId: 'golden-apple', itemName: 'Golden Digi-Apple', happinessBonus: 50, description: '🪙 50 Coins + Rare Golden Digi-Apple + Genetic Mutation!' },
+];
+
+export function getDefaultDailyHabits(): DailyHabit[] {
+  return [
+    {
+      id: 'hydro_1',
+      label: '💧 Hydro-Byte Morning',
+      description: 'Drink first glass of water to hydrate',
+      icon: '💧',
+      rewardCoins: 2,
+      rewardDiscipline: 2,
+      completed: false,
+      category: 'hydration',
+    },
+    {
+      id: 'hydro_2',
+      label: '💧 Hydro-Byte Afternoon',
+      description: 'Afternoon hydration recharge',
+      icon: '💧',
+      rewardCoins: 2,
+      rewardDiscipline: 2,
+      completed: false,
+      category: 'hydration',
+    },
+    {
+      id: 'hydro_3',
+      label: '💧 Hydro-Byte Evening',
+      description: 'Evening hydration goal',
+      icon: '💧',
+      rewardCoins: 2,
+      rewardDiscipline: 2,
+      completed: false,
+      category: 'hydration',
+    },
+    {
+      id: 'desk_stretch',
+      label: '🧘 Bio-Sync Desk Stretch',
+      description: '30s posture & eye reset away from the screen',
+      icon: '🧘',
+      rewardCoins: 3,
+      rewardDiscipline: 5,
+      completed: false,
+      category: 'movement',
+    },
+    {
+      id: 'focus_sprint',
+      label: '🎯 Cyber Focus Sprint',
+      description: 'Complete any Pomodoro focus session',
+      icon: '🎯',
+      rewardCoins: 5,
+      rewardDiscipline: 10,
+      completed: false,
+      category: 'focus',
+    },
+    {
+      id: 'clean_pet',
+      label: '✨ Habitat Refresh',
+      description: 'Clean waste or give your pet a bath',
+      icon: '✨',
+      rewardCoins: 2,
+      rewardDiscipline: 3,
+      completed: false,
+      category: 'pet_care',
+    },
+    {
+      id: 'tamer_workout',
+      label: '⚡ Digi-Workout / Arena',
+      description: 'Play a mini-game or compete in the battle arena',
+      icon: '⚡',
+      rewardCoins: 4,
+      rewardDiscipline: 5,
+      completed: false,
+      category: 'pet_care',
+    },
+  ];
+}
+
 
 export class StorageService {
   private static instance: StorageService;
@@ -81,10 +187,40 @@ export class StorageService {
       return pet;
     });
 
+    if (!prof.dailyStreak) {
+      prof.dailyStreak = {
+        currentStreak: 0,
+        longestStreak: 0,
+        claimedToday: false,
+      };
+    }
+    const today = getTodayDateString();
+    if (!prof.dailyHabitsDate || prof.dailyHabitsDate !== today) {
+      prof.dailyHabits = getDefaultDailyHabits();
+      prof.dailyHabitsDate = today;
+      if (!prof.bioSync) {
+        prof.bioSync = { waterDrunkToday: 0, waterGoal: 6, deskStretchesToday: 0 };
+      } else {
+        prof.bioSync.waterDrunkToday = 0;
+        prof.bioSync.deskStretchesToday = 0;
+      }
+    }
+    if (!prof.dailyHabits || prof.dailyHabits.length === 0) {
+      prof.dailyHabits = getDefaultDailyHabits();
+    }
+    if (!prof.bioSync) {
+      prof.bioSync = { waterDrunkToday: 0, waterGoal: 6, deskStretchesToday: 0 };
+    }
+    if (!prof.activeSoundscape) {
+      prof.activeSoundscape = 'off';
+    }
+    prof.dailyStreak.claimedToday = prof.dailyStreak.lastClaimDate === today;
+
     return prof;
   }
 
   public createDefaultProfile(username = 'Tamer'): UserProfile {
+    const today = getTodayDateString();
     const defaultItems: InventoryItem[] = [
       {
         id: 'cake',
@@ -168,6 +304,19 @@ export class StorageService {
       unlockedHabitats: ['default'],
       selectedHabitat: 'default',
       lastSaved: Date.now(),
+      dailyStreak: {
+        currentStreak: 0,
+        longestStreak: 0,
+        claimedToday: false,
+      },
+      dailyHabits: getDefaultDailyHabits(),
+      dailyHabitsDate: today,
+      bioSync: {
+        waterDrunkToday: 0,
+        waterGoal: 6,
+        deskStretchesToday: 0,
+      },
+      activeSoundscape: 'off',
     };
 
     this.saveProfile(newProfile);
@@ -432,6 +581,9 @@ export class StorageService {
     pet.stats.poopCount = 0;
     pet.stats.cleanliness.current = 100;
     if (pet.status === 'poopy') pet.status = 'idle';
+    if (cleaned > 0) {
+      this.completeHabit('clean_pet');
+    }
     this.saveProfile();
     return cleaned;
   }
@@ -454,8 +606,255 @@ export class StorageService {
     pet.stats.discipline = Math.min(100, (pet.stats.discipline ?? 70) + 5);
     pet.stats.happiness.current = Math.min(100, pet.stats.happiness.current + 15);
     this.addMoney(tokens * 2);
+    this.completeHabit('focus_sprint');
     this.saveProfile();
   }
+
+  // --- Productivity & Daily Protocol Systems ---
+
+  public checkDailyReset(): boolean {
+    const today = getTodayDateString();
+    let resetOccurred = false;
+
+    if (this.profile.dailyHabitsDate !== today) {
+      this.profile.dailyHabits = getDefaultDailyHabits();
+      this.profile.dailyHabitsDate = today;
+      if (!this.profile.bioSync) {
+        this.profile.bioSync = { waterDrunkToday: 0, waterGoal: 6, deskStretchesToday: 0 };
+      } else {
+        this.profile.bioSync.waterDrunkToday = 0;
+        this.profile.bioSync.deskStretchesToday = 0;
+      }
+      resetOccurred = true;
+    }
+
+    if (!this.profile.dailyStreak) {
+      this.profile.dailyStreak = { currentStreak: 0, longestStreak: 0, claimedToday: false };
+      resetOccurred = true;
+    }
+
+    this.profile.dailyStreak.claimedToday = this.profile.dailyStreak.lastClaimDate === today;
+
+    if (resetOccurred) {
+      this.saveProfile();
+    }
+    return resetOccurred;
+  }
+
+  public getDailyStreak(): DailyStreakInfo {
+    this.checkDailyReset();
+    return this.profile.dailyStreak || { currentStreak: 0, longestStreak: 0, claimedToday: false };
+  }
+
+  public claimDailyLoginBonus(): {
+    success: boolean;
+    alreadyClaimed: boolean;
+    streak: number;
+    reward?: DailyStreakReward;
+    message: string;
+    coinsAwarded: number;
+    itemAwarded?: InventoryItem;
+  } {
+    this.checkDailyReset();
+    const today = getTodayDateString();
+    const yesterday = getTodayDateString(-1);
+    const streak = this.profile.dailyStreak || { currentStreak: 0, longestStreak: 0, claimedToday: false };
+
+    if (streak.claimedToday || streak.lastClaimDate === today) {
+      return {
+        success: false,
+        alreadyClaimed: true,
+        streak: streak.currentStreak,
+        message: 'Daily bonus already claimed for today! Return tomorrow to keep your streak.',
+        coinsAwarded: 0,
+      };
+    }
+
+    let nextStreak = 1;
+    if (streak.lastClaimDate === yesterday) {
+      nextStreak = streak.currentStreak + 1;
+    }
+
+    streak.currentStreak = nextStreak;
+    streak.longestStreak = Math.max(streak.longestStreak, nextStreak);
+    streak.lastClaimDate = today;
+    streak.claimedToday = true;
+
+    const cycleDay = ((nextStreak - 1) % 7) + 1;
+    const reward = STREAK_REWARDS[cycleDay - 1];
+
+    this.addMoney(reward.coins);
+
+    let itemAwarded: InventoryItem | undefined;
+    if (reward.itemId && reward.itemName) {
+      itemAwarded = {
+        id: reward.itemId,
+        name: reward.itemName,
+        description: `Day ${cycleDay} Streak Reward`,
+        effects: reward.itemId === 'golden-apple'
+          ? { hunger: 50, happiness: 60, energy: 50, cureSick: true }
+          : reward.itemId === 'daycare-bowl'
+          ? { hunger: 35 }
+          : reward.itemId === 'medicine'
+          ? { cureSick: true, cleanliness: 50 }
+          : reward.itemId === 'protein-shake'
+          ? { hunger: 20, attack: 2, defense: 1, discipline: 5 }
+          : { hunger: 25, happiness: 25 },
+        quantity: 1,
+        shopValue: reward.coins,
+      };
+      this.addItem(itemAwarded);
+    }
+
+    const pet = this.getCurrentPet();
+    if (pet) {
+      pet.stats.happiness.current = Math.min(100, pet.stats.happiness.current + reward.happinessBonus);
+      if (cycleDay === 7 && pet.genome) {
+        // Day 7 spontaneous mutation or attribute refinement
+        pet.stats.maxHp += 5;
+        pet.stats.hp = pet.stats.maxHp;
+        pet.stats.attack += 1;
+        pet.stats.defense += 1;
+      }
+    }
+
+    this.profile.dailyStreak = streak;
+    this.saveProfile();
+
+    return {
+      success: true,
+      alreadyClaimed: false,
+      streak: nextStreak,
+      reward,
+      message: `Day ${nextStreak} Streak Claimed! Received ${reward.coins}🪙${itemAwarded ? ` + ${itemAwarded.name}` : ''}!`,
+      coinsAwarded: reward.coins,
+      itemAwarded,
+    };
+  }
+
+  public getDailyHabits(): DailyHabit[] {
+    this.checkDailyReset();
+    return this.profile.dailyHabits || [];
+  }
+
+  public completeHabit(habitId: string, awardDirect = true): {
+    completed: boolean;
+    allCompleted: boolean;
+    rewardCoins: number;
+    habit?: DailyHabit;
+  } {
+    this.checkDailyReset();
+    if (!this.profile.dailyHabits) return { completed: false, allCompleted: false, rewardCoins: 0 };
+
+    const habit = this.profile.dailyHabits.find((h) => h.id === habitId);
+    if (!habit || habit.completed) {
+      const allCompleted = this.profile.dailyHabits.every((h) => h.completed);
+      return { completed: false, allCompleted, rewardCoins: 0, habit };
+    }
+
+    habit.completed = true;
+    let earnedCoins = habit.rewardCoins;
+
+    if (awardDirect) {
+      this.addMoney(earnedCoins);
+      const pet = this.getCurrentPet();
+      if (pet) {
+        pet.stats.discipline = Math.min(100, (pet.stats.discipline ?? 70) + (habit.rewardDiscipline ?? 2));
+      }
+    }
+
+    const allCompleted = this.profile.dailyHabits.every((h) => h.completed);
+    if (allCompleted) {
+      // Overclock bonus: 15 bonus coins + full pet energy!
+      this.addMoney(15);
+      earnedCoins += 15;
+      const pet = this.getCurrentPet();
+      if (pet) {
+        pet.stats.energy.current = 100;
+        pet.stats.happiness.current = 100;
+      }
+    }
+
+    this.saveProfile();
+    return { completed: true, allCompleted, rewardCoins: earnedCoins, habit };
+  }
+
+  public toggleHabit(habitId: string): {
+    completed: boolean;
+    allCompleted: boolean;
+    rewardCoins: number;
+    habit?: DailyHabit;
+  } {
+    return this.completeHabit(habitId, true);
+  }
+
+  public getBioSync(): BioSyncState {
+    this.checkDailyReset();
+    if (!this.profile.bioSync) {
+      this.profile.bioSync = { waterDrunkToday: 0, waterGoal: 6, deskStretchesToday: 0 };
+    }
+    return this.profile.bioSync;
+  }
+
+  public logWaterIntake(): { waterDrunkToday: number; coinsEarned: number; bonusCompleted: boolean } {
+    this.checkDailyReset();
+    const bio = this.getBioSync();
+    bio.waterDrunkToday = Math.min(12, bio.waterDrunkToday + 1);
+    bio.lastWaterTimestamp = Date.now();
+
+    const pet = this.getCurrentPet();
+    if (pet) {
+      pet.stats.cleanliness.current = Math.min(100, pet.stats.cleanliness.current + 10);
+      pet.stats.happiness.current = Math.min(100, pet.stats.happiness.current + 10);
+    }
+
+    this.addMoney(2);
+
+    let bonusCompleted = false;
+    if (bio.waterDrunkToday >= 1) {
+      const res = this.completeHabit('hydro_1', false);
+      if (res.completed) bonusCompleted = true;
+    }
+    if (bio.waterDrunkToday >= 2) {
+      const res = this.completeHabit('hydro_2', false);
+      if (res.completed) bonusCompleted = true;
+    }
+    if (bio.waterDrunkToday >= 3) {
+      const res = this.completeHabit('hydro_3', false);
+      if (res.completed) bonusCompleted = true;
+    }
+
+    this.saveProfile();
+    return { waterDrunkToday: bio.waterDrunkToday, coinsEarned: 2, bonusCompleted };
+  }
+
+  public performDeskStretch(): { deskStretchesToday: number; coinsEarned: number } {
+    this.checkDailyReset();
+    const bio = this.getBioSync();
+    bio.deskStretchesToday = (bio.deskStretchesToday ?? 0) + 1;
+
+    const pet = this.getCurrentPet();
+    if (pet) {
+      pet.stats.energy.current = Math.min(100, pet.stats.energy.current + 15);
+      pet.stats.discipline = Math.min(100, (pet.stats.discipline ?? 70) + 5);
+    }
+
+    this.addMoney(3);
+    this.completeHabit('desk_stretch', false);
+    this.saveProfile();
+
+    return { deskStretchesToday: bio.deskStretchesToday, coinsEarned: 3 };
+  }
+
+  public getActiveSoundscape(): 'off' | 'rain' | 'drone' | 'matrix' {
+    return this.profile.activeSoundscape || 'off';
+  }
+
+  public setActiveSoundscape(soundscape: 'off' | 'rain' | 'drone' | 'matrix'): void {
+    this.profile.activeSoundscape = soundscape;
+    this.saveProfile();
+  }
+
 
   public retirePetToHallOfFame(): HallOfFameEntry | null {
     const pet = this.getCurrentPet();

@@ -12,6 +12,7 @@ export class DigiviceShell {
   private btn3!: Phaser.GameObjects.Sprite;
   private themeKey: string;
   public isPowerOn = false;
+  private ledTween: Phaser.Tweens.Tween | null = null;
 
   constructor(scene: Phaser.Scene, initialTheme = 'Mountain Steel') {
     this.scene = scene;
@@ -188,6 +189,7 @@ export class DigiviceShell {
 
   public setPower(powerOn: boolean, onComplete?: () => void): void {
     this.isPowerOn = powerOn;
+    this.stopAlertLed();
     if (powerOn) {
       this.powerLight.setAlpha(1);
       this.scene.tweens.add({
@@ -207,4 +209,31 @@ export class DigiviceShell {
       });
     }
   }
+
+  public pulseAlertLed(durationMs = 350, repeat = 6, onComplete?: () => void): void {
+    this.stopAlertLed();
+    this.powerLight.setAlpha(1);
+    this.ledTween = this.scene.tweens.add({
+      targets: this.powerLight,
+      alpha: 0.15,
+      duration: durationMs,
+      yoyo: true,
+      repeat,
+      ease: 'Sine.easeInOut',
+      onComplete: () => {
+        this.ledTween = null;
+        this.powerLight.setAlpha(this.isPowerOn ? 1 : 0);
+        onComplete?.();
+      },
+    });
+  }
+
+  public stopAlertLed(): void {
+    if (this.ledTween) {
+      this.ledTween.stop();
+      this.ledTween = null;
+    }
+    this.powerLight.setAlpha(this.isPowerOn ? 1 : 0);
+  }
 }
+

@@ -54,6 +54,15 @@ export class PetScene extends Phaser.Scene {
           this.ui.updateStatus(updated);
         }
       });
+    } else {
+      const streak = storage.getDailyStreak();
+      if (!streak.claimedToday) {
+        this.time.delayedCall(1200, () => {
+          this.ui.showToast(`🔥 Day ${streak.currentStreak + 1} Streak Ready to Claim!`);
+          const digivice = this.scene.get('DigiviceScene') as DigiviceScene;
+          digivice?.pulseAlertLed(5);
+        });
+      }
     }
 
     // Start stat decay timer (rebalanced to 30-second ticks for peaceful companion play)
@@ -390,6 +399,34 @@ export class PetScene extends Phaser.Scene {
         },
       });
 
+      // Daily Protocol & Habits Hub
+      const habits = storage.getDailyHabits();
+      const completedCount = habits.filter((h) => h.completed).length;
+      const streak = storage.getDailyStreak();
+      const streakBadge = streak.claimedToday ? '' : ' 🔥CLAIM';
+
+      items.push({
+        label: `📋 Daily Protocol [${completedCount}/${habits.length}]${streakBadge}`,
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('LifestyleScene');
+          this.scene.stop('PetScene');
+        },
+      });
+
+      // Quick Hydro-Byte (Drink Water)
+      items.push({
+        label: '💧 Hydro-Byte (Drink Water)',
+        action: () => {
+          const res = storage.logWaterIntake();
+          SoundService.getInstance().playWaterSplash();
+          this.petEntity?.playAction('happy', 800);
+          this.ui.showToast(`Hydrated! +${res.coinsEarned}🪙 (Glass ${res.waterDrunkToday})`);
+          this.ui.updateStatus(storage.getCurrentPet());
+          this.ui.closeMenu();
+        },
+      });
+
       // Quick Feed
       items.push({
         label: '🍖 Feed Quick Snack',
@@ -546,6 +583,24 @@ export class PetScene extends Phaser.Scene {
         const filterName = digiScene?.cycleLcdFilter ? digiScene.cycleLcdFilter() : 'Default';
         this.ui.showToast(`LCD Filter: ${filterName}`);
         this.ui.closeMenu();
+      },
+    });
+
+    const activeSound = storage.getActiveSoundscape();
+    const soundNames: Record<string, string> = {
+      off: 'OFF',
+      rain: 'RAIN',
+      drone: 'DRONE',
+      matrix: 'MATRIX',
+    };
+    items.push({
+      label: `🎧 Soundscape: [${soundNames[activeSound]}]`,
+      action: () => {
+        const cycle: ('off' | 'rain' | 'drone' | 'matrix')[] = ['off', 'rain', 'drone', 'matrix'];
+        const next = cycle[(cycle.indexOf(activeSound) + 1) % cycle.length];
+        SoundService.getInstance().startSoundscape(next);
+        this.ui.showToast(`Soundscape: ${next.toUpperCase()}`);
+        this.openActionMenu();
       },
     });
 

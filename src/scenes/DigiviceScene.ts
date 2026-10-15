@@ -124,8 +124,13 @@ export class DigiviceScene extends Phaser.Scene {
     StorageService.getInstance().setTheme(themeName);
   }
 
+  public pulseAlertLed(repeat = 6): void {
+    this.shell.pulseAlertLed(350, repeat);
+  }
+
   private dispatchAction(methodNames: string[]): void {
     const activeScenes = [
+      'LifestyleScene',
       'PedigreeScene',
       'VisitorArenaScene',
       'MiniGameScene',

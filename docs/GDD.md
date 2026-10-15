@@ -584,5 +584,52 @@ Unlike purely aesthetic desktop pets or generic habit trackers, *They Might Byte
 
 ---
 
+## 6. Daily Protocol, Wellness Bio-Sync & Ambient Soundscapes
+
+### 6.1 Daily Protocol Matrix (Habits & Quests)
+The Daily Protocol transforms everyday real-world productivity and wellness tasks into meaningful virtual-pet progression without intrusive gamification tropes:
+- **7 Daily Protocols**:
+  1. `💧 Hydro-Byte Morning`: Drink first glass of water (+2🪙, +2 Discipline, +Cleanliness).
+  2. `💧 Hydro-Byte Afternoon`: Afternoon hydration recharge (+2🪙, +2 Discipline, +Cleanliness).
+  3. `💧 Hydro-Byte Evening`: Evening hydration milestone (+2🪙, +2 Discipline, +Cleanliness).
+  4. `🧘 Bio-Sync Desk Stretch`: 10-second guided posture and eye reset away from the screen (+3🪙, +5 Discipline, +15 Energy).
+  5. `🎯 Cyber Focus Sprint`: Complete any Pomodoro focus session (+5🪙, +10 Discipline, +15 Happiness).
+  6. `✨ Habitat Refresh`: Clean waste or give your pet a soothing bath (+2🪙, +3 Discipline, +Happiness).
+  7. `⚡ Digi-Workout / Arena`: Play an interactive training mini-game or compete in the battle arena (+4🪙, +5 Discipline, +Attack).
+- **Protocol Overclock Bonus**:
+  - Completing all 7 daily habits triggers an automatic **+15🪙 bonus**, instantly restores pet energy to 100%, and peaks pet happiness.
+- **Calendar Rollover**:
+  - Automatic client-side daily reset detected on calendar day shift (`YYYY-MM-DD`).
+
+### 6.2 Bio-Sync Wellness & Hydration ("Hydro-Bytes")
+- **Interactive Hydration Meter**: Tracks 6 daily water glasses (`[💧💧💧💧⚪⚪]`). Tamers can log glasses directly from the Action Menu or Lifestyle Hub, triggering custom synthesized water splash audio (`playWaterSplash()`) and cheerful pet animations.
+- **Guided Desk Stretch Companion**: Features an animated 10-second posture reset with timed breathing cues, eye relaxation prompts (20-20-20 rule), and synchronized pet exercise animations with physical LED pulsing.
+
+### 6.3 Tamer Daily Login Streak (7-Day Cycle)
+- Consecutive daily logins reward scaling currency, premium sustenance, and heirloom gear:
+  - **Day 1**: 🪙 5 Coins + Happiness boost
+  - **Day 2**: 🪙 10 Coins + Crunchy Parsnip
+  - **Day 3**: 🪙 15 Coins + Peppermint Candy Cane
+  - **Day 4**: 🪙 20 Coins + Auto-feeding Daycare Snack Bowl
+  - **Day 5**: 🪙 25 Coins + Mega Protein Shake
+  - **Day 6**: 🪙 30 Coins + Vaccine Spray
+  - **Day 7**: 🪙 50 Coins + Golden Digi-Apple + Spontaneous Genetic Mutation!
+- Longest streak records are preserved across save files; missed days reset to Day 1 while retaining historic trophies.
+
+### 6.4 Procedural Web Audio Soundscapes (Zero Assets)
+- Built entirely on the Web Audio API with zero external audio download overhead:
+  1. **🌧 Cyber Rain**: Continuous looped pink/white noise filtered via an LFO-modulated bandpass filter (~850Hz) with stochastic high-pitch roof droplet blips (1600–2400Hz).
+  2. **🪐 Deep Space Drone**: Dual detuned sine wave synthesis (55.0Hz & 55.8Hz) generating a natural 0.8Hz binaural delta wave for alpha/theta flow states and focus.
+  3. **💾 Data Stream / Matrix**: Lo-fi rhythmic pulse synthesizer cycling pentatonic cyberpunk frequencies through a 1200Hz bandpass filter.
+
+### 6.5 Physical Bezel LED Alert Indicator
+- Hardware LED on the bezel pulses smoothly (`alpha: 0.15 ↔ 1.0` sine tween) when:
+  - Daily login streak rewards are unclaimed.
+  - A focus session or bio-sync stretch countdown concludes.
+  - Urgent care or daily protocol milestones require attention.
+
+---
+
 *Document updated and verified for They Might Byte v2.0.*
+
 

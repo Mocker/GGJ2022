@@ -7,6 +7,7 @@ import { PetScene } from './scenes/PetScene';
 import { BattleScene } from './scenes/BattleScene';
 import { MiniGameScene } from './scenes/MiniGameScene';
 import { FocusScene } from './scenes/FocusScene';
+import { LifestyleScene } from './scenes/LifestyleScene';
 import { HallOfFameScene } from './scenes/HallOfFameScene';
 import { PedigreeScene } from './scenes/PedigreeScene';
 import { VisitorArenaScene } from './scenes/VisitorArenaScene';
@@ -31,7 +32,20 @@ const config: Phaser.Types.Core.GameConfig = {
   dom: {
     createContainer: true,
   },
-  scene: [BootScene, DigiviceScene, TitleScene, SelectPetScene, PetScene, BattleScene, MiniGameScene, FocusScene, HallOfFameScene, PedigreeScene, VisitorArenaScene],
+  scene: [
+    BootScene,
+    DigiviceScene,
+    TitleScene,
+    SelectPetScene,
+    PetScene,
+    BattleScene,
+    MiniGameScene,
+    FocusScene,
+    LifestyleScene,
+    HallOfFameScene,
+    PedigreeScene,
+    VisitorArenaScene,
+  ],
 };
 
 window.addEventListener('load', () => {

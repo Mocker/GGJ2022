@@ -197,7 +197,8 @@ describe('StorageService & Lineage Mechanics', () => {
     expect(pet?.stats.focusMinutes).toBe(25);
     expect(pet?.stats.focusTokens).toBe(5);
     expect(pet?.stats.discipline).toBeGreaterThan(70);
-    expect(storage.getProfile().money).toBe(initialMoney + 10);
+    expect(storage.getProfile().money).toBe(initialMoney + 10 + 5); // 10 from tokens + 5 from focus_sprint daily habit
+    expect(storage.getDailyHabits().find((h) => h.id === 'focus_sprint')?.completed).toBe(true);
   });
 
   it('retires adult pet to Hall of Fame and births next generation heirloom egg', () => {

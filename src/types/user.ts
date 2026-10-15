@@ -13,6 +13,31 @@ export interface HallOfFameEntry {
   retiredAt: number;
 }
 
+export interface DailyHabit {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
+  rewardCoins: number;
+  rewardDiscipline?: number;
+  completed: boolean;
+  category: 'hydration' | 'movement' | 'focus' | 'mindset' | 'pet_care';
+}
+
+export interface DailyStreakInfo {
+  currentStreak: number;
+  longestStreak: number;
+  lastClaimDate?: string; // YYYY-MM-DD
+  claimedToday: boolean;
+}
+
+export interface BioSyncState {
+  waterDrunkToday: number;
+  waterGoal: number;
+  lastWaterTimestamp?: number;
+  deskStretchesToday: number;
+}
+
 export interface UserProfile {
   id: string;
   username: string;
@@ -29,4 +54,11 @@ export interface UserProfile {
   unlockedThemes?: string[];
   unlockedHabitats?: string[];
   selectedHabitat?: string;
+  // Productivity & Lifestyle Systems
+  dailyStreak?: DailyStreakInfo;
+  dailyHabits?: DailyHabit[];
+  dailyHabitsDate?: string; // YYYY-MM-DD
+  bioSync?: BioSyncState;
+  activeSoundscape?: 'off' | 'rain' | 'drone' | 'matrix';
 }
+
