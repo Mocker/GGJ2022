@@ -130,6 +130,7 @@ export class DigiviceScene extends Phaser.Scene {
 
   private dispatchAction(methodNames: string[]): void {
     const activeScenes = [
+      'ByteDexScene',
       'LifestyleScene',
       'PedigreeScene',
       'VisitorArenaScene',

@@ -38,6 +38,13 @@ export interface BioSyncState {
   deskStretchesToday: number;
 }
 
+export interface ByteDexEntry {
+  speciesId: string;
+  firstDiscoveredAt: number;
+  timesEncountered: number;
+  generationDiscovered: number;
+}
+
 export interface UserProfile {
   id: string;
   username: string;
@@ -60,5 +67,7 @@ export interface UserProfile {
   dailyHabitsDate?: string; // YYYY-MM-DD
   bioSync?: BioSyncState;
   activeSoundscape?: 'off' | 'rain' | 'drone' | 'matrix';
+  // Tamer Field Guide (Byte-Dex)
+  byteDex?: Record<string, ByteDexEntry>;
 }
 

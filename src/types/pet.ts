@@ -1,10 +1,58 @@
 import type { PetGenotype } from '../genetics/types';
 
-export type PetType = 'tadpole' | 'bacteria' | 'dino' | 'snuffler' | 'sunfish';
-export type EggType = 'egg-blue' | 'egg-green' | 'egg-yellow';
+export type PetType =
+  | 'tadpole'
+  | 'bacteria'
+  | 'dino'
+  | 'snuffler'
+  | 'sunfish'
+  | 'seedling'
+  | 'glitchbot'
+  | 'shadowmite'
+  | 'wyrm'
+  | 'golem'
+  | 'seraph';
 
-export type PetStage = 'egg' | 'baby' | 'adultCute' | 'adultEvil' | 'megaHero' | 'megaShadow' | 'cyberMecha';
-export type BranchType = 'hero' | 'shadow' | 'cyber' | 'neutral';
+export type EggType =
+  | 'egg-blue'
+  | 'egg-green'
+  | 'egg-yellow'
+  | 'egg-crimson'
+  | 'egg-silver'
+  | 'egg-emerald'
+  | 'egg-obsidian';
+
+export type PetStage =
+  | 'egg'
+  | 'baby'
+  | 'adultCute'
+  | 'adultEvil'
+  | 'cyberMecha'
+  | 'megaHero'
+  | 'megaShadow'
+  | 'omniAscended'
+  | 'botanicAncient'
+  | 'abyssalApex';
+
+export type BranchType = 'hero' | 'shadow' | 'cyber' | 'neutral' | 'sage' | 'nature' | 'titan';
+
+export type VisualAuraType = 'none' | 'celestial' | 'cyber' | 'void' | 'bioluminescent' | 'nature' | 'magma';
+
+export interface SpeciesEntry {
+  id: string;
+  dexNumber: number;
+  name: string;
+  lineage: 'aquatic' | 'microbial' | 'celestial' | 'primordial' | 'android' | 'botanical' | 'void';
+  stage: PetStage;
+  type: PetType;
+  branch: BranchType;
+  aura: VisualAuraType;
+  baseHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  lore: string;
+  evolutionHint: string;
+}
 
 export interface PetStats {
   energy: { min: number; current: number; max: number };
@@ -43,6 +91,8 @@ export interface PetModel {
   status: 'idle' | 'sleeping' | 'hungry' | 'sick' | 'poopy' | 'happy' | 'meditating';
   isSleeping: boolean;
   genome?: PetGenotype;
+  aura?: VisualAuraType;
+  speciesId?: string;
   createdAt: number;
 }
 

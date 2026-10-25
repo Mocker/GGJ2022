@@ -1,4 +1,4 @@
-import { UserProfile, HallOfFameEntry, DailyHabit, DailyStreakInfo, BioSyncState } from '../types/user';
+import { UserProfile, HallOfFameEntry, DailyHabit, DailyStreakInfo, BioSyncState, ByteDexEntry } from '../types/user';
 import { PetModel, PetType, EggType } from '../types/pet';
 import { InventoryItem } from '../types/item';
 import { generateRandomGenome, crossoverGenomes } from '../genetics/evolutionEngine';
@@ -214,6 +214,9 @@ export class StorageService {
     if (!prof.activeSoundscape) {
       prof.activeSoundscape = 'off';
     }
+    if (!prof.byteDex) {
+      prof.byteDex = {};
+    }
     prof.dailyStreak.claimedToday = prof.dailyStreak.lastClaimDate === today;
 
     return prof;
@@ -317,6 +320,14 @@ export class StorageService {
         deskStretchesToday: 0,
       },
       activeSoundscape: 'off',
+      byteDex: {
+        'cute-tadpole': {
+          speciesId: 'cute-tadpole',
+          firstDiscoveredAt: Date.now(),
+          timesEncountered: 1,
+          generationDiscovered: 1,
+        },
+      },
     };
 
     this.saveProfile(newProfile);
@@ -918,5 +929,42 @@ export class StorageService {
     this.addMoney(20); // Rebirth bonus
     this.saveProfile();
     return entry;
+  }
+
+  // --- Tamer Field Guide (Byte-Dex) Discovery System ---
+
+  public recordByteDexEntry(speciesId: string): boolean {
+    if (!this.profile.byteDex) {
+      this.profile.byteDex = {};
+    }
+    const pet = this.getCurrentPet();
+    const gen = pet?.stats.generation ?? 1;
+    const isNew = !this.profile.byteDex[speciesId];
+
+    if (isNew) {
+      this.profile.byteDex[speciesId] = {
+        speciesId,
+        firstDiscoveredAt: Date.now(),
+        timesEncountered: 1,
+        generationDiscovered: gen,
+      };
+      this.saveProfile();
+      return true;
+    } else {
+      this.profile.byteDex[speciesId].timesEncountered++;
+      this.saveProfile();
+      return false;
+    }
+  }
+
+  public getByteDex(): Record<string, ByteDexEntry> {
+    if (!this.profile.byteDex) {
+      this.profile.byteDex = {};
+    }
+    return this.profile.byteDex;
+  }
+
+  public getDiscoveredSpeciesCount(): number {
+    return Object.keys(this.getByteDex()).length;
   }
 }

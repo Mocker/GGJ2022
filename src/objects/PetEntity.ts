@@ -3,6 +3,7 @@ import { PetModel } from '../types/pet';
 import { SoundService } from '../services/audio';
 import { StorageService } from '../services/storage';
 import { expressPhenotype } from '../genetics/evolutionEngine';
+import { VisualEffects } from './VisualEffects';
 
 export class PetEntity {
   public scene: Phaser.Scene;
@@ -13,6 +14,7 @@ export class PetEntity {
   private poopSprites: Phaser.GameObjects.Text[] = [];
   private zzzText: Phaser.GameObjects.Text | null = null;
   private sickText: Phaser.GameObjects.Text | null = null;
+  private auraContainer: Phaser.GameObjects.Container | null = null;
 
   // Speech & Thought Bubble Elements
   private bubbleContainer: Phaser.GameObjects.Container | null = null;
@@ -48,8 +50,33 @@ export class PetEntity {
     }
 
     this.playIdle();
+    this.setupAura();
     this.startWanderLoop();
     this.updateStatusVisuals();
+  }
+
+  public setupAura(): void {
+    if (this.auraContainer) {
+      this.auraContainer.destroy();
+      this.auraContainer = null;
+    }
+    if (this.petData.stage === 'egg') return;
+
+    const auraType =
+      this.petData.aura ||
+      (this.petData.stats.branchType === 'hero'
+        ? 'celestial'
+        : this.petData.stats.branchType === 'shadow'
+        ? 'void'
+        : this.petData.stats.branchType === 'cyber'
+        ? 'cyber'
+        : this.petData.stats.branchType === 'titan'
+        ? 'magma'
+        : this.petData.stats.branchType === 'nature'
+        ? 'nature'
+        : 'bioluminescent');
+
+    this.auraContainer = VisualEffects.createAura(this.scene, this.sprite.x, this.sprite.y, auraType);
   }
 
   public getIdleAnimKey(): string {
@@ -472,7 +499,15 @@ export class PetEntity {
           x: targetX,
           duration,
           ease: 'Linear',
+          onUpdate: () => {
+            if (this.auraContainer) {
+              this.auraContainer.setPosition(this.sprite.x, this.sprite.y);
+            }
+          },
           onComplete: () => {
+            if (this.auraContainer) {
+              this.auraContainer.setPosition(this.sprite.x, this.sprite.y);
+            }
             this.playIdle();
             // Occasional spontaneous wandering thought
             if (Math.random() < 0.3 && !this.isBusy && !this.petData.isSleeping) {
@@ -494,6 +529,10 @@ export class PetEntity {
 
   public destroy(): void {
     this.stopWanderLoop();
+    if (this.auraContainer) {
+      this.auraContainer.destroy();
+      this.auraContainer = null;
+    }
     if (this.bubbleContainer) this.bubbleContainer.destroy();
     if (this.bubbleTimer) this.bubbleTimer.remove();
     if (this.zzzText) this.zzzText.destroy();

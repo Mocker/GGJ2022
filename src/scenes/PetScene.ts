@@ -534,6 +534,17 @@ export class PetScene extends Phaser.Scene {
         },
       });
 
+      // Tamer Field Guide (Byte-Dex)
+      const dexCount = storage.getDiscoveredSpeciesCount();
+      items.push({
+        label: `📖 Field Guide (${dexCount}/25)`,
+        action: () => {
+          this.ui.closeMenu();
+          this.scene.start('ByteDexScene');
+          this.scene.stop('PetScene');
+        },
+      });
+
       // Export Tamer Card (PNG)
       items.push({
         label: '📇 Export Tamer Card (PNG)',
@@ -698,11 +709,14 @@ export class PetScene extends Phaser.Scene {
       const storage = StorageService.getInstance();
       const pet = storage.getCurrentPet()!;
       const evo = evaluateEvolution(pet);
+      const isNewDiscovery = storage.recordByteDexEntry(evo.speciesId);
 
       storage.updateCurrentPet((p) => {
         p.stage = evo.nextStage;
         p.name = evo.nextName;
         p.type = evo.nextType;
+        p.aura = evo.aura;
+        p.speciesId = evo.speciesId;
         p.stats.hp += evo.bonusHp;
         p.stats.maxHp += evo.bonusHp;
         p.stats.attack += evo.bonusAttack;
@@ -712,6 +726,13 @@ export class PetScene extends Phaser.Scene {
       const updated = storage.getCurrentPet()!;
       this.spawnPet(updated);
       this.ui.showToast(evo.evolutionMessage);
+      if (isNewDiscovery) {
+        this.time.delayedCall(1600, () => {
+          this.ui.showToast(`📖 New Field Guide Entry: ${evo.nextName}!`);
+          const digivice = this.scene.get('DigiviceScene') as DigiviceScene;
+          digivice?.pulseAlertLed(6);
+        });
+      }
     });
   }
 
@@ -750,10 +771,14 @@ export class PetScene extends Phaser.Scene {
         onComplete: () => {
           SoundService.getInstance().playEvolve();
           this.cameras.main.shake(220, 0.015);
+          const isNewDiscovery = storage.recordByteDexEntry(evo.speciesId);
+
           storage.updateCurrentPet((p) => {
             p.stage = evo.nextStage;
             p.name = evo.nextName;
             p.type = evo.nextType;
+            p.aura = evo.aura;
+            p.speciesId = evo.speciesId;
             p.stats.branchType = evo.branch;
             p.stats.hp += evo.bonusHp;
             p.stats.maxHp += evo.bonusHp;
@@ -765,6 +790,13 @@ export class PetScene extends Phaser.Scene {
           const updated = storage.getCurrentPet()!;
           this.spawnPet(updated);
           this.ui.showToast(evo.evolutionMessage);
+          if (isNewDiscovery) {
+            this.time.delayedCall(1600, () => {
+              this.ui.showToast(`📖 New Field Guide Entry: ${evo.nextName}!`);
+              const digivice = this.scene.get('DigiviceScene') as DigiviceScene;
+              digivice?.pulseAlertLed(8);
+            });
+          }
         },
       });
     }

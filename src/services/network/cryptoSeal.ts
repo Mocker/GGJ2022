@@ -40,6 +40,10 @@ export function buildPetCanonicalPayload(pet: PetModel): string {
 }
 
 export class CryptoSealService {
+  public static hash(data: string, secret = DEFAULT_SECRET): string {
+    return fnv1a64(data + '::' + secret);
+  }
+
   public static createPetSeal(pet: PetModel, secret = DEFAULT_SECRET): string {
     const payload = buildPetCanonicalPayload(pet) + '::' + secret;
     return fnv1a64(payload);

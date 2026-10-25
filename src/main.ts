@@ -8,6 +8,7 @@ import { BattleScene } from './scenes/BattleScene';
 import { MiniGameScene } from './scenes/MiniGameScene';
 import { FocusScene } from './scenes/FocusScene';
 import { LifestyleScene } from './scenes/LifestyleScene';
+import { ByteDexScene } from './scenes/ByteDexScene';
 import { HallOfFameScene } from './scenes/HallOfFameScene';
 import { PedigreeScene } from './scenes/PedigreeScene';
 import { VisitorArenaScene } from './scenes/VisitorArenaScene';
@@ -42,6 +43,7 @@ const config: Phaser.Types.Core.GameConfig = {
     MiniGameScene,
     FocusScene,
     LifestyleScene,
+    ByteDexScene,
     HallOfFameScene,
     PedigreeScene,
     VisitorArenaScene,
