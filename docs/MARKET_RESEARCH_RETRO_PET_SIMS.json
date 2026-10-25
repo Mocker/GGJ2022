@@ -1,0 +1,65 @@
+{
+  "schema_version": 4,
+  "tool": "convolvger",
+  "tool_version": "0.7.0",
+  "retrieved_at": "2026-10-25T06:42:15.323865Z",
+  "findings": [],
+  "conversation": {
+    "id": "c_6daed5f3906463a9",
+    "provider": "gemini",
+    "source_url": "https://gemini.google.com/share/b104acc979c7",
+    "title": "Retro Pet Sim Market Research",
+    "created_at": "2026-10-25T05:52:39.448583Z",
+    "updated_at": "2026-10-25T05:52:39.448583Z",
+    "messages": [
+      {
+        "id": null,
+        "role": "user",
+        "author": null,
+        "timestamp": "2026-10-25T05:52:39.448583Z",
+        "content": [
+          {
+            "type": "text",
+            "text": "Start research"
+          }
+        ],
+        "visible": true,
+        "active": true,
+        "status": null,
+        "recipient": null,
+        "citations": [],
+        "provider_metadata": {}
+      },
+      {
+        "id": "r_60f6a38d40f39306",
+        "role": "assistant",
+        "author": null,
+        "timestamp": "2026-10-25T05:52:39.448583Z",
+        "content": [
+          {
+            "type": "text",
+            "text": "I've completed your research. Feel free to ask me follow-up questions or request changes.\n\nhttp://googleusercontent.com/immersive_entry_chip/0"
+          }
+        ],
+        "visible": true,
+        "active": true,
+        "status": null,
+        "recipient": null,
+        "citations": [],
+        "provider_metadata": {
+          "response_content_id": "rc_e064454a2fbd0938",
+          "parent": [
+            "c_6daed5f3906463a9",
+            "r_7c04ca16c0bc4862",
+            "rc_66f2ad84b78b1a0f"
+          ]
+        }
+      }
+    ],
+    "provider_metadata": {
+      "model": "Flash",
+      "share_id": "b104acc979c7",
+      "payload_timestamp": "2026-10-25T06:38:26.614782+00:00"
+    }
+  }
+}
